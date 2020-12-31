@@ -64,6 +64,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EFS\EnigmaEFS.cs" />
+    <Compile Include="Enums\EnigmaEFSError.cs" />
     <Compile Include="MFA\DriveDetection.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

@@ -7,16 +7,6 @@ using System.IO;
 
 namespace Enigma
 {
-    enum EnigmaEFSError
-    {
-        MountLocationDoesntExist,
-        DriveNotFound,
-        DirectoryNotFound,
-        InsufficientStorageAvailable,
-        WrongFileType,
-        FilePermission
-    }
-
     /// <summary>
     /// Allows to create, modify or manipulate an Enigma Encripted File System.
     /// </summary>
