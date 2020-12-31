@@ -64,6 +64,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EFS\Attributes\Attribute.cs" />
+    <Compile Include="EFS\Attributes\StandardInformation.cs" />
     <Compile Include="EFS\EnigmaEFS.cs" />
     <Compile Include="EFS\ISaveObject.cs" />
     <Compile Include="Enums\AttributeType.cs" />
