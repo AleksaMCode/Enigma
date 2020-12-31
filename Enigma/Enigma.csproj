@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EFS\Attribute.cs" />
     <Compile Include="EFS\EnigmaEFS.cs" />
     <Compile Include="EFS\ISaveObject.cs" />
     <Compile Include="Enums\AttributeType.cs" />
