@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Enigma
 {
-    public interface ISaveObjects
+    public interface ISaveObject
     {
         int GetSaveLength();
-        void Save(byte[] buffer, int offset);
     }
 }

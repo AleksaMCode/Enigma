@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Enigma.EFS
 {
-    public abstract class Attribute : ISaveObjects
+    public abstract class Attribute : ISaveObject
     {
         /// <summary>
         /// Attribute type code.
