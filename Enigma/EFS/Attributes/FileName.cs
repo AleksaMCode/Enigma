@@ -24,5 +24,9 @@ namespace Enigma
             // Max. size of TotalLength is 64. If the size is smaller, padding will be appended to the end of the header.
             TotalLength = 64;
         }
+        public override int GetSaveLength()
+        {
+            return TotalLength;
+        }
     }
 }
