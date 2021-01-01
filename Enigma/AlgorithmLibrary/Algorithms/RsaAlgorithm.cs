@@ -74,10 +74,19 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public byte[] Signature(byte[] data, HashAlgorithm hashAlgo)
         {
-            using (var rsaProvider = new RSACryptoServiceProvider())
+            using (RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider())
             {
                 rsaProvider.ImportParameters(this.Key);
                 return rsaProvider.SignData(data, hashAlgo);
+            }
+        }
+
+        public bool VerifySignature(byte[] data, HashAlgorithm hasher, byte[] signature)
+        {
+            using (RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider())
+            {
+                rsaProvider.ImportParameters(this.Key);
+                return rsaProvider.VerifyData(data, hasher, signature);
             }
         }
     }
