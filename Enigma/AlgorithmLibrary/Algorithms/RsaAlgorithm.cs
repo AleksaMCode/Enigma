@@ -42,5 +42,28 @@ namespace Enigma.AlgorithmLibrary.Algorithms
                 }
             }
         }
+        public byte[] Encrypt(byte[] data)
+        {
+            byte[] encryptedData;
+
+            using (RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider())
+            {
+                rsaProvider.ImportParameters(Key);
+                encryptedData = rsaProvider.Encrypt(data, false);
+
+                return encryptedData;
+            }
+        }
+
+        public byte[] Decrypt(byte[] data)
+        {
+            byte[] decryptedData;
+
+            RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+            rsaProvider.ImportParameters(this.Key);
+            decryptedData = rsaProvider.Decrypt(data, false);
+
+            return decryptedData;
+        }
     }
 }
