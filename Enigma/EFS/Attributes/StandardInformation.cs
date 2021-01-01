@@ -30,5 +30,10 @@ namespace Enigma
 
             TotalLength = 46;
         }
+
+        public override int GetSaveLength()
+        {
+            return TotalLength;
+        }
     }
 }
