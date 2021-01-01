@@ -28,10 +28,10 @@ namespace Enigma
             CTimeUsedId = ATimeUserId = RTimeUserId = OwnerId = userID;
             Type = AttributeType.STANDARD_INFORMATION;
 
-            TotalLength = 46;
+            TotalLength = 48;
         }
 
-        public override int GetSaveLength()
+        public override uint GetSaveLength()
         {
             return TotalLength;
         }

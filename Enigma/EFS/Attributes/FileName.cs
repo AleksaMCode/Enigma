@@ -22,9 +22,9 @@ namespace Enigma
         {
             Type = AttributeType.FILE_NAME;
             // Max. size of TotalLength is 64. If the size is smaller, padding will be appended to the end of the header.
-            TotalLength = 64;
+            TotalLength = 66;
         }
-        public override int GetSaveLength()
+        public override uint GetSaveLength()
         {
             return TotalLength;
         }

@@ -12,7 +12,10 @@ namespace Enigma
         /// Attribute type code.
         /// </summary>
         public AttributeType Type { get; set; }
-        public ushort TotalLength { get; set; }
+        /// <summary>
+        /// Max. size of the file that can be encrypted is 4.294967295 GB.
+        /// </summary>
+        public uint TotalLength { get; set; }
 
         public static AttributeType GetAttributeType(byte[] data, int offset)
         {
@@ -24,9 +27,9 @@ namespace Enigma
             return (AttributeType)BitConverter.ToUInt32(data, offset);
         }
 
-        public virtual int GetSaveLength()
+        public virtual uint GetSaveLength()
         {
-            return 6;
+            return 8;
         }
 
     }

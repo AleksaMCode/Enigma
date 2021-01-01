@@ -8,6 +8,6 @@ namespace Enigma
 {
     public interface ISaveObject
     {
-        int GetSaveLength();
+        uint GetSaveLength();
     }
 }
