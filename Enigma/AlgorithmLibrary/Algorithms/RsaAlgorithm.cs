@@ -10,15 +10,20 @@ namespace Enigma.AlgorithmLibrary.Algorithms
     public class RsaAlgorithm : IAlgorithm
     {
         public static readonly string NameSignature = "RSA";
+
         public RSAParameters Key { get; set; }
+
         byte[] IAlgorithm.Key => null;
+
         public int BlockSize { get; } = 115;
+
         public byte[] AdditionalData { get => null; }
 
         public RsaAlgorithm(RSAParameters rsaKeyParams)
         {
             Key = rsaKeyParams;
         }
+
         public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
         {
             byte[] data = new byte[16];
@@ -42,6 +47,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
                 }
             }
         }
+
         public byte[] Encrypt(byte[] data)
         {
             byte[] encryptedData;
@@ -64,6 +70,15 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             decryptedData = rsaProvider.Decrypt(data, false);
 
             return decryptedData;
+        }
+
+        public byte[] Signature(byte[] data, HashAlgorithm hashAlgo)
+        {
+            using (var rsaProvider = new RSACryptoServiceProvider())
+            {
+                rsaProvider.ImportParameters(this.Key);
+                return rsaProvider.SignData(data, hashAlgo);
+            }
         }
     }
 }
