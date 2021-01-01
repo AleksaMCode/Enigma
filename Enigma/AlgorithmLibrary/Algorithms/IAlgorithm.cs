@@ -16,6 +16,6 @@ namespace Enigma
         byte[] AdditionalData { get; }
         byte[] Encrypt(byte[] message);
         byte[] Decrypt(byte[] message);
-        string GetSignatureString();
+        string GetAlgorithmNameSignature();
     }
 }
