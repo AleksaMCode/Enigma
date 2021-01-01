@@ -19,5 +19,28 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         {
             Key = rsaKeyParams;
         }
+        public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
+        {
+            byte[] data = new byte[16];
+            new RNGCryptoServiceProvider().GetBytes(data);
+
+            using (RSACryptoServiceProvider decryptRSA = new RSACryptoServiceProvider())
+            {
+                using (RSACryptoServiceProvider encryptRSA = new RSACryptoServiceProvider())
+                {
+                    encryptRSA.ImportParameters(publicKey);
+                    decryptRSA.ImportParameters(privateKey);
+
+                    var decrypted = decryptRSA.Decrypt(encryptRSA.Encrypt(data, false), false);
+
+                    if (data.SequenceEqual(decrypted))
+                    {
+                        return true;
+                    }
+                    // else
+                    return false;
+                }
+            }
+        }
     }
 }
