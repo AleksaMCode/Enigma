@@ -60,6 +60,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="AlgorithmLibrary\Algorithms\IAlgorithm.cs" />
+    <Compile Include="AlgorithmLibrary\AlgorithmUtility.cs" />
     <Compile Include="AlgorithmLibrary\FileEncryptionKey.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
