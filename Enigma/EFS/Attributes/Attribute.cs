@@ -13,25 +13,6 @@ namespace Enigma
         /// </summary>
         public AttributeType Type { get; set; }
         public ushort TotalLength { get; set; }
-        /// <summary>
-        /// The size of the optional attribute name in characters, or 0 if there is no attribute name. The maximum attribute name length is 255 characters.
-        /// </summary>
-        public byte NameLength { get; set; }
-        /// <summary>
-        /// The offset of the attribute name from the start of the attribute record, in bytes. If the NameLength member is 0, this member is undefined.
-        /// </summary>
-        public ushort OffsetToName { get; set; }
-        public string AttributeName { get; set; }
-
-        ///// <summary>
-        ///// Owner of the file.
-        ///// </summary>
-        //public string RecordOwner { get; set; }
-
-        ///// <summary>
-        ///// List of users that can access the file.
-        ///// </summary>
-        //public List<string> SharedWith { get; set; } = null;
 
         public static AttributeType GetAttributeType(byte[] data, int offset)
         {
@@ -45,7 +26,7 @@ namespace Enigma
 
         public virtual int GetSaveLength()
         {
-            return 5; // change the value
+            return 6;
         }
 
     }
