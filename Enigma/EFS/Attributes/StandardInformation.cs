@@ -21,5 +21,14 @@ namespace Enigma
         public DateTime ReadTime { get; set; }
         public uint RTimeUserId { get; set; }
         public uint OwnerId { get; set; }
+
+        public void CreateStandInfoFile(uint userID)
+        {
+            CreationTime = AlteredTime = ReadTime = DateTime.Now;
+            CTimeUsedId = ATimeUserId = RTimeUserId = OwnerId = userID;
+            Type = AttributeType.STANDARD_INFORMATION;
+
+            TotalLength = 46;
+        }
     }
 }
