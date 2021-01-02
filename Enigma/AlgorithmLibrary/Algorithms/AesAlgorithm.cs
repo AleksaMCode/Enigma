@@ -20,18 +20,18 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public byte[] AdditionalData { get => this.IV; }
 
-        public AesAlgorithm(int keySize, string mode)
+        public AesAlgorithm(int keySize, string mode = "CBC")
         {
             Key = new byte[keySize]; // 32 B, 24 B or 16 B
             new RNGCryptoServiceProvider().GetBytes(Key);
-            
+
             IV = new byte[16];   // 16 B = 128 b
             new RNGCryptoServiceProvider().GetBytes(IV);
-            
+
             ModeSignature = mode;
         }
 
-        public AesAlgorithm(byte[] key, byte[] iv, string mode)
+        public AesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             Key = key;
             IV = iv;
@@ -41,12 +41,12 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
         {
             using AesManaged aes = new AesManaged();
-            aes.Mode = mode;            
+            aes.Mode = mode;
             using var encryptor = aes.CreateEncryptor(Key, IV);
 
             using MemoryStream ms = new MemoryStream();
             using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
-           
+
             writer.Write(data, 0, data.Length);
             writer.FlushFinalBlock();
 
@@ -57,7 +57,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         {
             using AesManaged aes = new AesManaged();
             using var decryptor = aes.CreateDecryptor(Key, IV);
-            
+
             using MemoryStream ms = new MemoryStream(data);
             using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
 
