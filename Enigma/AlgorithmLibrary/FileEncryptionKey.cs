@@ -16,7 +16,11 @@ namespace Enigma
     public class FileEncryptionKey
     {
         public string AlgorithmName { get; set; }
+
+        public string AlgorithmMode { get; set; }
+        
         public byte[] Key { get; set; }
+
         public byte[] IV { get; set; }
 
         public FileEncryptionKey(string algoName, IAlgorithm algo)
