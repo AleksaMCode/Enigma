@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 
 namespace Enigma
 {
@@ -13,8 +9,8 @@ namespace Enigma
     {
         byte[] Key { get; }
         byte[] AdditionalData { get; }
-        byte[] Encrypt(byte[] message);
-        byte[] Decrypt(byte[] message);
+        byte[] Encrypt(byte[] message, CipherMode mode = CipherMode.CBC);
+        byte[] Decrypt(byte[] message, CipherMode mode = CipherMode.CBC);
         string GetAlgorithmNameSignature();
     }
 }
