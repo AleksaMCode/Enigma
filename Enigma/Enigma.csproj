@@ -62,6 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="AlgorithmLibrary\Algorithms\AesAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\IAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\IAsymmetricAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\RsaAlgorithm.cs" />
