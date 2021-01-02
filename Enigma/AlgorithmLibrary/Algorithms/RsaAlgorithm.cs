@@ -46,25 +46,25 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             }
         }
 
-        public byte[] Encrypt(byte[] data)
+        public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
         {
             byte[] encryptedData;
 
-            using (RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider())
-            {
-                rsaProvider.ImportParameters(Key);
-                encryptedData = rsaProvider.Encrypt(data, false);
+            using RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
 
-                return encryptedData;
-            }
+            rsaProvider.ImportParameters(Key);
+            encryptedData = rsaProvider.Encrypt(data, false);
+
+            return encryptedData;
+
         }
 
-        public byte[] Decrypt(byte[] data)
+        public byte[] Decrypt(byte[] data, CipherMode mode = CipherMode.CBC)
         {
             byte[] decryptedData;
 
             RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
-            rsaProvider.ImportParameters(this.Key);
+            rsaProvider.ImportParameters(Key);
             decryptedData = rsaProvider.Decrypt(data, false);
 
             return decryptedData;
