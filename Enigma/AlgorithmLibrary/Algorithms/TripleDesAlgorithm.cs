@@ -60,5 +60,10 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
             return decrypted.Take(bytesRead).ToArray();
         }
+
+        public string GetAlgorithmNameSignature()
+        {
+            return NameSignature;
+        }
     }
 }
