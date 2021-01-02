@@ -14,6 +14,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// </summary>
         public byte[] Key { get; set; }
 
+        /// <summary>
+        /// The block size for TripleDES is 64 bits.
+        /// </summary>
         public byte[] IV { get; set; }
 
         public byte[] AdditionalData { get => this.IV; }
@@ -22,7 +25,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         {
             Key = new byte[192];
             new RNGCryptoServiceProvider().GetBytes(Key);
-            IV = new byte[16];
+            IV = new byte[64];
             new RNGCryptoServiceProvider().GetBytes(IV);
         }
 
