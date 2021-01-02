@@ -9,6 +9,8 @@ namespace Enigma.AlgorithmLibrary.Algorithms
     {
         public static readonly string NameSignature = "AES";
 
+        public static string ModeSignature = null;
+
         /// <summary>
         /// For AES, the legal key sizes are 128, 192, and 256 bits.
         /// </summary>
@@ -18,18 +20,22 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public byte[] AdditionalData { get => this.IV; }
 
-        public AesAlgorithm(int keySize)
+        public AesAlgorithm(int keySize, string mode)
         {
             Key = new byte[keySize]; // 32 B, 24 B or 16 B
             new RNGCryptoServiceProvider().GetBytes(Key);
+            
             IV = new byte[16];   // 16 B = 128 b
             new RNGCryptoServiceProvider().GetBytes(IV);
+            
+            ModeSignature = mode;
         }
 
-        public AesAlgorithm(byte[] key, byte[] iv)
+        public AesAlgorithm(byte[] key, byte[] iv, string mode)
         {
             Key = key;
             IV = iv;
+            ModeSignature = mode;
         }
 
         public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
@@ -63,7 +69,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public string GetAlgorithmNameSignature()
         {
-            return NameSignature;
+            return NameSignature + "-" + Key.Length + "-" + ModeSignature;
         }
     }
 }
