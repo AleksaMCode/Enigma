@@ -13,10 +13,6 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public RSAParameters Key { get; set; }
 
-        byte[] IAlgorithm.Key => null;
-
-        public byte[] AdditionalData { get => null; }
-
         public RsaAlgorithm(RSAParameters rsaKeyParams)
         {
             Key = rsaKeyParams;
