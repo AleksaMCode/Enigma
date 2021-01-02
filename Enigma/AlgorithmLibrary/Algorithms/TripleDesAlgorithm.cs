@@ -11,6 +11,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         /// <summary>
         /// TripleDES takes three 64-bit keys, for an overall key length of 192 bits. Algorithm uses only 168 bits out of 192 bits.
+        /// TripleDES uses three successive iterations of the DES algorithm. It can use either two or three 56-bit keys.
         /// </summary>
         public byte[] Key { get; set; }
 
@@ -23,9 +24,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public TripleDesAlgorithm()
         {
-            Key = new byte[192];
+            Key = new byte[24]; // 24 B = 192 b
             new RNGCryptoServiceProvider().GetBytes(Key);
-            IV = new byte[64];
+            IV = new byte[8];   // 8 B = 64 b
             new RNGCryptoServiceProvider().GetBytes(IV);
         }
 
