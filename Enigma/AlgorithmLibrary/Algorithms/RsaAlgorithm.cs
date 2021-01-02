@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Enigma.AlgorithmLibrary.Algorithms
 {
-    public class RsaAlgorithm : IAlgorithm
+    public class RsaAlgorithm : IAsymmetricAlgorithm
     {
         public static readonly string NameSignature = "RSA";
 
@@ -43,7 +43,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return false;
         }
 
-        public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
+        public byte[] Encrypt(byte[] data)
         {
             byte[] encryptedData;
 
@@ -55,7 +55,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return encryptedData;
         }
 
-        public byte[] Decrypt(byte[] data, CipherMode mode = CipherMode.CBC)
+        public byte[] Decrypt(byte[] data)
         {
             byte[] decryptedData;
 
