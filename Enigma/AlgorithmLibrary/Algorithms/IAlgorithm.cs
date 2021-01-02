@@ -3,7 +3,7 @@
 namespace Enigma
 {
     /// <summary>
-    /// Interface for implementation all encryption algorithms.
+    /// Interface for implementation all symmetric-key algorithms.
     /// </summary>
     public interface IAlgorithm
     {
