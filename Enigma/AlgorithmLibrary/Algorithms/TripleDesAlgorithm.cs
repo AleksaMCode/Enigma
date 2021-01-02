@@ -9,6 +9,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
     {
         public static readonly string NameSignature = "3DES";
 
+
+        public static string ModeSignature = null;
+
         /// <summary>
         /// TripleDES takes three 64-bit keys, for an overall key length of 192 bits. Algorithm uses only 168 bits out of 192 bits.
         /// TripleDES uses three successive iterations of the DES algorithm. It can use either two or three 56-bit keys.
@@ -22,18 +25,22 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public byte[] AdditionalData { get => this.IV; }
 
-        public TripleDesAlgorithm()
+        public TripleDesAlgorithm(string mode = "CBC")
         {
             Key = new byte[24]; // 24 B = 192 b
             new RNGCryptoServiceProvider().GetBytes(Key);
+
             IV = new byte[8];   // 8 B = 64 b
             new RNGCryptoServiceProvider().GetBytes(IV);
+
+            ModeSignature = mode;
         }
 
-        public TripleDesAlgorithm(byte[] key, byte[] iv)
+        public TripleDesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             Key = key;
             IV = iv;
+            ModeSignature = mode;
         }
 
         public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
@@ -67,7 +74,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public string GetAlgorithmNameSignature()
         {
-            return NameSignature;
+            return NameSignature + "-" + ModeSignature;
         }
     }
 }
