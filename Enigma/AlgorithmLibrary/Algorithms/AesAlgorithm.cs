@@ -7,7 +7,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 {
     public class AesAlgorithm : IAlgorithm
     {
-        public static readonly string signature = "AES";
+        public static readonly string NameSignature = "AES";
 
         /// <summary>
         /// For AES, the legal key sizes are 128, 192, and 256 bits.
@@ -15,6 +15,8 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         public byte[] Key { get; set; }
 
         public byte[] IV { get; set; }
+
+        public byte[] AdditionalData { get => this.IV; }
 
         public AesAlgorithm(int keySize)
         {
@@ -57,6 +59,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             var bytesRead = cs.Read(decrypted, 0, decrypted.Length);
 
             return decrypted.Take(bytesRead).ToArray();
+        }
+
+        public string GetAlgorithmNameSignature()
+        {
+            return NameSignature;
         }
     }
 }
