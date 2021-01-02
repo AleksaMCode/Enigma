@@ -27,23 +27,20 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             byte[] data = new byte[16];
             new RNGCryptoServiceProvider().GetBytes(data);
 
-            using (RSACryptoServiceProvider decryptRSA = new RSACryptoServiceProvider())
+            using RSACryptoServiceProvider decryptRSA = new RSACryptoServiceProvider();
+            using RSACryptoServiceProvider encryptRSA = new RSACryptoServiceProvider();
+
+            encryptRSA.ImportParameters(publicKey);
+            decryptRSA.ImportParameters(privateKey);
+
+            var decrypted = decryptRSA.Decrypt(encryptRSA.Encrypt(data, false), false);
+
+            if (data.SequenceEqual(decrypted))
             {
-                using (RSACryptoServiceProvider encryptRSA = new RSACryptoServiceProvider())
-                {
-                    encryptRSA.ImportParameters(publicKey);
-                    decryptRSA.ImportParameters(privateKey);
-
-                    var decrypted = decryptRSA.Decrypt(encryptRSA.Encrypt(data, false), false);
-
-                    if (data.SequenceEqual(decrypted))
-                    {
-                        return true;
-                    }
-                    // else
-                    return false;
-                }
+                return true;
             }
+            // else
+            return false;
         }
 
         public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
@@ -56,7 +53,6 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             encryptedData = rsaProvider.Encrypt(data, false);
 
             return encryptedData;
-
         }
 
         public byte[] Decrypt(byte[] data, CipherMode mode = CipherMode.CBC)
@@ -72,20 +68,18 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         public byte[] Signature(byte[] data, HashAlgorithm hashAlgo)
         {
-            using (RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider())
-            {
-                rsaProvider.ImportParameters(this.Key);
-                return rsaProvider.SignData(data, hashAlgo);
-            }
+            using RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+
+            rsaProvider.ImportParameters(Key);
+            return rsaProvider.SignData(data, hashAlgo);
         }
 
         public bool VerifySignature(byte[] data, HashAlgorithm hasher, byte[] signature)
         {
-            using (RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider())
-            {
-                rsaProvider.ImportParameters(this.Key);
-                return rsaProvider.VerifyData(data, hasher, signature);
-            }
+            using RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+
+            rsaProvider.ImportParameters(Key);
+            return rsaProvider.VerifyData(data, hasher, signature);
         }
 
         public string GetAlgorithmNameSignature()
