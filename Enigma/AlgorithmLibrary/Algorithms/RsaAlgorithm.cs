@@ -87,5 +87,10 @@ namespace Enigma.AlgorithmLibrary.Algorithms
                 return rsaProvider.VerifyData(data, hasher, signature);
             }
         }
+
+        public string GetAlgorithmNameSignature()
+        {
+            return NameSignature;
+        }
     }
 }
