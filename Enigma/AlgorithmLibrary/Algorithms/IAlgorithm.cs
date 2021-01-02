@@ -11,7 +11,6 @@ namespace Enigma
     /// </summary>
     public interface IAlgorithm
     {
-        int BlockSize { get; }
         byte[] Key { get; }
         byte[] AdditionalData { get; }
         byte[] Encrypt(byte[] message);

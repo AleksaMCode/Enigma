@@ -15,8 +15,6 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         byte[] IAlgorithm.Key => null;
 
-        public int BlockSize { get; } = 115;
-
         public byte[] AdditionalData { get => null; }
 
         public RsaAlgorithm(RSAParameters rsaKeyParams)
