@@ -139,7 +139,7 @@ namespace Enigma
                     }
                 default:
                     {
-                        throw new UnknownCipherModeException("mode");
+                        throw new UnknownCipherModeException(mode);
                     }
             }
         }
