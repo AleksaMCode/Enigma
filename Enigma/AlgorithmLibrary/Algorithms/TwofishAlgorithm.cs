@@ -98,13 +98,21 @@ namespace Enigma
             byte[] encrypted;
             var twofish = CreateTwofishCipher(true);
 
-            byte[] inData = data;
-            encrypted = new byte[twofish.GetOutputSize(inData.Length)];
-            
-            int len = twofish.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
-            twofish.DoFinal(encrypted, len);
+            try
+            {
+                byte[] inData = data;
+                encrypted = new byte[twofish.GetOutputSize(inData.Length)];
 
-            return encrypted;
+                int len = twofish.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
+                twofish.DoFinal(encrypted, len);
+
+                return encrypted;
+            }
+            catch (CryptoException)
+            {
+            }
+
+            return null;
         }
 
         public byte[] Decrypt(byte[] data)
@@ -112,13 +120,21 @@ namespace Enigma
             byte[] decrypted;
             var twofish = CreateTwofishCipher(false);
 
-            byte[] inData = data;
-            decrypted = new byte[twofish.GetOutputSize(inData.Length)];
+            try
+            {
+                byte[] inData = data;
+                decrypted = new byte[twofish.GetOutputSize(inData.Length)];
 
-            int len = twofish.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
-            twofish.DoFinal(decrypted, len);
+                int len = twofish.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
+                twofish.DoFinal(decrypted, len);
 
-            return decrypted;
+                return decrypted;
+            }
+            catch(CryptoException)
+            {
+            }
+
+            return null;
         }
     }
 }
