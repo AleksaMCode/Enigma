@@ -8,7 +8,9 @@ namespace Enigma
     public interface IAsymmetricAlgorithm
     {
         byte[] Encrypt(byte[] data);
+
         byte[] Decrypt(byte[] data);
+
         string GetAlgorithmNameSignature();
     }
 }

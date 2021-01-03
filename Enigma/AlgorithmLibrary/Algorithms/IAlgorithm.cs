@@ -8,9 +8,13 @@ namespace Enigma
     public interface IAlgorithm
     {
         byte[] Key { get; }
+
         byte[] AdditionalData { get; }
+
         byte[] Encrypt(byte[] data);
+
         byte[] Decrypt(byte[] data);
+
         string GetAlgorithmNameSignature();
     }
 }
