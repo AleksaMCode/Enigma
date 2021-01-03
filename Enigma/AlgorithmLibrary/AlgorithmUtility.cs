@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 
 namespace Enigma
 {
@@ -7,14 +8,50 @@ namespace Enigma
         public static readonly int algoNameSignatureSize = 13;
         public static readonly int hashAlgoNameSignatureSize = 6;
 
-        public static string GetNameSignatureFromAlgorithm(IAlgorithm code)
+        public static string GetNameSignatureFromAlgorithm(IAlgorithm algo)
         {
-            // TODO: finish
+            if ((algo is AesAlgorithm) || (algo is CamelliaAlgorithm) || (algo is TwofishAlgorithm) || (algo is TripleDesAlgorithm))
+            {
+                return algo.GetAlgorithmNameSignature();
+            }
+            else
+            {
+                throw new UnknownCryptAlgoException(algo.GetAlgorithmNameSignature());
+            }
+        }
+
+        private static int ParseKeySize(string keySizeAscii)
+        {
+            return Convert.ToInt32(keySizeAscii) / 8;
         }
 
         public static IAlgorithm GetAlgorithmFromNameSignature(string algoName)
         {
-            // TODO: finish
+            // remove padding
+            algoName = algoName.Substring(0, algoName.IndexOf('0'));
+
+            // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish
+            // split the name in AlgoName, Ciphermode for 3DES
+            string[] tokens = algoName.Split('-');
+
+            if (tokens[0].Equals("AES"))
+            {
+                return new AesAlgorithm(ParseKeySize(tokens[1]), tokens[3]);
+            }
+            else if (tokens[0].Equals("2FISH"))
+            {
+                return new TwofishAlgorithm(ParseKeySize(tokens[1]), tokens[3]);
+            }
+            else if (tokens[0].Equals("CAMLL"))
+            {
+                return new CamelliaAlgorithm(ParseKeySize(tokens[1]), tokens[3]);
+            }
+            // 3DES
+            else
+            {
+                return new TripleDesAlgorithm(tokens[1]);
+            }
+
         }
 
         public static string GetNameSignatureFromHashAlgo(HashAlgorithm hashAlgo)
