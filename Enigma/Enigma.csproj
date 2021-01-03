@@ -78,6 +78,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CryptedFileParser\Exceptions\UnknownCipherModeException.cs" />
+    <Compile Include="CryptedFileParser\Exceptions\UnknownCryptAlgoException.cs" />
+    <Compile Include="CryptedFileParser\Exceptions\UnknownHashAlgoException.cs" />
     <Compile Include="EFS\Attributes\Attribute.cs" />
     <Compile Include="EFS\Attributes\FileName.cs" />
     <Compile Include="EFS\Attributes\SecurityDescriptor.cs" />
