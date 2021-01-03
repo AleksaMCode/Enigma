@@ -9,8 +9,8 @@ namespace Enigma
     {
         byte[] Key { get; }
         byte[] AdditionalData { get; }
-        byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC);
-        byte[] Decrypt(byte[] data, CipherMode mode = CipherMode.CBC);
+        byte[] Encrypt(byte[] data);
+        byte[] Decrypt(byte[] data);
         string GetAlgorithmNameSignature();
     }
 }
