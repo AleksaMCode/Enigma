@@ -127,7 +127,7 @@ namespace Enigma
 
                 return decrypted;
             }
-            catch(CryptoException)
+            catch (CryptoException)
             {
             }
 
@@ -136,7 +136,7 @@ namespace Enigma
 
         public string GetAlgorithmNameSignature()
         {
-            return NameSignature + "-" + Key.Length + "-" + ModeSignature;
+            return NameSignature + "-" + Key.Length * 8 + "-" + ModeSignature;
         }
     }
 }

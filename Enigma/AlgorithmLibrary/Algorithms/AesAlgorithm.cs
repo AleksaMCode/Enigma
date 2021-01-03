@@ -42,7 +42,7 @@ namespace Enigma
         {
             using AesManaged aes = new AesManaged();
             aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
-           
+
             using var encryptor = aes.CreateEncryptor(Key, IV);
             using MemoryStream ms = new MemoryStream();
             using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
@@ -70,7 +70,7 @@ namespace Enigma
 
         public string GetAlgorithmNameSignature()
         {
-            return NameSignature + "-" + Key.Length + "-" + ModeSignature;
+            return NameSignature + "-" + Key.Length * 8 + "-" + ModeSignature;
         }
     }
 }

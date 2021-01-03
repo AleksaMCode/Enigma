@@ -132,7 +132,7 @@ namespace Enigma
 
         public string GetAlgorithmNameSignature()
         {
-            return NameSignature + "-" + Key.Length + "-" + ModeSignature;
+            return NameSignature + "-" + Key.Length * 8 + "-" + ModeSignature;
         }
     }
 }
