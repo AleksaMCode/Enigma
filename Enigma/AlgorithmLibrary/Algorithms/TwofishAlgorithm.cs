@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Enigma
 {
@@ -23,5 +22,31 @@ namespace Enigma
         public byte[] IV { get; set; }
 
         public byte[] AdditionalData { get => this.IV; }
+
+        public TwofishAlgorithm(int keySize, string mode = "CBC")
+        {
+            Key = new byte[keySize]; // 32 B, 24 B or 16 B
+            new RNGCryptoServiceProvider().GetBytes(Key);
+
+            ModeSignature = mode;
+
+            if (ModeSignature != "ECB")
+            {
+                IV = new byte[16];   // 16 B = 128 b
+                new RNGCryptoServiceProvider().GetBytes(IV);
+            }
+            else
+            {
+                IV = null;
+            }
+
+        }
+
+        public TwofishAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
+        {
+            Key = key;
+            IV = iv;
+            ModeSignature = mode;
+        }
     }
 }
