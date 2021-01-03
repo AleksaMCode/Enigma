@@ -43,29 +43,29 @@ namespace Enigma
             ModeSignature = mode;
         }
 
-        public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
+        public byte[] Encrypt(byte[] data)
         {
             using TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
-            tdes.Mode = mode;
+            tdes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
             //tdes.Padding = PaddingMode.PKCS7;
             using ICryptoTransform encryptor = tdes.CreateEncryptor(Key, IV);
             using MemoryStream ms = new MemoryStream();
-
             using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
+
             writer.Write(data, 0, data.Length);
             writer.FlushFinalBlock();
             return ms.ToArray();
         }
 
-        public byte[] Decrypt(byte[] data, CipherMode mode = CipherMode.CBC)
+        public byte[] Decrypt(byte[] data)
         {
             using TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
-            tdes.Mode = mode;
+            tdes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
 
             using ICryptoTransform decryptor = tdes.CreateDecryptor(Key, IV);
             using MemoryStream ms = new MemoryStream(data);
-
             using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+
             var decrypted = new byte[data.Length];
             var bytesRead = cs.Read(decrypted, 0, data.Length);
 
