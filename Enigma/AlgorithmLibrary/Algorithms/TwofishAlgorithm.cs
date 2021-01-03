@@ -3,9 +3,6 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
-using System;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace Enigma
@@ -28,7 +25,7 @@ namespace Enigma
 
         public byte[] AdditionalData { get => this.IV; }
 
-        public TwofishAlgorithm(int keySize, string mode = "CBC")
+        public TwofishAlgorithm(int keySize, string mode = "ECB")
         {
             Key = new byte[keySize]; // 32 B, 24 B or 16 B
             new RNGCryptoServiceProvider().GetBytes(Key);
@@ -47,7 +44,7 @@ namespace Enigma
 
         }
 
-        public TwofishAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
+        public TwofishAlgorithm(byte[] key, byte[] iv, string mode = "ECB")
         {
             Key = key;
             IV = iv;
