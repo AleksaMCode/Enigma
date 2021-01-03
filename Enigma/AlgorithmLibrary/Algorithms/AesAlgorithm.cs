@@ -42,8 +42,8 @@ namespace Enigma
         {
             using AesManaged aes = new AesManaged();
             aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
+           
             using var encryptor = aes.CreateEncryptor(Key, IV);
-
             using MemoryStream ms = new MemoryStream();
             using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
 
@@ -57,8 +57,8 @@ namespace Enigma
         {
             using AesManaged aes = new AesManaged();
             aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
-            using var decryptor = aes.CreateDecryptor(Key, IV);
 
+            using var decryptor = aes.CreateDecryptor(Key, IV);
             using MemoryStream ms = new MemoryStream(data);
             using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
 
