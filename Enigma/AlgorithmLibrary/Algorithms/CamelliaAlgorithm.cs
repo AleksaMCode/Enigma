@@ -129,5 +129,10 @@ namespace Enigma
 
             return null;
         }
+
+        public string GetAlgorithmNameSignature()
+        {
+            return NameSignature + "-" + Key.Length + "-" + ModeSignature;
+        }
     }
 }
