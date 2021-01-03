@@ -84,10 +84,8 @@ namespace Enigma
 
         public static HashAlgorithm GetHashAlgoFromNameSignature(string algoName)
         {
-            if (algoName.Length != hashAlgoNameSignatureSize)
-            {
-                throw new UnknownHashAlgoException(algoName);
-            }
+            // remove padding
+            algoName = algoName.Substring(0, algoName.IndexOf('0'));
 
             if (algoName.Equals("MD5"))
             {
