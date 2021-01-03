@@ -8,7 +8,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 {
     public class TwofishAlgorithm : IAlgorithm
     {
-        public static readonly string NameSignature = "2fish";
+        public static readonly string NameSignature = "2FISH";
 
         public static string ModeSignature = null;
 
