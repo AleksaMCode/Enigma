@@ -96,6 +96,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PrivateKeyParsers\ASNParser.cs" />
+    <Compile Include="PrivateKeyParsers\KeyFileParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
