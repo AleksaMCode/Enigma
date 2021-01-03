@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Enigma.AlgorithmLibrary
+namespace Enigma
 {
     internal static class AlgorithmUtility
     {

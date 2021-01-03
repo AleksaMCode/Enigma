@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace Enigma.AlgorithmLibrary.Algorithms
+namespace Enigma
 {
     public class AesAlgorithm : IAlgorithm
     {

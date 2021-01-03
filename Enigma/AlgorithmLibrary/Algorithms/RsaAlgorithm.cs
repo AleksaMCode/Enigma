@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enigma.AlgorithmLibrary.Algorithms
+namespace Enigma
 {
     public class RsaAlgorithm : IAsymmetricAlgorithm
     {

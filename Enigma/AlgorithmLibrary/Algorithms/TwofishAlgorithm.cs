@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Enigma.AlgorithmLibrary.Algorithms
+namespace Enigma
 {
     public class TwofishAlgorithm : IAlgorithm
     {
