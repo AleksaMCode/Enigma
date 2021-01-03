@@ -46,5 +46,88 @@ namespace Enigma
             IV = iv;
             ModeSignature = mode;
         }
+
+        public IBufferedCipher CreateCamelliaCipher(bool forEncryption)
+        {
+            IBufferedCipher cipher;
+            var keyParameter = new KeyParameter(Key);
+            var keyWithIv = new ParametersWithIV(keyParameter, IV);
+
+            switch (ModeSignature)
+            {
+                case "ECB":
+                    {
+                        cipher = new PaddedBufferedBlockCipher(new CamelliaEngine());
+                        cipher.Init(forEncryption, keyParameter);
+                        return cipher;
+                    }
+                case "CBC":
+                    {
+                        cipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(new CamelliaEngine()));
+                        cipher.Init(forEncryption, keyWithIv);
+                        return cipher;
+                    }
+                case "CFB":
+                    {
+                        cipher = new BufferedBlockCipher(new CfbBlockCipher(new CamelliaEngine(), 16));
+                        cipher.Init(forEncryption, keyWithIv);
+                        return cipher;
+                    }
+                case "OFB":
+                    {
+                        cipher = new BufferedBlockCipher(new OfbBlockCipher(new CamelliaEngine(), 16));
+                        cipher.Init(forEncryption, keyWithIv);
+                        return cipher;
+                    }
+                default:
+                    {
+                        throw new UnknownCipherModeException(ModeSignature);
+                    }
+            }
+        }
+
+        public byte[] Encrypt(byte[] data)
+        {
+            byte[] encrypted;
+            var camellia = CreateCamelliaCipher(true);
+
+            try
+            {
+                byte[] inData = data;
+                encrypted = new byte[camellia.GetOutputSize(inData.Length)];
+
+                int len = camellia.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
+                camellia.DoFinal(encrypted, len);
+
+                return encrypted;
+            }
+            catch (CryptoException)
+            {
+            }
+
+            return null;
+        }
+
+        public byte[] Decrypt(byte[] data)
+        {
+            byte[] decrypted;
+            var camellia = CreateCamelliaCipher(false);
+
+            try
+            {
+                byte[] inData = data;
+                decrypted = new byte[camellia.GetOutputSize(inData.Length)];
+
+                int len = camellia.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
+                camellia.DoFinal(decrypted, len);
+
+                return decrypted;
+            }
+            catch (CryptoException)
+            {
+            }
+
+            return null;
+        }
     }
 }
