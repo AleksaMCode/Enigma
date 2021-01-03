@@ -14,13 +14,37 @@ namespace Enigma
     {
         public static readonly string NameSignature = "CAMLL";
 
-
         public static string ModeSignature = null;
 
-
         public byte[] Key { get; set; }
-  
 
         public byte[] IV { get; set; }
+
+        public byte[] AdditionalData { get => this.IV; }
+
+        public CamelliaAlgorithm(int keySize, string mode = "ECB")
+        {
+            Key = new byte[keySize]; // 32 B, 24 B or 16 B
+            new RNGCryptoServiceProvider().GetBytes(Key);
+
+            ModeSignature = mode;
+
+            if (ModeSignature != "ECB")
+            {
+                IV = new byte[16];   // 16 B = 128 b
+                new RNGCryptoServiceProvider().GetBytes(IV);
+            }
+            else
+            {
+                IV = null;
+            }
+        }
+
+        public CamelliaAlgorithm(byte[] key, byte[] iv, string mode = "ECB")
+        {
+            Key = key;
+            IV = iv;
+            ModeSignature = mode;
+        }
     }
 }
