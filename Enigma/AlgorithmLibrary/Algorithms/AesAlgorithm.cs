@@ -38,10 +38,10 @@ namespace Enigma
             ModeSignature = mode;
         }
 
-        public byte[] Encrypt(byte[] data, CipherMode mode = CipherMode.CBC)
+        public byte[] Encrypt(byte[] data)
         {
             using AesManaged aes = new AesManaged();
-            aes.Mode = mode;
+            aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
             using var encryptor = aes.CreateEncryptor(Key, IV);
 
             using MemoryStream ms = new MemoryStream();
@@ -53,9 +53,10 @@ namespace Enigma
             return ms.ToArray();
         }
 
-        public byte[] Decrypt(byte[] data, CipherMode mode = CipherMode.CBC)
+        public byte[] Decrypt(byte[] data)
         {
             using AesManaged aes = new AesManaged();
+            aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
             using var decryptor = aes.CreateDecryptor(Key, IV);
 
             using MemoryStream ms = new MemoryStream(data);
