@@ -77,5 +77,36 @@ namespace Enigma.AlgorithmLibrary
                 throw new UnknownHashAlgoException(algoName);
             }
         }
+
+        public static CipherMode GetCipherMode(string mode)
+        {
+            switch (mode)
+            {
+                case "CBC":
+                    {
+                        return CipherMode.CBC;
+                    }
+                case "ECB":
+                    {
+                        return CipherMode.ECB;
+                    }
+                case "OFB":
+                    {
+                        return CipherMode.OFB;
+                    }
+                case "CFB":
+                    {
+                        return CipherMode.CFB;
+                    }
+                case "CTS":
+                    {
+                        return CipherMode.CTS;
+                    }
+                default:
+                    {
+                        throw new UnknownCipherModeException("mode");
+                    }
+            }
+        }
     }
 }
