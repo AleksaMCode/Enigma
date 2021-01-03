@@ -4,7 +4,7 @@ namespace Enigma.AlgorithmLibrary
 {
     internal static class AlgorithmUtility
     {
-        public static readonly int algoNameSignatureSize = 11;
+        public static readonly int algoNameSignatureSize = 13;
         public static readonly int hashAlgoNameSignatureSize = 6;
 
         public static string GetNameSignatureFromAlgorithm(IAlgorithm code)
