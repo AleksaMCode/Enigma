@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EnigmaWpf\Models\UserInformation.cs" />
     <Compile Include="UserDbManager\SQLiteConfiguration.cs" />
     <Compile Include="UserDbManager\User.cs" />
     <Compile Include="UserDbManager\UserDatabase.cs" />
@@ -150,7 +151,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="EnigmaWpf\Models\" />
     <Folder Include="EnigmaWpf\ViewModel\" />
     <Folder Include="EnigmaWpf\Views\" />
   </ItemGroup>
