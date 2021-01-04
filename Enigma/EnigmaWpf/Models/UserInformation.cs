@@ -23,5 +23,10 @@ namespace Enigma
             this.user = user;
             PrivateKey = privateKey;
         }
+
+        public UserInformation(User user)
+        {
+            this.user = user;
+        }
     }
 }
