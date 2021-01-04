@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
+using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace Enigma
@@ -33,6 +37,18 @@ namespace Enigma
             }
             // else
             return false;
+        }
+
+        // TODO: test this method
+        public static bool AreKeysMatched(string publicKey, RSAParameters privateKey)
+        {
+            var rdr = new StringReader(publicKey);
+            var pemReader = new PemReader(rdr);
+
+            AsymmetricKeyParameter pemObject1 = (AsymmetricKeyParameter)pemReader.ReadObject();
+            AsymmetricCipherKeyPair pemObject2 = DotNetUtilities.GetRsaKeyPair(privateKey);
+
+            return pemObject1.Equals(pemObject2.Public);
         }
 
         public byte[] Encrypt(byte[] data)
