@@ -25,6 +25,10 @@ namespace Enigma
             {
                 throw new Exception("Certificate is invalid.");
             }
+            else if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == false)
+            {
+                throw new Exception("Certificate has been revoked.");
+            }
             else if (CertificateValidator.VerifyKeyUsage(cert) == false)
             {
                 throw new Exception("Certificate must have 'digitalSignature' and 'keyEncipherment' set as it's key usage.");
