@@ -15,12 +15,12 @@ namespace Enigma
 
         internal void Register(string username, string password, string certificateFilePath)
         {
-            if (!PasswordAdvisor.CommonPasswordCheck(username, password))
+            if (!PasswordAdvisor.CommonPasswordCheck(password))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
 
-            if (!PasswordAdvisor.IsPasswordStrong(password, false))
+            if (!PasswordAdvisor.IsPasswordStrong(username, password, false))
             {
                 throw new Exception("Password is too weak. Please try again.");
             }

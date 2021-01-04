@@ -29,14 +29,8 @@ namespace Enigma
             EFFWordList = 7776
         }
 
-        public static bool CommonPasswordCheck(string username, string password)
+        public static bool CommonPasswordCheck(string password)
         {
-            // password can't contain username
-            if (password.Contains(username))
-            {
-                return false;
-            }
-
             string commonPassword;
             StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\10-million-password-list-top-1000000.txt");
 
@@ -51,7 +45,7 @@ namespace Enigma
             return true;
         }
 
-        public static bool IsPasswordStrong(string password, bool wordListGenerated = false)
+        public static bool IsPasswordStrong(string username, string password, bool wordListGenerated = false)
         {
             if (password.Length < minimumLength)
             {
@@ -60,6 +54,10 @@ namespace Enigma
             else if (password.Length > maximumLength)
             {
                 throw new Exception("Password is too long.");
+            }
+            else if (password.Contains(username))
+            {
+                throw new Exception("Password cannot contain your username.");
             }
 
             switch (GetPasswordEntropy(password, wordListGenerated))
