@@ -82,6 +82,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EnigmaWpf\Models\CertificateValidator.cs" />
+    <Compile Include="EnigmaWpf\Models\LoginControler.cs" />
     <Compile Include="EnigmaWpf\Models\PasswordAdvisor.cs" />
     <Compile Include="EnigmaWpf\Models\RegisterControler.cs" />
     <Compile Include="EnigmaWpf\Models\UserInformation.cs" />
