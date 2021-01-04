@@ -36,22 +36,16 @@ namespace Enigma
                 return false;
             }
 
+            return true;
+        }
 
-            // check if the certificate key has the righth key usage properties - only for Version > 2
-            List<X509KeyUsageExtension> extensions = certificateToValidate.Extensions.OfType<X509KeyUsageExtension>().ToList();
-            if (!extensions.Any())
-            {
-                foreach (var extension in extensions)
-                {
-                    return extension.KeyUsages == X509KeyUsageFlags.DigitalSignature || extension.KeyUsages == X509KeyUsageFlags.KeyEncipherment || extension.KeyUsages == X509KeyUsageFlags.DataEncipherment;
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            // check if certifacate has been revoked
+        /// <summary>
+        /// Check if certificate has been revoked.
+        /// </summary>
+        /// <param name="certificateToValidate"> Certificate that is checked.</param>
+        /// <returns></returns>
+        public static bool VerifyCertificateRevocationStatus(X509Certificate2 certificateToValidate)
+        {
             try
             {
                 byte[] buffer = File.ReadAllBytes(/*CRL List path*/);
@@ -62,17 +56,16 @@ namespace Enigma
             }
             catch (Exception)
             {
+                return false;
             }
-
-            return true;
         }
 
-        public static bool VerifyKeyUsage(X509Certificate2 cert)
+        public static bool VerifyKeyUsage(X509Certificate2 certificateToValidate)
         {
-            List<X509KeyUsageExtension> extensions = cert.Extensions.OfType<X509KeyUsageExtension>().ToList();
+            List<X509KeyUsageExtension> extensions = certificateToValidate.Extensions.OfType<X509KeyUsageExtension>().ToList();
             if (!extensions.Any())
             {
-                return cert.Version < 3;
+                return certificateToValidate.Version < 3;
             }
 
             List<X509KeyUsageFlags> keyUsageFlags = extensions.Select((ext) => ext.KeyUsages).ToList();
