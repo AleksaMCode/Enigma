@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Enigma
@@ -26,6 +27,28 @@ namespace Enigma
             LowerAndUpperCaseLatinLetterAndNumbers = 62,
             AsciiPrintableChars = 95,
             EFFWordList = 7776
+        }
+
+        public static bool CommonPasswordCheck(string username, string password)
+        {
+            // password can't contain username
+            if (password.Contains(username))
+            {
+                return false;
+            }
+
+            string commonPassword;
+            StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\10-million-password-list-top-1000000.txt");
+
+            while ((commonPassword = file.ReadLine()) != null)
+            {
+                if (commonPassword.Equals(password))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static bool IsPasswordStrong(string password, bool wordListGenerated = false)
