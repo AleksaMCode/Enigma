@@ -82,8 +82,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EnigmaWpf\Models\CertificateValidator.cs" />
+    <Compile Include="EnigmaWpf\Models\PasswordAdvisor.cs" />
     <Compile Include="EnigmaWpf\Models\RegisterControler.cs" />
     <Compile Include="EnigmaWpf\Models\UserInformation.cs" />
+    <Compile Include="Enums\PasswordEntropy.cs" />
     <Compile Include="UserDbManager\SQLiteConfiguration.cs" />
     <Compile Include="UserDbManager\User.cs" />
     <Compile Include="UserDbManager\UserDatabase.cs" />

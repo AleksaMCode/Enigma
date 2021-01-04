@@ -19,6 +19,11 @@ namespace Enigma
 
         internal void Register(string username, string password, string certificateFilePath)
         {
+            if(!PasswordAdvisor.IsPasswordStrong(password,false))
+            {
+                throw new Exception("Password is too weak.");
+            }
+
             X509Certificate2 cert = new X509Certificate2(certificateFilePath);
 
             if (CertificateValidator.VerifyCertificate(cert) == false)
