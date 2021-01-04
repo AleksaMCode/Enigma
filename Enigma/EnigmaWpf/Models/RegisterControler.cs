@@ -103,7 +103,6 @@ namespace Enigma
                     string line;
                     using (StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
                     {
-
                         while ((line = file.ReadLine()) != null)
                         {
                             if (line.Contains(index))
