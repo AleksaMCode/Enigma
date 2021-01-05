@@ -131,22 +131,23 @@ namespace Enigma
 
         internal string GenerateRandomPassword()
         {
-            char[] passArray = new char[64];
+            char[] passArray = new char[30];
             string password;
 
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
 
-
             while (true)
             {
-                for (int i = 0; i < 64; ++i)
+                for (int i = 0; i < 30; ++i)
                 {
                     // ASCII printable characters are >= SPACE (0x20) and < DEL (0x7e)
                     passArray[i] = (char)csprng.Next(0x20, 0x7f);
                 }
 
                 password = new string(passArray);
+                passArray = Enumerable.Repeat('0', passArray.Length).ToArray(); // zeroization
+
                 if (PasswordAdvisor.IsPasswordStrong(password, false))
                 {
                     break;
@@ -156,50 +157,82 @@ namespace Enigma
             return password;
         }
 
+        private string GeneratePassphraseDelimiter()
+        {
+            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+            csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+            int size = csprng.Next(3, 5);
+
+            char[] delimiter = new char[size];
+
+            for (int i = 0; i < size; ++i)
+            {
+                // ASCII characters: >= SPACE (0x20) and < a (0x61)
+                delimiter[i] = (char)csprng.Next(0x20, 0x61);
+            }
+
+            return new string(delimiter);
+        }
+
         internal string GeneratePassphrase()
         {
             int diceRollResult = 0;
-            string index;
-            string passphrase = "";
+            string passphrase;
+            string delimiter = GeneratePassphraseDelimiter();
 
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
 
+            int maxNumberOfWords = csprng.Next(6, 10);
+
             while (true)
             {
                 int numberOfWords = 0;
-                while (numberOfWords < 6)
+                string index;
+                passphrase = "";
+
+                while (numberOfWords < maxNumberOfWords)
                 {
-                    for (int i = 4; i < 0; --i)
-                    {
-                        diceRollResult += csprng.Next(1, 7) * (int)Math.Pow(10, i);
-                    }
+                    bool numberExist = false;
+                    string line = null;
 
-                    index = Convert.ToString(diceRollResult);
-                    diceRollResult = 0;
-
-                    string line;
-                    using (StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
+                    while (!numberExist)
                     {
-                        while ((line = file.ReadLine()) != null)
+                        // five dice rolls
+                        for (int i = 0; i < 5; ++i)
                         {
-                            if (line.Contains(index))
+                            diceRollResult += csprng.Next(1, 7) * (int)Math.Pow(10, i);
+                        }
+
+                        index = Convert.ToString(diceRollResult);
+                        diceRollResult = 0;
+
+                        // can this be optimized?
+                        using (StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
+                        {
+                            while ((line = file.ReadLine()) != null)
                             {
-                                break;
+                                if (line.Contains(index))
+                                {
+                                    index = "00000"; // removing value from memory
+                                    numberExist = true;
+                                    break;
+                                }
                             }
                         }
                     }
+
                     passphrase += line.Split(' ')[1].Trim();
+                    if (numberOfWords != maxNumberOfWords - 1)
+                    {
+                        passphrase += delimiter;
+                    }
                     numberOfWords++;
                 }
 
                 if (PasswordAdvisor.IsPasswordStrong(passphrase, true))
                 {
                     break;
-                }
-                else
-                {
-                    numberOfWords = 0;
                 }
             }
 
