@@ -94,17 +94,17 @@ namespace Enigma
                 startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
 
                 byte[] startLocationBytes = BitConverter.GetBytes(startLocation);
-                if (BitConverter.IsLittleEndian)
-                {
-                    Array.Reverse(startLocationBytes);
-                }
+                //if (BitConverter.IsLittleEndian)
+                //{
+                //    Array.Reverse(startLocationBytes);
+                //}
                 Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4); // copy startLocation
 
                 byte[] haystackSizeBytes = BitConverter.GetBytes(haystackSize);
-                if (BitConverter.IsLittleEndian)
-                {
-                    Array.Reverse(haystackSizeBytes);
-                }
+                //if (BitConverter.IsLittleEndian)
+                //{
+                //    Array.Reverse(haystackSizeBytes);
+                //}
                 Buffer.BlockCopy(haystackSizeBytes, 0, haystack, 4, 4); // copy haystackSize
 
                 Buffer.BlockCopy(salt, 0, haystack, 8, 16); // copy salt
