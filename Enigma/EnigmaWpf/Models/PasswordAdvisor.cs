@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Enigma
@@ -47,9 +48,10 @@ namespace Enigma
 
         public static bool IsPasswordStrong(string password, bool wordListGenerated = false)
         {
-            if (password.Length < minimumLength)
+            // Memorized secrets SHALL be at least 8 characters in length not including spaces.
+            if (String.Concat(password.Where(c => !Char.IsWhiteSpace(c))).Length < minimumLength) 
             {
-                throw new Exception("Password must be at least 8 characters long.");
+                throw new Exception("Password must be at least 8 characters long not including the spaces.");
             }
             else if (password.Length > maximumLength)
             {
