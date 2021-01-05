@@ -214,7 +214,6 @@ namespace Enigma
                             {
                                 if (line.Contains(index))
                                 {
-                                    index = "00000"; // removing value from memory
                                     numberExist = true;
                                     break;
                                 }
