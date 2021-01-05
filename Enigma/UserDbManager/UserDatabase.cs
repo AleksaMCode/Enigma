@@ -29,7 +29,9 @@ namespace Enigma
         {
             byte[] passBytes = Encoding.ASCII.GetBytes(password);
 
-            byte[] salt = new byte[256];
+            // The NIST guidelines require that passwords be salted with at least 32 bits of data and hashed with
+            // a one-way key derivation function such as Password-Based Key Derivation Function 2 (PBKDF2).
+            byte[] salt = new byte[16];
             new RNGCryptoServiceProvider().GetBytes(salt);
 
             var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using System.Linq;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto.Prng;
+using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Digests;
 using System.Security.Cryptography.X509Certificates;
 
@@ -49,6 +52,81 @@ namespace Enigma
             }
 
             this.data.AddUser(username, password, File.ReadAllBytes(certificateFilePath));
+        }
+
+        internal void EncryptUserKey(string privateKeyPath, string password)
+        {
+            byte[] passwordBytes = Encoding.ASCII.GetBytes(password);
+            byte[] keyRaw = File.ReadAllBytes(privateKeyPath);
+            byte[] salt = new byte[16];
+            new RNGCryptoServiceProvider().GetBytes(salt);
+            byte[] passwordDigest = SHA256.Create().ComputeHash(passwordBytes.Concat(salt).ToArray());
+
+            byte[] hash = SHA512.Create().ComputeHash(passwordBytes);
+            byte[] key = null;
+            byte[] iv = null;
+
+            Buffer.BlockCopy(hash, 0, key, 0, 32);
+            Buffer.BlockCopy(hash, 32, iv, 0, 16);
+
+            NeedleInAHaystack(new FileInfo(privateKeyPath).Directory.Root.FullName,
+                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')), new AesAlgorithm(key, iv).Encrypt(keyRaw), ref salt, ref passwordDigest);
+
+            // data scrambling
+            new RNGCryptoServiceProvider().GetBytes(iv);
+            new RNGCryptoServiceProvider().GetBytes(key);
+            new RNGCryptoServiceProvider().GetBytes(hash);
+            new RNGCryptoServiceProvider().GetBytes(keyRaw);
+            new RNGCryptoServiceProvider().GetBytes(passwordBytes);
+        }
+
+        private void NeedleInAHaystack(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
+        {
+            int haystackSize = needle.Length * 10;
+            int startLocation = 0;
+            if (new DriveInfo(rootDir).AvailableFreeSpace > haystackSize)
+            {
+                byte[] haystack = new byte[haystackSize];
+                new RNGCryptoServiceProvider().GetBytes(haystack);
+
+                var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+                csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+                startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
+
+                byte[] startLocationBytes = BitConverter.GetBytes(startLocation);
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(startLocationBytes);
+                }
+                Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4); // copy startLocation
+
+                byte[] haystackSizeBytes = BitConverter.GetBytes(haystackSize);
+                if (BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(haystackSizeBytes);
+                }
+                Buffer.BlockCopy(haystackSizeBytes, 0, haystack, 4, 4); // copy haystackSize
+
+                Buffer.BlockCopy(passwordDigest, 0, haystack, 8, 16); // copy salt
+
+                Buffer.BlockCopy(passwordDigest, 0, haystack, 24, 32); // copy passwordDigest
+
+                Buffer.BlockCopy(passwordDigest, 0, haystack, startLocation, needle.Length); // copy the needle (encrypted key)
+
+
+                using FileStream stream = new FileStream(path, FileMode.Create);
+                using BinaryWriter writter = new BinaryWriter(stream);
+                writter.Write(haystack);
+
+                // data scrambling
+                new RNGCryptoServiceProvider().GetBytes(salt);
+                new RNGCryptoServiceProvider().GetBytes(haystack);
+                new RNGCryptoServiceProvider().GetBytes(passwordDigest);
+            }
+            else
+            {
+                throw new Exception("Insufficient storage available.");
+            }
         }
 
         internal string GenerateRandomPassword()
