@@ -107,11 +107,11 @@ namespace Enigma
                 }
                 Buffer.BlockCopy(haystackSizeBytes, 0, haystack, 4, 4); // copy haystackSize
 
-                Buffer.BlockCopy(passwordDigest, 0, haystack, 8, 16); // copy salt
+                Buffer.BlockCopy(salt, 0, haystack, 8, 16); // copy salt
 
                 Buffer.BlockCopy(passwordDigest, 0, haystack, 24, 32); // copy passwordDigest
 
-                Buffer.BlockCopy(passwordDigest, 0, haystack, startLocation, needle.Length); // copy the needle (encrypted key)
+                Buffer.BlockCopy(needle, 0, haystack, startLocation, needle.Length); // copy the needle (encrypted key)
 
 
                 using FileStream stream = new FileStream(path, FileMode.Create);
