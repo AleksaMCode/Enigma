@@ -229,7 +229,7 @@ namespace Enigma
                     numberOfWords++;
                 }
 
-                if (PasswordAdvisor.IsPasswordStrong(passphrase, true))
+                if (PasswordAdvisor.IsPasswordStrong(passphrase, true, maxNumberOfWords))
                 {
                     break;
                 }

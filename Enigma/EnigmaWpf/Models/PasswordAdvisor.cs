@@ -46,10 +46,10 @@ namespace Enigma
             return true;
         }
 
-        public static bool IsPasswordStrong(string password, bool wordListGenerated = false)
+        public static bool IsPasswordStrong(string password, bool wordListGenerated = false, int numberOfWordsGenerated = 0)
         {
             // Memorized secrets SHALL be at least 8 characters in length not including spaces.
-            if (String.Concat(password.Where(c => !Char.IsWhiteSpace(c))).Length < minimumLength) 
+            if (String.Concat(password.Where(c => !Char.IsWhiteSpace(c))).Length < minimumLength)
             {
                 throw new Exception("Password must be at least 8 characters long not including the spaces.");
             }
@@ -58,7 +58,7 @@ namespace Enigma
                 throw new Exception("Password is too long.");
             }
 
-            switch (GetPasswordEntropy(password, wordListGenerated))
+            switch (GetPasswordEntropy(password, wordListGenerated, numberOfWordsGenerated))
             {
                 case PasswordEntropy.VeryWeak:
                 case PasswordEntropy.Weak:
@@ -78,9 +78,9 @@ namespace Enigma
             }
         }
 
-        private static PasswordEntropy GetPasswordEntropy(string password, bool wordListGenerated)
+        private static PasswordEntropy GetPasswordEntropy(string password, bool wordListGenerated, int numberOfWordsGenerated = 0)
         {
-            double entropy = CalculateEntropy(password, wordListGenerated);
+            double entropy = CalculateEntropy(password, wordListGenerated, numberOfWordsGenerated);
 
             if (entropy <= 30)
             {
@@ -104,11 +104,11 @@ namespace Enigma
             }
         }
 
-        private static double CalculateEntropy(string password, bool wordListGenerated)
+        private static double CalculateEntropy(string password, bool wordListGenerated, int numberOfWordsGenerated = 0)
         {
             if (wordListGenerated == true)
             {
-                return Math.Log(Math.Pow((int)PasswordPoolSize.EFFWordList, 6), 2);
+                return Math.Log(Math.Pow((int)PasswordPoolSize.EFFWordList, numberOfWordsGenerated), 2);
             }
 
             int passwordLength = password.Length;
