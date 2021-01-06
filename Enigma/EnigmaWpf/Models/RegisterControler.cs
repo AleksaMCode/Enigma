@@ -100,12 +100,12 @@ namespace Enigma
                 //}
                 Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4); // copy startLocation
 
-                byte[] haystackSizeBytes = BitConverter.GetBytes(haystackSize);
+                byte[] needleSize = BitConverter.GetBytes(needle.Length);
                 //if (BitConverter.IsLittleEndian)
                 //{
                 //    Array.Reverse(haystackSizeBytes);
                 //}
-                Buffer.BlockCopy(haystackSizeBytes, 0, haystack, 4, 4); // copy haystackSize
+                Buffer.BlockCopy(needleSize, 0, haystack, 4, 4); // copy needleSize
 
                 Buffer.BlockCopy(salt, 0, haystack, 8, 16); // copy salt
 
