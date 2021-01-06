@@ -63,14 +63,14 @@ namespace Enigma
             byte[] passwordDigest = SHA256.Create().ComputeHash(passwordBytes.Concat(salt).ToArray());
 
             byte[] hash = SHA512.Create().ComputeHash(passwordBytes);
-            byte[] key = null;
-            byte[] iv = null;
+            byte[] key = new byte[32];
+            byte[] iv = new byte[16];
 
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
 
             NeedleInAHaystack(new FileInfo(privateKeyPath).Directory.Root.FullName,
-                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')), new AesAlgorithm(key, iv).Encrypt(keyRaw), ref salt, ref passwordDigest);
+                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv).Encrypt(keyRaw), ref salt, ref passwordDigest);
 
             // data scrambling
             new RNGCryptoServiceProvider().GetBytes(iv);
