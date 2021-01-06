@@ -20,7 +20,7 @@ namespace Enigma
 
         public UserDatabase()
         {
-            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: load a pepper from a encrypted RSA key (e.q. last 128 b = 16 B)
+            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: store pepper somewhere on computer. Where?
         }
 
         public User GetUser(string username)
