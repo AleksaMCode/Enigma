@@ -221,7 +221,7 @@ namespace Enigma
                         }
                     }
 
-                    passphrase += line.Split(' ')[1].Trim();
+                    passphrase += line.Split('\t')[1].Trim();
                     if (numberOfWords != maxNumberOfWords - 1)
                     {
                         passphrase += delimiter;
