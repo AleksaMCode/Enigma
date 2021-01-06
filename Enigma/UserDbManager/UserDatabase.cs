@@ -14,13 +14,13 @@ namespace Enigma
         }
 
         /// <summary>
-        /// NIST require a pepper to be at least 112 B long. This recommendation is valid up until 2030.
+        /// NIST require a pepper to be at least 112 b (14 B) long. This recommendation is valid up until 2030.
         /// </summary>
-        public static byte[] Pepper { get; } = new byte[128];
+        public static byte[] Pepper { get; } = new byte[16];
 
         public UserDatabase()
         {
-            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: load a pepper from a encrypted RSA key (e.q. last 128 B)
+            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: load a pepper from a encrypted RSA key (e.q. last 128 b = 16 B)
         }
 
         public User GetUser(string username)
