@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace Enigma
@@ -13,11 +13,14 @@ namespace Enigma
             this.context = new UsersContext(pathToDatabase);
         }
 
-        public static byte[] Pepper { get; } = new byte[112];
+        /// <summary>
+        /// NIST require a pepper to be at least 112 B long. This recommendation is valid up until 2030.
+        /// </summary>
+        public static byte[] Pepper { get; } = new byte[128];
 
         public UserDatabase()
         {
-            new RNGCryptoServiceProvider().GetBytes(Pepper);
+            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: load a pepper from a encrypted RSA key (e.q. last 128 B)
         }
 
         public User GetUser(string username)
