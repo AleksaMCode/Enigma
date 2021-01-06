@@ -61,30 +61,32 @@ namespace Enigma
         {
             byte[] currentPasswordDigest = SHA256.Create().ComputeHash(password.Concat(salt).ToArray());
 
-            return currentPasswordDigest.Equals(passwordDigest);
+            return currentPasswordDigest.SequenceEqual(passwordDigest);
         }
 
         private byte[] DecryptTheUserKey(byte[] keyRawEncrypted, string password)
         {
             byte[] passwordBytes = Encoding.ASCII.GetBytes(password);
             int startLocation = BitConverter.ToInt32(keyRawEncrypted, 0);
-            int haystackSize = BitConverter.ToInt32(keyRawEncrypted, 4);
+            int needleSize = BitConverter.ToInt32(keyRawEncrypted, 4);
 
-            byte[] salt = null, passwordDigest = null, needle = null;
+            byte[] salt = new byte[16];
+            byte[] needle = new byte[needleSize];
+            byte[] passwordDigest = new byte[256 / 8];
 
-            Buffer.BlockCopy(salt, 0, keyRawEncrypted, 8, 16);
-            Buffer.BlockCopy(passwordDigest, 0, keyRawEncrypted, 24, 32);
+            Buffer.BlockCopy(keyRawEncrypted, 8, salt, 0, 16);
+            Buffer.BlockCopy(keyRawEncrypted, 24, passwordDigest, 0, 32);
 
             if (!CheckKeyPassword(passwordBytes, salt, passwordDigest))
             {
                 throw new Exception("Invalid password.");
             }
 
-            Buffer.BlockCopy(needle, 0, keyRawEncrypted, startLocation, haystackSize);
+            Buffer.BlockCopy(needle, 0, keyRawEncrypted, startLocation, needleSize);
 
             byte[] hash = SHA512.Create().ComputeHash(passwordBytes);
-            byte[] key = null;
-            byte[] iv = null;
+            byte[] key = new byte[32];
+            byte[] iv = new byte[16];
 
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
