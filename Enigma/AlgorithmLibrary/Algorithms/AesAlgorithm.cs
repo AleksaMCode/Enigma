@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Parameters;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -38,34 +42,109 @@ namespace Enigma
             ModeSignature = mode;
         }
 
+        public IBufferedCipher CreateAesCipher(bool forEncryption)
+        {
+            IBufferedCipher cipher;
+            var keyParameter = new KeyParameter(Key);
+            var keyWithIv = new ParametersWithIV(keyParameter, IV);
+
+            switch (ModeSignature)
+            {
+                case "OFB":
+                    {
+                        cipher = new BufferedBlockCipher(new OfbBlockCipher(new AesEngine(), 16));
+                        cipher.Init(forEncryption, keyWithIv);
+                        return cipher;
+                    }
+                case "CFB":
+                    {
+                        cipher = new BufferedBlockCipher(new CfbBlockCipher(new AesEngine(), 16));
+                        cipher.Init(forEncryption, keyWithIv);
+                        return cipher;
+                    }
+                default:
+                    {
+                        throw new UnknownCipherModeException(ModeSignature);
+                    }
+            }
+        }
+
         public byte[] Encrypt(byte[] data)
         {
-            using AesManaged aes = new AesManaged();
-            aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
+            if (ModeSignature == "CBC" || ModeSignature == "ECB")
+            {
+                using AesManaged aes = new AesManaged();
+                aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
 
-            using var encryptor = aes.CreateEncryptor(Key, IV);
-            using MemoryStream ms = new MemoryStream();
-            using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
+                using var encryptor = aes.CreateEncryptor(Key, IV);
+                using MemoryStream ms = new MemoryStream();
+                using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
 
-            writer.Write(data, 0, data.Length);
-            writer.FlushFinalBlock();
+                writer.Write(data, 0, data.Length);
+                writer.FlushFinalBlock();
 
-            return ms.ToArray();
+                return ms.ToArray();
+            }
+            else // OFB or CFB
+            {
+                byte[] encrypted;
+                var aes = CreateAesCipher(true);
+
+                try
+                {
+                    byte[] inData = data;
+                    encrypted = new byte[aes.GetOutputSize(inData.Length)];
+
+                    int len = aes.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
+                    aes.DoFinal(encrypted, len);
+
+                    return encrypted;
+                }
+                catch (CryptoException)
+                {
+                }
+
+                return null;
+            }
         }
 
         public byte[] Decrypt(byte[] data)
         {
-            using AesManaged aes = new AesManaged();
-            aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
+            if (ModeSignature == "CBC" || ModeSignature == "ECB")
+            {
+                using AesManaged aes = new AesManaged();
+                aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
 
-            using var decryptor = aes.CreateDecryptor(Key, IV);
-            using MemoryStream ms = new MemoryStream(data);
-            using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+                using var decryptor = aes.CreateDecryptor(Key, IV);
+                using MemoryStream ms = new MemoryStream(data);
+                using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
 
-            var decrypted = new byte[data.Length];
-            var bytesRead = cs.Read(decrypted, 0, decrypted.Length);
+                var decrypted = new byte[data.Length];
+                var bytesRead = cs.Read(decrypted, 0, decrypted.Length);
 
-            return decrypted.Take(bytesRead).ToArray();
+                return decrypted.Take(bytesRead).ToArray();
+            }
+            else // OFB or CFB
+            {
+                byte[] decrypted;
+                var aes = CreateAesCipher(false);
+
+                try
+                {
+                    byte[] inData = data;
+                    decrypted = new byte[aes.GetOutputSize(inData.Length)];
+
+                    int len = aes.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
+                    aes.DoFinal(decrypted, len);
+
+                    return decrypted;
+                }
+                catch (CryptoException)
+                {
+                }
+            }
+
+            return null;
         }
 
         public string GetAlgorithmNameSignature()
