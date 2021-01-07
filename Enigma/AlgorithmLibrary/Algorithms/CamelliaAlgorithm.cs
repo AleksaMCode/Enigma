@@ -22,7 +22,7 @@ namespace Enigma
 
         public byte[] AdditionalData { get => this.IV; }
 
-        public CamelliaAlgorithm(int keySize, string mode = "ECB")
+        public CamelliaAlgorithm(int keySize, string mode = "CBC")
         {
             Key = new byte[keySize]; // 32 B, 24 B or 16 B
             new RNGCryptoServiceProvider().GetBytes(Key);
@@ -40,7 +40,7 @@ namespace Enigma
             }
         }
 
-        public CamelliaAlgorithm(byte[] key, byte[] iv, string mode = "ECB")
+        public CamelliaAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             Key = key;
             IV = iv;

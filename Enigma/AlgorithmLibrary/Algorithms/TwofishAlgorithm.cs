@@ -25,7 +25,7 @@ namespace Enigma
 
         public byte[] AdditionalData { get => this.IV; }
 
-        public TwofishAlgorithm(int keySize, string mode = "ECB")
+        public TwofishAlgorithm(int keySize, string mode = "CBC")
         {
             Key = new byte[keySize]; // 32 B, 24 B or 16 B
             new RNGCryptoServiceProvider().GetBytes(Key);
@@ -44,7 +44,7 @@ namespace Enigma
 
         }
 
-        public TwofishAlgorithm(byte[] key, byte[] iv, string mode = "ECB")
+        public TwofishAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             Key = key;
             IV = iv;
