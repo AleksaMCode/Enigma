@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿using System;
+using Org.BouncyCastle.Crypto;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
@@ -51,7 +52,11 @@ namespace Enigma
         {
             IBufferedCipher cipher;
             var keyParameter = new KeyParameter(Key);
-            var keyWithIv = new ParametersWithIV(keyParameter, IV);
+            ParametersWithIV keyWithIv = null;
+            if (!ModeSignature.Equals("ECB"))
+            {
+                keyWithIv = new ParametersWithIV(keyParameter, IV);
+            }
 
             switch (ModeSignature)
             {
@@ -93,13 +98,19 @@ namespace Enigma
 
             try
             {
-                byte[] inData = data;
-                encrypted = new byte[camellia.GetOutputSize(inData.Length)];
+                encrypted = new byte[camellia.GetOutputSize(data.Length)];
 
-                int len = camellia.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
-                camellia.DoFinal(encrypted, len);
+                int len = camellia.ProcessBytes(data, 0, data.Length, encrypted, 0);
+                len += camellia.DoFinal(encrypted, len);
 
-                return encrypted;
+                if (len != encrypted.Length)
+                {
+                    throw new CryptoException();
+                }
+                else
+                {
+                    return encrypted;
+                }
             }
             catch (CryptoException)
             {
@@ -115,12 +126,18 @@ namespace Enigma
 
             try
             {
-                byte[] inData = data;
-                decrypted = new byte[camellia.GetOutputSize(inData.Length)];
+                decrypted = new byte[camellia.GetOutputSize(data.Length)];
 
-                int len = camellia.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
-                camellia.DoFinal(decrypted, len);
+                int len = camellia.ProcessBytes(data, 0, data.Length, decrypted, 0);
+                len += camellia.DoFinal(decrypted, len);
 
+                // array resizing is only needed when using CBC or ECB block cipher mode of operation
+                if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
+                {
+                    // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to 
+                    // added padding. By simply cutting of the padding from end of the array, we overcome a mismatch problem when comparing to the original array.
+                    Array.Resize<byte>(ref decrypted, len); //potential problem with Array.Resize: new array created on a new memory location
+                }
                 return decrypted;
             }
             catch (CryptoException)
