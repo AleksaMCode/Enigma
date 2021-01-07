@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿using System;
+using Org.BouncyCastle.Crypto;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
@@ -106,9 +107,16 @@ namespace Enigma
                 encrypted = new byte[twofish.GetOutputSize(inData.Length)];
 
                 int len = twofish.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
-                twofish.DoFinal(encrypted, len);
+                len += twofish.DoFinal(encrypted, len);
 
-                return encrypted;
+                if (len != encrypted.Length)
+                {
+                    throw new CryptoException();
+                }
+                else
+                {
+                    return encrypted;
+                }
             }
             catch (CryptoException)
             {
@@ -128,7 +136,15 @@ namespace Enigma
                 decrypted = new byte[twofish.GetOutputSize(inData.Length)];
 
                 int len = twofish.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
-                twofish.DoFinal(decrypted, len);
+                len += twofish.DoFinal(decrypted, len);
+
+                // array resizing is only needed when using CBC or ECB block cipher mode of operation
+                if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
+                {
+                    // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to 
+                    // added padding. By simply cutting of the padding from end of the array, we overcome a mismatch problem when comparing to the original array.
+                    Array.Resize<byte>(ref decrypted, len); //potential problem with Array.Resize: new array created on a new memory location
+                }
 
                 return decrypted;
             }
