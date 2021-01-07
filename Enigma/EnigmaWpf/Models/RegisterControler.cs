@@ -82,6 +82,7 @@ namespace Enigma
 
         private void NeedleInAHaystack(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
         {
+            // TODO: add MAC/HMAC and secure deletion of original RSA key
             int haystackSize = needle.Length * 10;
             int startLocation = 0;
             if (new DriveInfo(rootDir).AvailableFreeSpace > haystackSize)
