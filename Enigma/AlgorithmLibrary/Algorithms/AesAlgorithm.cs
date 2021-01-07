@@ -1,11 +1,12 @@
-﻿using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Parameters;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
+using Org.BouncyCastle.Crypto;
 using System.Security.Cryptography;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
+
 
 namespace Enigma
 {
@@ -71,7 +72,7 @@ namespace Enigma
 
         public byte[] Encrypt(byte[] data)
         {
-            if (ModeSignature == "CBC" || ModeSignature == "ECB")
+            if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
             {
                 using AesManaged aes = new AesManaged();
                 aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
@@ -110,7 +111,7 @@ namespace Enigma
 
         public byte[] Decrypt(byte[] data)
         {
-            if (ModeSignature == "CBC" || ModeSignature == "ECB")
+            if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
             {
                 using AesManaged aes = new AesManaged();
                 aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
