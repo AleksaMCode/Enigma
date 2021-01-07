@@ -41,9 +41,16 @@ namespace Enigma
 
         public TripleDesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
-            Key = key;
-            IV = iv;
-            ModeSignature = mode;
+            if (key.Length == 24 && iv.Length == 8)
+            {
+                Key = key;
+                IV = iv;
+                ModeSignature = mode;
+            }
+            else
+            {
+                throw new CryptoException("Key size and/or iv size isn't correct.");
+            }
         }
 
         public IBufferedCipher CreateTripleDesCipher(bool forEncryption)

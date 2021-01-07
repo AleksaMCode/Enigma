@@ -27,8 +27,15 @@ namespace Enigma
 
         public AesAlgorithm(int keySize, string mode = "CBC")
         {
-            Key = new byte[keySize]; // 32 B, 24 B or 16 B
-            new RNGCryptoServiceProvider().GetBytes(Key);
+            if (keySize == 16 || keySize == 24 || keySize == 16)
+            {
+                Key = new byte[keySize]; // 32 B, 24 B or 16 B
+                new RNGCryptoServiceProvider().GetBytes(Key);
+            }
+            else
+            {
+                throw new CryptoException("Key size is not valid. AES accepts 128-, 192-, and 256-bit keys.");
+            }
 
             IV = new byte[16];   // 16 B = 128 b
             new RNGCryptoServiceProvider().GetBytes(IV);
@@ -38,9 +45,16 @@ namespace Enigma
 
         public AesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
-            Key = key;
-            IV = iv;
-            ModeSignature = mode;
+            if ((key.Length == 16 || key.Length == 24 || key.Length == 32) && (iv.Length == 16))
+            {
+                Key = key;
+                IV = iv;
+                ModeSignature = mode;
+            }
+            else
+            {
+                throw new CryptoException("Key size and/or iv size isn't correct.");
+            }
         }
 
         public IBufferedCipher CreateAesCipher(bool forEncryption)

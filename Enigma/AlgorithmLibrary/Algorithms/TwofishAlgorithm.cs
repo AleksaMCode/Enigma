@@ -28,8 +28,15 @@ namespace Enigma
 
         public TwofishAlgorithm(int keySize, string mode = "CBC")
         {
-            Key = new byte[keySize]; // 32 B, 24 B or 16 B
-            new RNGCryptoServiceProvider().GetBytes(Key);
+            if (keySize == 16 || keySize == 24 || keySize == 16)
+            {
+                Key = new byte[keySize]; // 32 B, 24 B or 16 B
+                new RNGCryptoServiceProvider().GetBytes(Key);
+            }
+            else
+            {
+                throw new CryptoException("Key size is not valid. Twofish accepts 128-, 192-, and 256-bit keys.");
+            }
 
             ModeSignature = mode;
 
@@ -47,9 +54,16 @@ namespace Enigma
 
         public TwofishAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
-            Key = key;
-            IV = iv;
-            ModeSignature = mode;
+            if ((key.Length == 16 || key.Length == 24 || key.Length == 32) && (iv.Length == 16))
+            {
+                Key = key;
+                IV = iv;
+                ModeSignature = mode;
+            }
+            else
+            {
+                throw new CryptoException("Key size and/or iv size isn't correct.");
+            }
         }
 
         public IBufferedCipher CreateTwofishCipher(bool forEncryption)
