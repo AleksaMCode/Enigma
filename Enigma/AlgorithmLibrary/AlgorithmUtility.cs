@@ -133,10 +133,6 @@ namespace Enigma
                     {
                         return CipherMode.CFB;
                     }
-                case "CTS":
-                    {
-                        return CipherMode.CTS;
-                    }
                 default:
                     {
                         throw new UnknownCipherModeException(mode);
