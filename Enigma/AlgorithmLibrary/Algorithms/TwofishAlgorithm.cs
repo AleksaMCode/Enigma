@@ -117,10 +117,9 @@ namespace Enigma
 
             try
             {
-                byte[] inData = data;
-                encrypted = new byte[twofish.GetOutputSize(inData.Length)];
+                encrypted = new byte[twofish.GetOutputSize(data.Length)];
 
-                int len = twofish.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
+                int len = twofish.ProcessBytes(data, 0, data.Length, encrypted, 0);
                 len += twofish.DoFinal(encrypted, len);
 
                 if (len != encrypted.Length)
@@ -146,10 +145,9 @@ namespace Enigma
 
             try
             {
-                byte[] inData = data;
-                decrypted = new byte[twofish.GetOutputSize(inData.Length)];
+                decrypted = new byte[twofish.GetOutputSize(data.Length)];
 
-                int len = twofish.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
+                int len = twofish.ProcessBytes(data, 0, data.Length, decrypted, 0);
                 len += twofish.DoFinal(decrypted, len);
 
                 // array resizing is only needed when using CBC or ECB block cipher mode of operation

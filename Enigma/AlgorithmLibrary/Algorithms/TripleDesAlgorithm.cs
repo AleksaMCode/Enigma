@@ -96,10 +96,9 @@ namespace Enigma
 
                 try
                 {
-                    byte[] inData = data;
-                    encrypted = new byte[tdes.GetOutputSize(inData.Length)];
+                    encrypted = new byte[tdes.GetOutputSize(data.Length)];
 
-                    int len = tdes.ProcessBytes(inData, 0, inData.Length, encrypted, 0);
+                    int len = tdes.ProcessBytes(data, 0, data.Length, encrypted, 0);
                     tdes.DoFinal(encrypted, len);
 
                     return encrypted;
@@ -135,10 +134,9 @@ namespace Enigma
 
                 try
                 {
-                    byte[] inData = data;
-                    decrypted = new byte[tdes.GetOutputSize(inData.Length)];
+                    decrypted = new byte[tdes.GetOutputSize(data.Length)];
 
-                    int len = tdes.ProcessBytes(inData, 0, inData.Length, decrypted, 0);
+                    int len = tdes.ProcessBytes(data, 0, data.Length, decrypted, 0);
                     tdes.DoFinal(decrypted, len);
 
                     return decrypted;
