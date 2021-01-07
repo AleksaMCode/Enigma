@@ -55,7 +55,12 @@ namespace Enigma
         {
             IBufferedCipher cipher;
             var keyParameter = new KeyParameter(Key);
-            var keyWithIv = new ParametersWithIV(keyParameter, IV);
+            ParametersWithIV keyWithIv = null;
+
+            if (!ModeSignature.Equals("ECB"))
+            {
+                keyWithIv = new ParametersWithIV(keyParameter, IV);
+            }
 
             switch (ModeSignature)
             {
