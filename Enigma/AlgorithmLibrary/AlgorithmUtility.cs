@@ -5,8 +5,8 @@ namespace Enigma
 {
     internal static class AlgorithmUtility
     {
-        public static readonly int algoNameSignatureSize = 13;
-        public static readonly int hashAlgoNameSignatureSize = 6;
+        public static readonly int maxAlgoNameSignatureSize = 13;       // e.q. 2FISH-256-OFB
+        public static readonly int maxHashAlgoNameSignatureSize = 6;    // e.q. SHA256
 
         public static string GetNameSignatureFromAlgorithm(IAlgorithm algo)
         {
@@ -27,11 +27,13 @@ namespace Enigma
 
         public static IAlgorithm GetAlgorithmFromNameSignature(string algoName)
         {
-            // remove padding
-            algoName = algoName.Substring(0, algoName.IndexOf('0'));
+            if(algoName.Length > maxAlgoNameSignatureSize)
+            {
+                throw new UnknownCryptAlgoException(algoName);
+            }
 
-            // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish
-            // split the name in AlgoName, Ciphermode for 3DES
+            // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
+            // split the name in AlgoName, Ciphermode for 3DES, e.q. 3DSES-OFB
             string[] tokens = algoName.Split('-');
 
             if (tokens[0].Equals("AES"))
@@ -84,8 +86,10 @@ namespace Enigma
 
         public static HashAlgorithm GetHashAlgoFromNameSignature(string algoName)
         {
-            // remove padding
-            algoName = algoName.Substring(0, algoName.IndexOf('0'));
+            if (algoName.Length > maxAlgoNameSignatureSize)
+            {
+                throw new UnknownHashAlgoException(algoName);
+            }
 
             if (algoName.Equals("MD5"))
             {
