@@ -16,9 +16,15 @@ namespace Enigma
 
         public OriginalFile(Stream fileContent, string fileExtension)
         {
-            ExtensionCheck(fileExtension);
-            FileContent = fileContent;
-            FileExtension = fileExtension;
+            if (ExtensionCheck(fileExtension))
+            {
+                FileContent = fileContent;
+                FileExtension = fileExtension;
+            }
+            else
+            {
+                // throw an exception
+            }
         }
 
         public bool ExtensionCheck(string fileExtension)
