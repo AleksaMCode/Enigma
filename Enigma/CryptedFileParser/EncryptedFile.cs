@@ -30,9 +30,8 @@ namespace Enigma
         {
             byte[] originalNameArray = Encoding.ASCII.GetBytes(name);
 
-            using RSACryptoServiceProvider encryptRSA = new RSACryptoServiceProvider();
-            encryptRSA.ImportParameters(publicKey);
-            byte[] encriptedNameArray = encryptRSA.Encrypt(originalNameArray, false);
+            var encryptRSA = new RsaAlgorithm(publicKey);
+            byte[] encriptedNameArray = encryptRSA.Encrypt(originalNameArray);
 
             EncriptedName = Encoding.ASCII.GetString(encriptedNameArray);
         }
@@ -46,9 +45,8 @@ namespace Enigma
 
             byte[] encriptedNameArray = Encoding.ASCII.GetBytes(EncriptedName);
 
-            using RSACryptoServiceProvider decryptRSA = new RSACryptoServiceProvider();
-            decryptRSA.ImportParameters(privateKey);
-            byte[] originalNameArray = decryptRSA.Decrypt(encriptedNameArray, false);
+            var decryptRSA = new RsaAlgorithm(privateKey);
+            byte[] originalNameArray = decryptRSA.Decrypt(encriptedNameArray);
 
             name = Encoding.ASCII.GetString(originalNameArray);
             return true;
