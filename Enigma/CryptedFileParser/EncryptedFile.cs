@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Enigma
 {
@@ -14,10 +16,21 @@ namespace Enigma
 
         public readonly string fileExtension = "at";
 
-        internal EncryptedFile(Stream encrypteFileContent)
+        internal EncryptedFile(Stream encrypteFileContent, string name, RSAParameters publicKey)
         {
             encrypteFileContent.Position = 0;
             EncrypteFileContent = encrypteFileContent;
+            NameEncryption(name, publicKey);
+        }
+
+        private void NameEncryption(string name, RSAParameters publicKey)
+        {
+            byte[] originalNameArray = Encoding.ASCII.GetBytes(name);
+            
+            using RSACryptoServiceProvider encryptRSA = new RSACryptoServiceProvider();
+            encryptRSA.ImportParameters(publicKey);
+            byte[] encriptedNameArray = encryptRSA.Encrypt(originalNameArray, false);
+            EncriptedName = Encoding.ASCII.GetString(encriptedNameArray);
         }
     }
 }
