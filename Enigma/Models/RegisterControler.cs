@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Text;
 using System.Linq;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Crypto.Prng;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Crypto.Digests;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Prng;
+using Org.BouncyCastle.Security;
 
 namespace Enigma
 {
@@ -36,7 +36,7 @@ namespace Enigma
                 throw new Exception("Password is too weak. Please try again.");
             }
 
-            X509Certificate2 cert = new X509Certificate2(certificateFilePath);
+            var cert = new X509Certificate2(certificateFilePath);
 
             if (CertificateValidator.VerifyCertificate(cert) == false)
             {
@@ -51,20 +51,20 @@ namespace Enigma
                 throw new Exception("Certificate must have 'digitalSignature' and 'keyEncipherment' set as it's key usage.");
             }
 
-            this.data.AddUser(username, password, File.ReadAllBytes(certificateFilePath));
+            data.AddUser(username, password, File.ReadAllBytes(certificateFilePath));
         }
 
         internal void EncryptUserKey(string privateKeyPath, string password)
         {
-            byte[] passwordBytes = Encoding.ASCII.GetBytes(password);
-            byte[] keyRaw = File.ReadAllBytes(privateKeyPath);
-            byte[] salt = new byte[16];
+            var passwordBytes = Encoding.ASCII.GetBytes(password);
+            var keyRaw = File.ReadAllBytes(privateKeyPath);
+            var salt = new byte[16];
             new RNGCryptoServiceProvider().GetBytes(salt);
-            byte[] passwordDigest = SHA256.Create().ComputeHash(passwordBytes.Concat(salt).ToArray());
+            var passwordDigest = SHA256.Create().ComputeHash(passwordBytes.Concat(salt).ToArray());
 
-            byte[] hash = SHA512.Create().ComputeHash(passwordBytes);
-            byte[] key = new byte[32];
-            byte[] iv = new byte[16];
+            var hash = SHA512.Create().ComputeHash(passwordBytes);
+            var key = new byte[32];
+            var iv = new byte[16];
 
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
@@ -83,25 +83,25 @@ namespace Enigma
         private void NeedleInAHaystack(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
-            int haystackSize = needle.Length * 10;
-            int startLocation = 0;
+            var haystackSize = needle.Length * 10;
+            var startLocation = 0;
             if (new DriveInfo(rootDir).AvailableFreeSpace > haystackSize)
             {
-                byte[] haystack = new byte[haystackSize];
+                var haystack = new byte[haystackSize];
                 new RNGCryptoServiceProvider().GetBytes(haystack);
 
                 var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
                 csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
                 startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
 
-                byte[] startLocationBytes = BitConverter.GetBytes(startLocation);
+                var startLocationBytes = BitConverter.GetBytes(startLocation);
                 //if (BitConverter.IsLittleEndian)
                 //{
                 //    Array.Reverse(startLocationBytes);
                 //}
                 Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4); // copy startLocation
 
-                byte[] needleSize = BitConverter.GetBytes(needle.Length);
+                var needleSize = BitConverter.GetBytes(needle.Length);
                 //if (BitConverter.IsLittleEndian)
                 //{
                 //    Array.Reverse(haystackSizeBytes);
@@ -115,8 +115,8 @@ namespace Enigma
                 Buffer.BlockCopy(needle, 0, haystack, startLocation, needle.Length); // copy the needle (encrypted key)
 
 
-                using FileStream stream = new FileStream(path, FileMode.Create);
-                using BinaryWriter writter = new BinaryWriter(stream);
+                using var stream = new FileStream(path, FileMode.Create);
+                using var writter = new BinaryWriter(stream);
                 writter.Write(haystack);
 
                 // data scrambling
@@ -132,7 +132,7 @@ namespace Enigma
 
         internal string GenerateRandomPassword()
         {
-            char[] passArray = new char[30];
+            var passArray = new char[30];
             string password;
 
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
@@ -140,7 +140,7 @@ namespace Enigma
 
             while (true)
             {
-                for (int i = 0; i < 30; ++i)
+                for (var i = 0; i < 30; ++i)
                 {
                     // ASCII printable characters are >= SPACE (0x20) and < DEL (0x7e)
                     passArray[i] = (char)csprng.Next(0x20, 0x7f);
@@ -162,11 +162,11 @@ namespace Enigma
         {
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
-            int size = csprng.Next(3, 5);
+            var size = csprng.Next(3, 5);
 
-            char[] delimiter = new char[size];
+            var delimiter = new char[size];
 
-            for (int i = 0; i < size; ++i)
+            for (var i = 0; i < size; ++i)
             {
                 // ASCII characters: >= SPACE (0x20) and < a (0x61)
                 delimiter[i] = (char)csprng.Next(0x20, 0x61);
@@ -177,30 +177,30 @@ namespace Enigma
 
         internal string GeneratePassphrase()
         {
-            int diceRollResult = 0;
+            var diceRollResult = 0;
             string passphrase;
-            string delimiter = GeneratePassphraseDelimiter();
+            var delimiter = GeneratePassphraseDelimiter();
 
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
 
-            int maxNumberOfWords = csprng.Next(6, 10);
+            var maxNumberOfWords = csprng.Next(6, 10);
 
             while (true)
             {
-                int numberOfWords = 0;
+                var numberOfWords = 0;
                 string index;
                 passphrase = "";
 
                 while (numberOfWords < maxNumberOfWords)
                 {
-                    bool numberExist = false;
+                    var numberExist = false;
                     string line = null;
 
                     while (!numberExist)
                     {
                         // five dice rolls
-                        for (int i = 0; i < 5; ++i)
+                        for (var i = 0; i < 5; ++i)
                         {
                             diceRollResult += csprng.Next(1, 7) * (int)Math.Pow(10, i);
                         }
@@ -209,7 +209,7 @@ namespace Enigma
                         diceRollResult = 0;
 
                         // can this be optimized?
-                        using (StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
+                        using (var file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
                         {
                             while ((line = file.ReadLine()) != null)
                             {

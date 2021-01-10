@@ -1,8 +1,8 @@
-﻿using System;
-using Org.BouncyCastle.Crypto;
+using System;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 
@@ -21,7 +21,7 @@ namespace Enigma
 
         public byte[] IV { get; set; }
 
-        public byte[] AdditionalData { get => this.IV; }
+        public byte[] AdditionalData => IV;
 
         public CamelliaAlgorithm(int keySize, string mode = "CBC")
         {
@@ -75,33 +75,33 @@ namespace Enigma
             switch (ModeSignature)
             {
                 case "ECB":
-                    {
-                        cipher = new PaddedBufferedBlockCipher(new CamelliaEngine());
-                        cipher.Init(forEncryption, keyParameter);
-                        return cipher;
-                    }
+                {
+                    cipher = new PaddedBufferedBlockCipher(new CamelliaEngine());
+                    cipher.Init(forEncryption, keyParameter);
+                    return cipher;
+                }
                 case "CBC":
-                    {
-                        cipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(new CamelliaEngine()));
-                        cipher.Init(forEncryption, keyWithIv);
-                        return cipher;
-                    }
+                {
+                    cipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(new CamelliaEngine()));
+                    cipher.Init(forEncryption, keyWithIv);
+                    return cipher;
+                }
                 case "CFB":
-                    {
-                        cipher = new BufferedBlockCipher(new CfbBlockCipher(new CamelliaEngine(), 16));
-                        cipher.Init(forEncryption, keyWithIv);
-                        return cipher;
-                    }
+                {
+                    cipher = new BufferedBlockCipher(new CfbBlockCipher(new CamelliaEngine(), 16));
+                    cipher.Init(forEncryption, keyWithIv);
+                    return cipher;
+                }
                 case "OFB":
-                    {
-                        cipher = new BufferedBlockCipher(new OfbBlockCipher(new CamelliaEngine(), 16));
-                        cipher.Init(forEncryption, keyWithIv);
-                        return cipher;
-                    }
+                {
+                    cipher = new BufferedBlockCipher(new OfbBlockCipher(new CamelliaEngine(), 16));
+                    cipher.Init(forEncryption, keyWithIv);
+                    return cipher;
+                }
                 default:
-                    {
-                        throw new UnknownCipherModeException(ModeSignature);
-                    }
+                {
+                    throw new UnknownCipherModeException(ModeSignature);
+                }
             }
         }
 
@@ -114,7 +114,7 @@ namespace Enigma
             {
                 encrypted = new byte[camellia.GetOutputSize(data.Length)];
 
-                int len = camellia.ProcessBytes(data, 0, data.Length, encrypted, 0);
+                var len = camellia.ProcessBytes(data, 0, data.Length, encrypted, 0);
                 len += camellia.DoFinal(encrypted, len);
 
                 if (len != encrypted.Length)
@@ -142,13 +142,13 @@ namespace Enigma
             {
                 decrypted = new byte[camellia.GetOutputSize(data.Length)];
 
-                int len = camellia.ProcessBytes(data, 0, data.Length, decrypted, 0);
+                var len = camellia.ProcessBytes(data, 0, data.Length, decrypted, 0);
                 len += camellia.DoFinal(decrypted, len);
 
                 // array resizing is only needed when using CBC or ECB block cipher mode of operation
                 if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
                 {
-                    // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to 
+                    // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to
                     // added padding. By simply cutting of the padding from end of the array, we overcome a mismatch problem when comparing to the original array.
                     Array.Resize<byte>(ref decrypted, len); //potential problem with Array.Resize: new array created on a new memory location
                 }

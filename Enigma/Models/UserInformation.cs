@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Enigma
@@ -12,11 +12,11 @@ namespace Enigma
 
         public RSAParameters PrivateKey { get; }
 
-        public string Username { get => this.user.Username; }
+        public string Username => user.Username;
 
-        public X509Certificate2 Certificate { get => new X509Certificate2(this.user.PublicCertificate); }
+        public X509Certificate2 Certificate => new X509Certificate2(user.PublicCertificate);
 
-        public RSAParameters PublicKey { get => ((RSACryptoServiceProvider)this.Certificate.PublicKey.Key).ExportParameters(false); }
+        public RSAParameters PublicKey => ((RSACryptoServiceProvider)Certificate.PublicKey.Key).ExportParameters(false);
 
         public UserInformation(User user, RSAParameters privateKey)
         {

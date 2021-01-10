@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -31,27 +31,27 @@ namespace Enigma
 
         public KeyFileParser(byte[] keyBytes)
         {
-            byte[] trimmedBytes = Encoding.ASCII.GetBytes(Encoding.ASCII.GetString(keyBytes).Trim());
+            var trimmedBytes = Encoding.ASCII.GetBytes(Encoding.ASCII.GetString(keyBytes).Trim());
 
             if (trimmedBytes.Take(10).SequenceEqual(Encoding.ASCII.GetBytes("-----BEGIN")))
             {
                 if (trimmedBytes.Take(PrivateHeaderStart.Length).SequenceEqual(Encoding.ASCII.GetBytes(PrivateHeaderStart)) &&
                     trimmedBytes.Skip(trimmedBytes.Length - PrivateHeaderEnd.Length).Take(PrivateHeaderEnd.Length).SequenceEqual(Encoding.ASCII.GetBytes(PrivateHeaderEnd)))
                 {
-                    this.rawParameters =
+                    rawParameters =
                         Convert.FromBase64String(
                             Encoding.ASCII.GetString(
                                 trimmedBytes.Skip(PrivateHeaderStart.Length).Take(trimmedBytes.Length - PrivateHeaderStart.Length - PrivateHeaderEnd.Length - 1).ToArray()));
-                    this.isAlt = false;
+                    isAlt = false;
                 }
                 else if (trimmedBytes.Take(PrivateHeaderStartAlt.Length).SequenceEqual(Encoding.ASCII.GetBytes(PrivateHeaderStartAlt)) &&
                          trimmedBytes.Skip(trimmedBytes.Length - PrivateHeaderEndAlt.Length).Take(PrivateHeaderEndAlt.Length).SequenceEqual(Encoding.ASCII.GetBytes(PrivateHeaderEndAlt)))
                 {
-                    this.rawParameters =
+                    rawParameters =
                         Convert.FromBase64String(
                             Encoding.ASCII.GetString(
                                 trimmedBytes.Skip(PrivateHeaderStartAlt.Length).Take(trimmedBytes.Length - PrivateHeaderStartAlt.Length - PrivateHeaderEndAlt.Length).ToArray()));
-                    this.isAlt = true;
+                    isAlt = true;
                 }
                 else
                 {
@@ -60,8 +60,8 @@ namespace Enigma
             }
             else if (keyBytes[0] == 0x30)
             {
-                this.tryBoth = true;
-                this.rawParameters = keyBytes;
+                tryBoth = true;
+                rawParameters = keyBytes;
             }
             else
             {
@@ -71,11 +71,11 @@ namespace Enigma
 
         public RSAParameters GetParameters()
         {
-            if (this.tryBoth)
+            if (tryBoth)
             {
                 try
                 {
-                    return this.GetParametersOriginal();
+                    return GetParametersOriginal();
                 }
                 catch (InvalidKeyFileException)
                 {
@@ -83,7 +83,7 @@ namespace Enigma
 
                 try
                 {
-                    return this.GetParametersAlt();
+                    return GetParametersAlt();
                 }
                 catch (InvalidKeyFileException)
                 {
@@ -91,21 +91,21 @@ namespace Enigma
 
                 throw new InvalidKeyFileException();
             }
-            else if (this.isAlt)
+            else if (isAlt)
             {
-                return this.GetParametersAlt();
+                return GetParametersAlt();
             }
             else
             {
-                return this.GetParametersOriginal();
+                return GetParametersOriginal();
             }
         }
 
         private RSAParameters GetParametersOriginal()
         {
-            using (ASNPrivateKeyParser parser = new ASNPrivateKeyParser(this.rawParameters))
+            using (var parser = new ASNPrivateKeyParser(rawParameters))
             {
-                RSAParameters result = new RSAParameters();
+                var result = new RSAParameters();
 
                 if (!parser.IsNextTag(0x30))
                 {
@@ -135,9 +135,9 @@ namespace Enigma
 
         private RSAParameters GetParametersAlt()
         {
-            using (ASNPrivateKeyParser parser = new ASNPrivateKeyParser(this.rawParameters))
+            using (var parser = new ASNPrivateKeyParser(rawParameters))
             {
-                RSAParameters result = new RSAParameters();
+                var result = new RSAParameters();
 
                 if (!parser.IsNextTag(0x30))
                 {

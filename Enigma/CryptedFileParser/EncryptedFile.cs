@@ -1,6 +1,6 @@
-﻿using System.IO;
-using System.Text;
+using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Enigma
 {
@@ -28,10 +28,10 @@ namespace Enigma
 
         public void NameEncryption(string name, RSAParameters publicKey)
         {
-            byte[] originalNameArray = Encoding.ASCII.GetBytes(name);
+            var originalNameArray = Encoding.ASCII.GetBytes(name);
 
             var encryptRSA = new RsaAlgorithm(publicKey);
-            byte[] encriptedNameArray = encryptRSA.Encrypt(originalNameArray);
+            var encriptedNameArray = encryptRSA.Encrypt(originalNameArray);
 
             EncriptedName = Encoding.ASCII.GetString(encriptedNameArray);
         }
@@ -43,10 +43,10 @@ namespace Enigma
                 return false;
             }
 
-            byte[] encriptedNameArray = Encoding.ASCII.GetBytes(EncriptedName);
+            var encriptedNameArray = Encoding.ASCII.GetBytes(EncriptedName);
 
             var decryptRSA = new RsaAlgorithm(privateKey);
-            byte[] originalNameArray = decryptRSA.Decrypt(encriptedNameArray);
+            var originalNameArray = decryptRSA.Decrypt(encriptedNameArray);
 
             name = Encoding.ASCII.GetString(originalNameArray);
             return true;

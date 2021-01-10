@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
-using Org.BouncyCastle.X509;
-using Org.BouncyCastle.Security;
-using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.X509;
 
 namespace Enigma
 {
@@ -12,16 +11,16 @@ namespace Enigma
     {
         public static bool VerifyCertificate(X509Certificate2 certificateToValidate)
         {
-            X509Certificate2 authority = new X509Certificate2(/*ROOT CA location*/);
+            var authority = new X509Certificate2(/*ROOT CA location*/);
 
-            using X509Chain chain = new X509Chain();
+            using var chain = new X509Chain();
             chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
             chain.ChainPolicy.RevocationFlag = X509RevocationFlag.EndCertificateOnly;
             chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
             chain.ChainPolicy.VerificationTime = DateTime.Now;
             chain.ChainPolicy.ExtraStore.Add(authority);
 
-            bool isChainValid = chain.Build(certificateToValidate);
+            var isChainValid = chain.Build(certificateToValidate);
 
             if (!isChainValid)
             {
@@ -48,9 +47,9 @@ namespace Enigma
         {
             try
             {
-                byte[] buffer = File.ReadAllBytes(/*CRL List path*/);
-                X509CrlParser crlParser = new X509CrlParser();
-                X509Crl crl = crlParser.ReadCrl(buffer);
+                var buffer = File.ReadAllBytes("x"/*CRL List path*/);
+                var crlParser = new X509CrlParser();
+                var crl = crlParser.ReadCrl(buffer);
 
                 return crl.IsRevoked(DotNetUtilities.FromX509Certificate(certificateToValidate));
             }
@@ -62,13 +61,13 @@ namespace Enigma
 
         public static bool VerifyKeyUsage(X509Certificate2 certificateToValidate)
         {
-            List<X509KeyUsageExtension> extensions = certificateToValidate.Extensions.OfType<X509KeyUsageExtension>().ToList();
+            var extensions = certificateToValidate.Extensions.OfType<X509KeyUsageExtension>().ToList();
             if (!extensions.Any())
             {
                 return certificateToValidate.Version < 3;
             }
 
-            List<X509KeyUsageFlags> keyUsageFlags = extensions.Select((ext) => ext.KeyUsages).ToList();
+            var keyUsageFlags = extensions.Select((ext) => ext.KeyUsages).ToList();
             return keyUsageFlags.Contains(X509KeyUsageFlags.KeyEncipherment) && keyUsageFlags.Contains(X509KeyUsageFlags.DigitalSignature);
         }
     }

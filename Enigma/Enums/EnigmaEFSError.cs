@@ -1,7 +1,5 @@
-﻿using System;
-
 namespace Enigma
-{ 
+{
     public enum EnigmaEFSError
     {
         MountLocationDoesntExist,

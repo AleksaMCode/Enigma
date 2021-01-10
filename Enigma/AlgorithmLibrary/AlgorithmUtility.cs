@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Cryptography;
 
 namespace Enigma
@@ -27,14 +27,14 @@ namespace Enigma
 
         public static IAlgorithm GetAlgorithmFromNameSignature(string algoName)
         {
-            if(algoName.Length > maxAlgoNameSignatureSize)
+            if (algoName.Length > maxAlgoNameSignatureSize)
             {
                 throw new UnknownCryptAlgoException(algoName);
             }
 
             // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
             // split the name in AlgoName, Ciphermode for 3DES, e.q. 3DSES-OFB
-            string[] tokens = algoName.Split('-');
+            var tokens = algoName.Split('-');
 
             if (tokens[0].Equals("AES"))
             {
@@ -122,25 +122,25 @@ namespace Enigma
             switch (mode)
             {
                 case "CBC":
-                    {
-                        return CipherMode.CBC;
-                    }
+                {
+                    return CipherMode.CBC;
+                }
                 case "ECB":
-                    {
-                        return CipherMode.ECB;
-                    }
+                {
+                    return CipherMode.ECB;
+                }
                 case "OFB":
-                    {
-                        return CipherMode.OFB;
-                    }
+                {
+                    return CipherMode.OFB;
+                }
                 case "CFB":
-                    {
-                        return CipherMode.CFB;
-                    }
+                {
+                    return CipherMode.CFB;
+                }
                 default:
-                    {
-                        throw new UnknownCipherModeException(mode);
-                    }
+                {
+                    throw new UnknownCipherModeException(mode);
+                }
             }
         }
     }

@@ -1,4 +1,3 @@
-﻿using System;
 using System.IO;
 
 namespace Enigma
@@ -14,7 +13,7 @@ namespace Enigma
         /// <summary>
         /// List of allowed file extensions.
         /// </summary>
-        private string[] allowedExtensions = { "txt", "docx", "png", "jpeg", "pdf" };
+        private readonly string[] allowedExtensions = { "txt", "docx", "png", "jpeg", "pdf" };
 
         public OriginalFile(Stream fileContent, string fileName)
         {
@@ -36,9 +35,9 @@ namespace Enigma
 
         public bool ExtensionCheck(string fileExtension)
         {
-            foreach(string extension in allowedExtensions)
+            foreach (var extension in allowedExtensions)
             {
-                if(fileExtension.Equals(extension))
+                if (fileExtension.Equals(extension))
                 {
                     return true;
                 }

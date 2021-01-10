@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -33,7 +33,7 @@ namespace Enigma
         public static bool CommonPasswordCheck(string password)
         {
             string commonPassword;
-            StreamReader file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\10-million-password-list-top-1000000.txt");
+            var file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\10-million-password-list-top-1000000.txt");
 
             while ((commonPassword = file.ReadLine()) != null)
             {
@@ -49,7 +49,7 @@ namespace Enigma
         public static bool IsPasswordStrong(string password, bool wordListGenerated = false, int numberOfWordsGenerated = 0)
         {
             // Memorized secrets SHALL be at least 8 characters in length not including spaces.
-            if (String.Concat(password.Where(c => !Char.IsWhiteSpace(c))).Length < minimumLength)
+            if (string.Concat(password.Where(c => !char.IsWhiteSpace(c))).Length < minimumLength)
             {
                 throw new Exception("Password must be at least 8 characters long not including the spaces.");
             }
@@ -62,25 +62,25 @@ namespace Enigma
             {
                 case PasswordEntropy.VeryWeak:
                 case PasswordEntropy.Weak:
-                    {
-                        return false;
-                    }
+                {
+                    return false;
+                }
                 case PasswordEntropy.Reasonable:
                 case PasswordEntropy.Strong:
                 case PasswordEntropy.VeryStrong:
-                    {
-                        return true;
-                    }
+                {
+                    return true;
+                }
                 default:
-                    {
-                        return false;
-                    }
+                {
+                    return false;
+                }
             }
         }
 
         private static PasswordEntropy GetPasswordEntropy(string password, bool wordListGenerated, int numberOfWordsGenerated = 0)
         {
-            double entropy = CalculateEntropy(password, wordListGenerated, numberOfWordsGenerated);
+            var entropy = CalculateEntropy(password, wordListGenerated, numberOfWordsGenerated);
 
             if (entropy <= 30)
             {
@@ -111,11 +111,11 @@ namespace Enigma
                 return Math.Log(Math.Pow((int)PasswordPoolSize.EFFWordList, numberOfWordsGenerated), 2);
             }
 
-            int passwordLength = password.Length;
-            int lowerCaseCount = LowerCaseCount(password);
-            int upperCaseCount = UpperCaseCount(password);
-            int numericCount = NumericCount(password);
-            int nonAlphaCount = NonAlphaCount(password);
+            var passwordLength = password.Length;
+            var lowerCaseCount = LowerCaseCount(password);
+            var upperCaseCount = UpperCaseCount(password);
+            var numericCount = NumericCount(password);
+            var nonAlphaCount = NonAlphaCount(password);
 
             // AsciiPrintableChars
             if (lowerCaseCount > 0 && upperCaseCount > 0 && numericCount > 0 && nonAlphaCount > 0)

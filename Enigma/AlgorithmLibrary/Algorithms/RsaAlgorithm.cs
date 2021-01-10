@@ -1,9 +1,9 @@
-﻿using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
 
 namespace Enigma
 {
@@ -20,11 +20,11 @@ namespace Enigma
 
         public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
         {
-            byte[] data = new byte[16];
+            var data = new byte[16];
             new RNGCryptoServiceProvider().GetBytes(data);
 
-            using RSACryptoServiceProvider decryptRSA = new RSACryptoServiceProvider();
-            using RSACryptoServiceProvider encryptRSA = new RSACryptoServiceProvider();
+            using var decryptRSA = new RSACryptoServiceProvider();
+            using var encryptRSA = new RSACryptoServiceProvider();
 
             encryptRSA.ImportParameters(publicKey);
             decryptRSA.ImportParameters(privateKey);
@@ -45,8 +45,8 @@ namespace Enigma
             var rdr = new StringReader(publicKey);
             var pemReader = new PemReader(rdr);
 
-            AsymmetricKeyParameter pemObject1 = (AsymmetricKeyParameter)pemReader.ReadObject();
-            AsymmetricCipherKeyPair pemObject2 = DotNetUtilities.GetRsaKeyPair(privateKey);
+            var pemObject1 = (AsymmetricKeyParameter)pemReader.ReadObject();
+            var pemObject2 = DotNetUtilities.GetRsaKeyPair(privateKey);
 
             return pemObject1.Equals(pemObject2.Public);
         }
@@ -55,7 +55,7 @@ namespace Enigma
         {
             byte[] encryptedData;
 
-            using RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+            using var rsaProvider = new RSACryptoServiceProvider();
 
             rsaProvider.ImportParameters(Key);
             encryptedData = rsaProvider.Encrypt(data, false);
@@ -67,7 +67,7 @@ namespace Enigma
         {
             byte[] decryptedData;
 
-            RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+            var rsaProvider = new RSACryptoServiceProvider();
             rsaProvider.ImportParameters(Key);
             decryptedData = rsaProvider.Decrypt(data, false);
 
@@ -76,7 +76,7 @@ namespace Enigma
 
         public byte[] Signature(byte[] data, HashAlgorithm hashAlgo)
         {
-            using RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+            using var rsaProvider = new RSACryptoServiceProvider();
 
             rsaProvider.ImportParameters(Key);
             return rsaProvider.SignData(data, hashAlgo);
@@ -84,7 +84,7 @@ namespace Enigma
 
         public bool VerifySignature(byte[] data, HashAlgorithm hasher, byte[] signature)
         {
-            using RSACryptoServiceProvider rsaProvider = new RSACryptoServiceProvider();
+            using var rsaProvider = new RSACryptoServiceProvider();
 
             rsaProvider.ImportParameters(Key);
             return rsaProvider.VerifyData(data, hasher, signature);

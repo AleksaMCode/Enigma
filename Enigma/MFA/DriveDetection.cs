@@ -1,9 +1,6 @@
-﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Enigma
 {
@@ -12,7 +9,7 @@ namespace Enigma
     /// </summary>
     public class DriveDetection
     {
-        private HashSet<char> drives = null;
+        private readonly HashSet<char> drives = null;
         public char nextDriveLetter { get; set; } = '0';
 
         public DriveDetection()
@@ -45,7 +42,10 @@ namespace Enigma
 
         public bool ReadDataFromDrive(ref byte[] data)
         {
-            while (!Directory.Exists(nextDriveLetter + ":"));
+            while (!Directory.Exists(nextDriveLetter + ":"))
+            {
+                ;
+            }
 
             if (Directory.Exists(nextDriveLetter + ":"))
             {
@@ -59,6 +59,8 @@ namespace Enigma
                     return false;
                 }
             }
+
+            return false;
         }
     }
 }

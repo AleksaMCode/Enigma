@@ -3,49 +3,42 @@
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FB882450-20D1-4561-856F-E7013A9305A3}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{7914B5E2-70B6-4455-8E82-05FA2D13EC89}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Enigma</RootNamespace>
     <AssemblyName>Enigma</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <LangVersion>8.0</LangVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
+    <LangVersion>8.0</LangVersion>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
+    <LangVersion>8.0</LangVersion>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -53,18 +46,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
@@ -74,68 +58,14 @@
     <Reference Include="System.Data.SQLite.Linq, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="EnigmaWpf\Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="EnigmaWpf\Converters\ColorBrightnessConverter.cs" />
-    <Compile Include="CryptedFileParser\EncryptedFile.cs" />
-    <Compile Include="CryptedFileParser\OriginalFile.cs" />
-    <Compile Include="EnigmaWpf\Interfaces\INavigator.cs" />
-    <Compile Include="EnigmaWpf\Models\CertificateValidator.cs" />
-    <Compile Include="EnigmaWpf\Models\LoginControler.cs" />
-    <Compile Include="EnigmaWpf\Models\PasswordAdvisor.cs" />
-    <Compile Include="EnigmaWpf\Models\RegisterControler.cs" />
-    <Compile Include="EnigmaWpf\Models\UserInformation.cs" />
-    <Compile Include="EnigmaWpf\ViewModels\InitialFormViewModel.cs" />
-    <Compile Include="EnigmaWpf\ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="EnigmaWpf\ViewModels\ViewModelBaseWithValidation.cs" />
-    <Compile Include="EnigmaWpf\Views\InitialForm.xaml.cs">
-      <DependentUpon>InitialForm.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="EnigmaWpf\Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Enums\PasswordEntropy.cs" />
-    <Compile Include="UserDbManager\SQLiteConfiguration.cs" />
-    <Compile Include="UserDbManager\User.cs" />
-    <Compile Include="UserDbManager\UserDatabase.cs" />
-    <Compile Include="UserDbManager\UsersContext.cs" />
-    <Page Include="CustomStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="EnigmaWpf\Views\DataTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="EnigmaWpf\Views\InitialForm.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="EnigmaWpf\Views\MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Compile Include="AlgorithmLibrary\Algorithms\AesAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\CamelliaAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\IAlgorithm.cs" />
@@ -145,13 +75,11 @@
     <Compile Include="AlgorithmLibrary\Algorithms\TwofishAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\AlgorithmUtility.cs" />
     <Compile Include="AlgorithmLibrary\FileEncryptionKey.cs" />
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="CryptedFileParser\EncryptedFile.cs" />
     <Compile Include="CryptedFileParser\Exceptions\UnknownCipherModeException.cs" />
     <Compile Include="CryptedFileParser\Exceptions\UnknownCryptAlgoException.cs" />
     <Compile Include="CryptedFileParser\Exceptions\UnknownHashAlgoException.cs" />
+    <Compile Include="CryptedFileParser\OriginalFile.cs" />
     <Compile Include="EFS\Attributes\Attribute.cs" />
     <Compile Include="EFS\Attributes\FileName.cs" />
     <Compile Include="EFS\Attributes\SecurityDescriptor.cs" />
@@ -160,62 +88,25 @@
     <Compile Include="EFS\ISaveObject.cs" />
     <Compile Include="Enums\AttributeType.cs" />
     <Compile Include="Enums\EnigmaEFSError.cs" />
+    <Compile Include="Enums\PasswordEntropy.cs" />
     <Compile Include="MFA\DriveDetection.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Models\CertificateValidator.cs" />
+    <Compile Include="Models\LoginControler.cs" />
+    <Compile Include="Models\PasswordAdvisor.cs" />
+    <Compile Include="Models\RegisterControler.cs" />
+    <Compile Include="Models\UserInformation.cs" />
     <Compile Include="PrivateKeyParsers\ASNParser.cs" />
     <Compile Include="PrivateKeyParsers\InvalidKeyFileException.cs" />
     <Compile Include="PrivateKeyParsers\KeyFileParser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="openssl\ca.pem" />
-    <None Include="openssl\certs\s1.pem" />
-    <None Include="openssl\certs\s2.pem" />
-    <None Include="openssl\certs\s3.pem" />
-    <None Include="openssl\certs\s4.pem" />
-    <None Include="openssl\certs\s5.pem" />
-    <None Include="openssl\certs\s6.pem" />
-    <None Include="openssl\certs\s7.pem" />
-    <None Include="openssl\certs\s8.pem" />
-    <None Include="openssl\crl\list.crl" />
-    <None Include="openssl\private\private.key" />
-    <None Include="openssl\private\priv_1.key" />
-    <None Include="openssl\private\priv_2.key" />
-    <None Include="openssl\private\priv_3.key" />
-    <None Include="openssl\private\priv_4.key" />
-    <None Include="openssl\private\priv_5.key" />
-    <None Include="openssl\private\priv_6.key" />
-    <None Include="openssl\private\priv_7.key" />
-    <None Include="openssl\private\priv_8.key" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserDbManager\SQLiteConfiguration.cs" />
+    <Compile Include="UserDbManager\User.cs" />
+    <Compile Include="UserDbManager\UserDatabase.cs" />
+    <Compile Include="UserDbManager\UsersContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="EnigmaWpf\Controls\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="openssl\users_cert_list.txt" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

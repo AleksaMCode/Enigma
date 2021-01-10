@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace Enigma
 {
@@ -14,7 +14,7 @@ namespace Enigma
 
         public UserInformation LoginPartOne(string username, string password, out UserDatabase data)
         {
-            UserDatabase dataComp = new UserDatabase(this.userDatabasePath);
+            var dataComp = new UserDatabase(userDatabasePath);
 
             var user = dataComp.GetUser(username);
 
@@ -46,10 +46,10 @@ namespace Enigma
             this.privateKeyPath = privateKeyPath;
 
             // decrypt the raw key file and create keyRaw
-            byte[] keyRaw = DecryptTheUserKey(File.ReadAllBytes(this.privateKeyPath), password);
+            var keyRaw = DecryptTheUserKey(File.ReadAllBytes(this.privateKeyPath), password);
 
             var privateParameters = new KeyFileParser(keyRaw).GetParameters();
-            RSACryptoServiceProvider publicKeyProvider = (RSACryptoServiceProvider)user.Certificate.PublicKey.Key;
+            var publicKeyProvider = (RSACryptoServiceProvider)user.Certificate.PublicKey.Key;
 
             if (!RsaAlgorithm.AreKeysMatched(publicKeyProvider.ExportParameters(false), privateParameters))
             {
@@ -59,20 +59,20 @@ namespace Enigma
 
         private bool CheckKeyPassword(byte[] password, byte[] salt, byte[] passwordDigest)
         {
-            byte[] currentPasswordDigest = SHA256.Create().ComputeHash(password.Concat(salt).ToArray());
+            var currentPasswordDigest = SHA256.Create().ComputeHash(password.Concat(salt).ToArray());
 
             return currentPasswordDigest.SequenceEqual(passwordDigest);
         }
 
         private byte[] DecryptTheUserKey(byte[] keyRawEncrypted, string password)
         {
-            byte[] passwordBytes = Encoding.ASCII.GetBytes(password);
-            int startLocation = BitConverter.ToInt32(keyRawEncrypted, 0);
-            int needleSize = BitConverter.ToInt32(keyRawEncrypted, 4);
+            var passwordBytes = Encoding.ASCII.GetBytes(password);
+            var startLocation = BitConverter.ToInt32(keyRawEncrypted, 0);
+            var needleSize = BitConverter.ToInt32(keyRawEncrypted, 4);
 
-            byte[] salt = new byte[16];
-            byte[] needle = new byte[needleSize];
-            byte[] passwordDigest = new byte[256 / 8];
+            var salt = new byte[16];
+            var needle = new byte[needleSize];
+            var passwordDigest = new byte[256 / 8];
 
             Buffer.BlockCopy(keyRawEncrypted, 8, salt, 0, 16);
             Buffer.BlockCopy(keyRawEncrypted, 24, passwordDigest, 0, 32);
@@ -84,9 +84,9 @@ namespace Enigma
 
             Buffer.BlockCopy(needle, 0, keyRawEncrypted, startLocation, needleSize);
 
-            byte[] hash = SHA512.Create().ComputeHash(passwordBytes);
-            byte[] key = new byte[32];
-            byte[] iv = new byte[16];
+            var hash = SHA512.Create().ComputeHash(passwordBytes);
+            var key = new byte[32];
+            var iv = new byte[16];
 
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);

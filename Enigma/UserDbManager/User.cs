@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -20,7 +20,7 @@ namespace Enigma
 
         public bool IsPasswordValid(string password)
         {
-            byte[] passBytes = Encoding.ASCII.GetBytes(password);
+            var passBytes = Encoding.ASCII.GetBytes(password);
             var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(UserDatabase.Pepper).ToArray());
 
             // from March 2019., NIST recommends 80,000 iterations

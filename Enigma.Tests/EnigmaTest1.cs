@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using Enigma;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EnigmaTests
 {

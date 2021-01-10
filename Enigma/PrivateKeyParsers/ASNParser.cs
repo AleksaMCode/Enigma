@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Enigma
@@ -9,53 +9,53 @@ namespace Enigma
 
         public ASNPrivateKeyParser(byte[] rawData)
         {
-            this.reader = new BinaryReader(new MemoryStream(rawData));
+            reader = new BinaryReader(new MemoryStream(rawData));
         }
 
         public byte[] GetNextContent()
         {
-            this.reader.ReadByte();
-            int size = this.GetSize();
+            reader.ReadByte();
+            var size = GetSize();
 
-            byte[] content = this.reader.ReadBytes(size);
+            var content = reader.ReadBytes(size);
 
             return content;
         }
 
         public int EnterNextContent()
         {
-            this.reader.ReadByte();
-            return this.GetSize();
+            reader.ReadByte();
+            return GetSize();
         }
 
         public bool IsNextTag(byte tag)
         {
-            byte x = this.reader.ReadByte();
-            this.reader.BaseStream.Position--;
+            var x = reader.ReadByte();
+            reader.BaseStream.Position--;
             return x == tag;
         }
 
         public byte[] GetNext(int count)
         {
-            return this.reader.ReadBytes(count);
+            return reader.ReadBytes(count);
         }
 
         public void Dispose()
         {
-            this.reader.Close();
+            reader.Close();
         }
 
         private int GetSize()
         {
             int blockSize;
-            var sizeIndicator = this.reader.ReadByte();
+            var sizeIndicator = reader.ReadByte();
             if (sizeIndicator == 0x81)
             {
-                blockSize = this.reader.ReadByte();
+                blockSize = reader.ReadByte();
             }
             else if (sizeIndicator == 0x82)
             {
-                var bytes = this.reader.ReadBytes(2);
+                var bytes = reader.ReadBytes(2);
                 blockSize = BitConverter.ToInt32(new byte[] { bytes[1], bytes[0], 0, 0 }, 0);
             }
             else
@@ -63,12 +63,12 @@ namespace Enigma
                 blockSize = sizeIndicator;
             }
 
-            while (this.reader.ReadByte() == 0)
+            while (reader.ReadByte() == 0)
             {
                 blockSize--;
             }
 
-            this.reader.BaseStream.Position--;
+            reader.BaseStream.Position--;
             return blockSize;
         }
     }

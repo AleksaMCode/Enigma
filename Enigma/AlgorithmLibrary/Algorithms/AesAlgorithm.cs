@@ -1,10 +1,9 @@
-﻿using System;
 using System.IO;
 using System.Linq;
-using Org.BouncyCastle.Crypto;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
 
 
@@ -23,7 +22,7 @@ namespace Enigma
 
         public byte[] IV { get; set; }
 
-        public byte[] AdditionalData { get => this.IV; }
+        public byte[] AdditionalData => IV;
 
         public AesAlgorithm(int keySize, string mode = "CBC")
         {
@@ -66,21 +65,21 @@ namespace Enigma
             switch (ModeSignature)
             {
                 case "OFB":
-                    {
-                        cipher = new BufferedBlockCipher(new OfbBlockCipher(new AesEngine(), 16));
-                        cipher.Init(forEncryption, keyWithIv);
-                        return cipher;
-                    }
+                {
+                    cipher = new BufferedBlockCipher(new OfbBlockCipher(new AesEngine(), 16));
+                    cipher.Init(forEncryption, keyWithIv);
+                    return cipher;
+                }
                 case "CFB":
-                    {
-                        cipher = new BufferedBlockCipher(new CfbBlockCipher(new AesEngine(), 16));
-                        cipher.Init(forEncryption, keyWithIv);
-                        return cipher;
-                    }
+                {
+                    cipher = new BufferedBlockCipher(new CfbBlockCipher(new AesEngine(), 16));
+                    cipher.Init(forEncryption, keyWithIv);
+                    return cipher;
+                }
                 default:
-                    {
-                        throw new UnknownCipherModeException(ModeSignature);
-                    }
+                {
+                    throw new UnknownCipherModeException(ModeSignature);
+                }
             }
         }
 
@@ -88,12 +87,14 @@ namespace Enigma
         {
             if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
             {
-                using AesManaged aes = new AesManaged();
-                aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
+                using var aes = new AesManaged
+                {
+                    Mode = AlgorithmUtility.GetCipherMode(ModeSignature)
+                };
 
                 using var encryptor = aes.CreateEncryptor(Key, IV);
-                using MemoryStream ms = new MemoryStream();
-                using CryptoStream writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
+                using var ms = new MemoryStream();
+                using var writer = new CryptoStream(ms, encryptor, CryptoStreamMode.Write);
 
                 writer.Write(data, 0, data.Length);
                 writer.FlushFinalBlock();
@@ -109,7 +110,7 @@ namespace Enigma
                 {
                     encrypted = new byte[aes.GetOutputSize(data.Length)];
 
-                    int len = aes.ProcessBytes(data, 0, data.Length, encrypted, 0);
+                    var len = aes.ProcessBytes(data, 0, data.Length, encrypted, 0);
                     aes.DoFinal(encrypted, len);
 
                     return encrypted;
@@ -126,12 +127,14 @@ namespace Enigma
         {
             if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
             {
-                using AesManaged aes = new AesManaged();
-                aes.Mode = AlgorithmUtility.GetCipherMode(ModeSignature);
+                using var aes = new AesManaged
+                {
+                    Mode = AlgorithmUtility.GetCipherMode(ModeSignature)
+                };
 
                 using var decryptor = aes.CreateDecryptor(Key, IV);
-                using MemoryStream ms = new MemoryStream(data);
-                using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+                using var ms = new MemoryStream(data);
+                using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
 
                 var decrypted = new byte[data.Length];
                 var bytesRead = cs.Read(decrypted, 0, decrypted.Length);
@@ -147,7 +150,7 @@ namespace Enigma
                 {
                     decrypted = new byte[aes.GetOutputSize(data.Length)];
 
-                    int len = aes.ProcessBytes(data, 0, data.Length, decrypted, 0);
+                    var len = aes.ProcessBytes(data, 0, data.Length, decrypted, 0);
                     aes.DoFinal(decrypted, len);
 
                     return decrypted;
