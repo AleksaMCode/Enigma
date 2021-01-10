@@ -13,5 +13,11 @@ namespace Enigma
         public string EncriptedName { get; internal set; }
 
         public readonly string fileExtension = "at";
+
+        internal EncryptedFile(Stream encrypteFileContent)
+        {
+            encrypteFileContent.Position = 0;
+            EncrypteFileContent = encrypteFileContent;
+        }
     }
 }
