@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CryptedFileParser\EncryptedFile.cs" />
     <Compile Include="CryptedFileParser\OriginalFile.cs" />
     <Compile Include="EnigmaWpf\Models\CertificateValidator.cs" />
     <Compile Include="EnigmaWpf\Models\LoginControler.cs" />
