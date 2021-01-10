@@ -7,6 +7,8 @@ namespace Enigma
     {
         public Stream FileContent { get; internal set; }
 
+        public string FileName { get; internal set; }
+
         public string FileExtension { get; internal set; }
 
         /// <summary>
@@ -14,12 +16,17 @@ namespace Enigma
         /// </summary>
         private string[] allowedExtensions = { "txt", "docx", "png", "jpeg", "pdf" };
 
-        public OriginalFile(Stream fileContent, string fileExtension)
+        public OriginalFile(Stream fileContent, string fileName)
         {
-            if (ExtensionCheck(fileExtension))
+            // tokens[0] = file_name
+            // tokens[1] = file_extension
+            var tokens = fileName.Split('.');
+
+            if (ExtensionCheck(tokens[1]))
             {
                 FileContent = fileContent;
-                FileExtension = fileExtension;
+                FileName = tokens[0];
+                FileExtension = tokens[1];
             }
             else
             {
