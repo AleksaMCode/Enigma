@@ -147,6 +147,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="openssl\ca.pem" />
+    <None Include="openssl\certs\s1.pem" />
+    <None Include="openssl\certs\s2.pem" />
+    <None Include="openssl\certs\s3.pem" />
+    <None Include="openssl\certs\s4.pem" />
+    <None Include="openssl\certs\s5.pem" />
+    <None Include="openssl\certs\s6.pem" />
+    <None Include="openssl\certs\s7.pem" />
+    <None Include="openssl\certs\s8.pem" />
+    <None Include="openssl\crl\list.crl" />
+    <None Include="openssl\private\private.key" />
+    <None Include="openssl\private\priv_1.key" />
+    <None Include="openssl\private\priv_2.key" />
+    <None Include="openssl\private\priv_3.key" />
+    <None Include="openssl\private\priv_4.key" />
+    <None Include="openssl\private\priv_5.key" />
+    <None Include="openssl\private\priv_6.key" />
+    <None Include="openssl\private\priv_7.key" />
+    <None Include="openssl\private\priv_8.key" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
