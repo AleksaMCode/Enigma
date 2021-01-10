@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Enigma
+namespace Enigma.EnigmaWpf.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for InitialForm.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class InitialForm : UserControl
     {
-        public MainWindow()
+        public InitialForm()
         {
             InitializeComponent();
         }

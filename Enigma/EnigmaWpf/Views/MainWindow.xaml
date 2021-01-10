@@ -1,0 +1,82 @@
+<Window
+    x:Class="Enigma.EnigmaWpf.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Enigma.EnigmaWpf.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.BorderBrush>
+        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Offset="0" Color="Black" />
+            <GradientStop Offset="1" Color="White" />
+        </LinearGradientBrush>
+    </Window.BorderBrush>
+    <Window.Resources>
+        <ResourceDictionary Source="DataTemplate.xaml" />
+    </Window.Resources>
+    <Grid>
+        <ContentControl Content="{Binding CurrentControl}" />
+        <Grid Visibility="{Binding IsMessageBoxVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.Background>
+                <SolidColorBrush Opacity="0.5" Color="Gray" />
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                MinWidth="200"
+                MinHeight="100"
+                Background="GhostWhite"
+                BorderBrush="DarkGray"
+                BorderThickness="1"
+                CornerRadius="0">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="8" />
+                        <RowDefinition Height="30" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        x:Name="title"
+                        Grid.Row="0"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="{Binding MessageTitle}" />
+                    <TextBlock
+                        x:Name="message"
+                        Grid.Row="1"
+                        VerticalAlignment="Center"
+                        Text="{Binding MessageText}" />
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Width="60"
+                        Height="24"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Command="{Binding CloseMessageCommand}">
+                        Close
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
