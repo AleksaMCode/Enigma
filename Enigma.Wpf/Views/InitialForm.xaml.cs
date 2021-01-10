@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace Enigma.EnigmaWpf.Views
+namespace Enigma.Wpf.Views
 {
     /// <summary>
     /// Interaction logic for InitialForm.xaml

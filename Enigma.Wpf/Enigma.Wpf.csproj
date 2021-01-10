@@ -140,5 +140,11 @@
   <ItemGroup>
     <Folder Include="Controls\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Enigma\Enigma.csproj">
+      <Project>{7914b5e2-70b6-4455-8e82-05fa2d13ec89}</Project>
+      <Name>Enigma</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

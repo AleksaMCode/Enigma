@@ -1,9 +1,9 @@
 using System.Windows.Input;
-using Enigma.EnigmaWpf.Interfaces;
+using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace Enigma.EnigmaWpf.ViewModels
+namespace Enigma.Wpf.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, INavigator
     {

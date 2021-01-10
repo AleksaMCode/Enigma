@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Enigma.EnigmaWpf.Converters
+namespace Enigma.Wpf.Converters
 {
     /// <summary>
     ///     Used to convert a boolean to a Visibility class property

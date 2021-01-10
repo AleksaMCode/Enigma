@@ -1,4 +1,4 @@
-namespace Enigma.EnigmaWpf.Interfaces
+namespace Enigma.Wpf.Interfaces
 {
     public interface INavigator
     {

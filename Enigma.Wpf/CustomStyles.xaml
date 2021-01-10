@@ -1,8 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Converters="clr-namespace:Enigma.EnigmaWpf.Converters"
-    xmlns:local="clr-namespace:Enigma">
+    xmlns:Converters="clr-namespace:Enigma.Wpf.Converters">
     <Converters:ColorBrightnessConverter x:Key="ColorConverter" />
     <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <SolidColorBrush x:Key="MainDarkColor" Color="#333" />

@@ -2,10 +2,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
-using Enigma.EnigmaWpf.Interfaces;
+using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight.Command;
 
-namespace Enigma.EnigmaWpf.ViewModels
+namespace Enigma.Wpf.ViewModels
 {
     internal class InitialFormViewModel : ViewModelBaseWithValidation
     {

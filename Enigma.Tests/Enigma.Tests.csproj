@@ -56,9 +56,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Enigma.Wpf\Enigma.Wpf.csproj">
-      <Project>{fb882450-20d1-4561-856f-e7013a9305a3}</Project>
-      <Name>Enigma.Wpf</Name>
+    <ProjectReference Include="..\Enigma\Enigma.csproj">
+      <Project>{7914b5e2-70b6-4455-8e82-05fa2d13ec89}</Project>
+      <Name>Enigma</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

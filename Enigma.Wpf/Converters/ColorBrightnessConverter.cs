@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Enigma.EnigmaWpf.Converters
+namespace Enigma.Wpf.Converters
 {
     public class ColorBrightnessConverter : IValueConverter
     {

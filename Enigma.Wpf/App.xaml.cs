@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace Enigma
+namespace Enigma.Wpf
 {
     /// <summary>
     /// Interaction logic for App.xaml

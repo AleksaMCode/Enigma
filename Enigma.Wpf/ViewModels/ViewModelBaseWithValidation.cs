@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using GalaSoft.MvvmLight;
 
-namespace Enigma.EnigmaWpf.ViewModels
+namespace Enigma.Wpf.ViewModels
 {
     public abstract class ViewModelBaseWithValidation : ViewModelBase
     {
