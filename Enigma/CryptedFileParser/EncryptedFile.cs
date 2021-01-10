@@ -15,6 +15,11 @@ namespace Enigma
 
         public readonly string fileExtension = "at";
 
+        /// <summary>
+        /// Standard Information, File Name and Security Descriptor header.
+        /// </summary>
+        public Attribute[] Headers = new Attribute[3];
+
         internal EncryptedFile(Stream encrypteFileContent)
         {
             encrypteFileContent.Position = 0;
