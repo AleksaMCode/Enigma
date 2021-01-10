@@ -1,0 +1,8 @@
+1. Aleksa Aleksic	root_ca		2048	not_expired		correct_keyUsage					not_revoked
+2. Marko Markovic	root_ca		2048	not_expired		correct_keyUsage					not_revoked
+3. Janko Jankovic	root_ca		2048	not_expired		correct_keyUsage					not_revoked
+4. Stefan Stefic	root_ca		2048	not_expired		correct_keyUsage					revoked
+5. Luka Lukic		root_ca		2048	expired			correct_keyUsage					not_revoked
+6. Vlaja Vlajic		root_ca		1024	not_expired		correct_keyUsage					not_revoked
+7. Nikola Nikolic	root_ca		2048	not_expired		incorrect_keyUsage(encipherOnly)	not_revoked
+8. Jovan Jovic		root_ca_2	2048	not_expired		correct_keyUsage					not_revoked

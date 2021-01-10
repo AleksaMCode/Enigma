@@ -179,6 +179,9 @@
     <Folder Include="EnigmaWpf\ViewModel\" />
     <Folder Include="EnigmaWpf\Views\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="openssl\users_cert_list.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
