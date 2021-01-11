@@ -39,6 +39,16 @@ namespace Enigma.Models
         }
 
         /// <summary>
+        /// Checks if key size is greater than 2048 bits.
+        /// </summary>
+        /// <returns>true if the key is equal or greater than 2048 bits, otherwise returns false.</returns>
+        public static bool VerifyCertificateKeyLength(X509Certificate2 certificateToValidate)
+        {
+            //Since 2015, NIST recommends a minimum of 2048 - bit keys for RSA, an update to the widely - accepted recommendation of a 1024 - bit minimum since at least 2002.
+            return certificateToValidate.PublicKey.Key.KeySize >= 2048;
+        }
+
+        /// <summary>
         /// Check if certificate has been revoked.
         /// </summary>
         /// <param name="certificateToValidate"> Certificate that is checked.</param>

@@ -40,6 +40,11 @@ namespace Enigma.Models
 
             var cert = new X509Certificate2(certificateFilePath);
 
+
+            if (CertificateValidator.VerifyCertificateKeyLength(cert) == false)
+            {
+                throw new Exception("Key length has to be at least 2048 bits.");
+            }
             if (CertificateValidator.VerifyCertificate(cert) == false)
             {
                 throw new Exception("Certificate is invalid.");
