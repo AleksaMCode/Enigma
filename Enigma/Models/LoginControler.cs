@@ -82,7 +82,7 @@ namespace Enigma
                 throw new Exception("Invalid password.");
             }
 
-            Buffer.BlockCopy(needle, 0, keyRawEncrypted, startLocation, needleSize);
+            Buffer.BlockCopy(keyRawEncrypted, startLocation, needle, 0, needleSize);
 
             var hash = SHA512.Create().ComputeHash(passwordBytes);
             var key = new byte[32];
