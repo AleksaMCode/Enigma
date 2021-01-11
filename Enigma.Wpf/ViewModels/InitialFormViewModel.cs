@@ -51,8 +51,7 @@ namespace Enigma.Wpf.ViewModels
                 {
                     AreActionsEnabled = false;
 
-
-                    navigator.GoToControl(null); // next control here on successfull login
+                    navigator.GoToControl(null); // next control here on successful login
                 }
                 else
                 {

@@ -7,5 +7,9 @@ namespace Enigma.Wpf.Interfaces
         void GoToPreviousControl();
 
         void ShowMessage(string title, string message);
+
+        void ShowProgressBox(string loadingMessage);
+
+        void HideProgressBox();
     }
 }

@@ -7,6 +7,13 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    MinWidth="500"
+    MinHeight="400"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextHintingMode="Auto"
+    TextOptions.TextRenderingMode="ClearType"
+    Topmost="True"
+    UseLayoutRounding="True"
     mc:Ignorable="d">
     <Window.BorderBrush>
         <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -19,7 +26,7 @@
     </Window.Resources>
     <Grid>
         <ContentControl Content="{Binding CurrentControl}" />
-        <Grid Visibility="{Binding IsMessageBoxVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid Visibility="{Binding IsBoxVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid.Background>
                 <SolidColorBrush Opacity="0.5" Color="Gray" />
             </Grid.Background>
@@ -42,38 +49,67 @@
                 BorderBrush="DarkGray"
                 BorderThickness="1"
                 CornerRadius="0">
-                <Grid Margin="20">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="8" />
-                        <RowDefinition Height="30" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock
-                        x:Name="title"
-                        Grid.Row="0"
-                        VerticalAlignment="Center"
-                        FontWeight="SemiBold"
-                        Text="{Binding MessageTitle}" />
-                    <TextBlock
-                        x:Name="message"
-                        Grid.Row="1"
-                        VerticalAlignment="Center"
-                        Text="{Binding MessageText}" />
-                    <Button
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Width="60"
-                        Height="24"
+                <Grid>
+                    <Grid
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Command="{Binding CloseMessageCommand}">
-                        Close
-                    </Button>
+                        Visibility="{Binding IsLoadingBoxShown, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="2"
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding MessageText}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Margin="0,-50,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="60"
+                            Foreground="CornflowerBlue"
+                            Text="{Binding ProgressTextAnimation}" />
+                    </Grid>
+                    <Grid Margin="20" Visibility="{Binding IsMessageBoxShown, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="title"
+                            Grid.Row="0"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="{Binding MessageTitle}" />
+                        <TextBlock
+                            x:Name="message"
+                            Grid.Row="1"
+                            VerticalAlignment="Center"
+                            Text="{Binding MessageText}" />
+                        <Button
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Width="60"
+                            Height="24"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding CloseMessageCommand}">
+                            Close
+                        </Button>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>

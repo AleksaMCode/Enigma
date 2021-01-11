@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight;
@@ -9,9 +11,13 @@ namespace Enigma.Wpf.ViewModels
     {
         private object previousControl = null;
         private object currentControl;
-        private bool isMessageBoxVisible;
+        private bool isBoxVisible;
         private string messageTitle;
         private string messageText;
+        private bool isMessageBoxShown;
+        private bool isLoadingBoxShown;
+        private bool runAnimation;
+        private string progressTextAnimation;
 
         public MainWindowViewModel()
         {
@@ -29,10 +35,32 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        public bool IsMessageBoxVisible
+        public bool IsBoxVisible
         {
-            get => isMessageBoxVisible;
-            set => Set(() => IsMessageBoxVisible, ref isMessageBoxVisible, value);
+            get => isBoxVisible;
+            set => Set(() => IsBoxVisible, ref isBoxVisible, value);
+        }
+
+        public bool IsMessageBoxShown
+        {
+            get => isMessageBoxShown;
+            set
+            {
+                isLoadingBoxShown = false;
+                RaisePropertyChanged(() => IsLoadingBoxShown);
+                Set(() => IsMessageBoxShown, ref isMessageBoxShown, value);
+            }
+        }
+
+        public bool IsLoadingBoxShown
+        {
+            get => isLoadingBoxShown;
+            set
+            {
+                isMessageBoxShown = false;
+                RaisePropertyChanged(() => IsMessageBoxShown);
+                Set(() => IsLoadingBoxShown, ref isLoadingBoxShown, value);
+            }
         }
 
         public string MessageTitle
@@ -47,7 +75,13 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => MessageText, ref messageText, value);
         }
 
-        public ICommand CloseMessageCommand => new RelayCommand(() => IsMessageBoxVisible = false);
+        public string ProgressTextAnimation
+        {
+            get => progressTextAnimation;
+            set => Set(() => ProgressTextAnimation, ref progressTextAnimation, value);
+        }
+
+        public ICommand CloseMessageCommand => new RelayCommand(() => IsBoxVisible = false);
 
         public void GoToControl(object control)
         {
@@ -60,11 +94,50 @@ namespace Enigma.Wpf.ViewModels
             previousControl = null;
         }
 
+        public void HideProgressBox()
+        {
+            IsBoxVisible = false;
+            runAnimation = false;
+        }
+
         public void ShowMessage(string title, string message)
         {
             MessageTitle = title;
             MessageText = message;
-            IsMessageBoxVisible = true;
+            runAnimation = false;
+            IsMessageBoxShown = true;
+            IsBoxVisible = true;
+        }
+
+        public void ShowProgressBox(string loadingMessage)
+        {
+            MessageText = loadingMessage;
+            runAnimation = true;
+
+            var pauseTime = 500;
+            var phases = new string[] { "..", "...", "....", ".....", "....", "...", "..", "." };
+
+            ProgressTextAnimation = phases[phases.Length - 1];
+            Task.Run(async () =>
+            {
+                try
+                {
+                    while (runAnimation)
+                    {
+                        for (var i = 0; i < phases.Length && runAnimation; i++)
+                        {
+                            await Task.Delay(pauseTime);
+                            Application.Current.Dispatcher.Invoke(() => ProgressTextAnimation = phases[i]);
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            });
+
+            IsLoadingBoxShown = true;
+            IsBoxVisible = true;
         }
     }
 }
