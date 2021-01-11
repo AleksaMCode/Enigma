@@ -9,7 +9,13 @@ namespace Enigma.Models
 {
     public static class CertificateValidator
     {
-        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string msg)
+        /// <summary>
+        /// Checks if the certificate has expired and it also checks if it is issued by a proper root certificate.
+        /// </summary>
+        /// <param name="certificateToValidate">Certificate that is checked.</param>
+        /// <param name="error">String describing error.</param>
+        /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise returns false.</returns>
+        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error)
         {
             var authority = new X509Certificate2(/*ROOT CA location*/);
 
@@ -24,7 +30,7 @@ namespace Enigma.Models
 
             if (!isChainValid)
             {
-                msg = "Certificate has expired.";
+                error = "Certificate has expired.";
                 return false;
             }
 
@@ -33,17 +39,18 @@ namespace Enigma.Models
 
             if (!isChainIssuedByRoot)
             {
-                msg = "Certificate isn't signed by a proper root CA.";
+                error = "Certificate isn't signed by a proper root CA.";
                 return false;
             }
 
-            msg = null;
+            error = null;
             return true;
         }
 
         /// <summary>
-        /// Checks if key size is greater than 2048 bits.
+        /// Checks if key size is equal or greater than 2048 bits.
         /// </summary>
+        /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <returns>true if the key is equal or greater than 2048 bits, otherwise returns false.</returns>
         public static bool VerifyCertificateKeyLength(X509Certificate2 certificateToValidate)
         {
@@ -55,7 +62,7 @@ namespace Enigma.Models
         /// Check if certificate has been revoked.
         /// </summary>
         /// <param name="certificateToValidate"> Certificate that is checked.</param>
-        /// <returns></returns>
+        /// <returns>true if certificate has been revoked, otherwise returns false.</returns>
         public static bool VerifyCertificateRevocationStatus(X509Certificate2 certificateToValidate)
         {
             try
@@ -72,6 +79,11 @@ namespace Enigma.Models
             }
         }
 
+        /// <summary>
+        /// Check if certificate has been revoked.
+        /// </summary>
+        /// <param name="certificateToValidate"> Certificate that is checked.</param>
+        /// <returns>true if the key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>, otherwise returns false.</returns>
         public static bool VerifyKeyUsage(X509Certificate2 certificateToValidate)
         {
             var extensions = certificateToValidate.Extensions.OfType<X509KeyUsageExtension>().ToList();
