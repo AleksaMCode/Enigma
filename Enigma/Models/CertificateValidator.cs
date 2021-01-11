@@ -17,7 +17,7 @@ namespace Enigma.Models
         /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise returns false.</returns>
         public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error)
         {
-            var authority = new X509Certificate2(/*ROOT CA location*/);
+            var authority = new X509Certificate2(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\ca.pem");
 
             using var chain = new X509Chain();
             chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
@@ -67,7 +67,7 @@ namespace Enigma.Models
         {
             try
             {
-                var buffer = File.ReadAllBytes("x"/*CRL List path*/);
+                var buffer = File.ReadAllBytes(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\crl\list.crl");
                 var crlParser = new X509CrlParser();
                 var crl = crlParser.ReadCrl(buffer);
 
