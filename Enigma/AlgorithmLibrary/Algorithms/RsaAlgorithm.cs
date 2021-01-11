@@ -36,12 +36,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
             var decrypted = decryptRSA.Decrypt(encryptRSA.Encrypt(data, false), false);
 
-            if (data.SequenceEqual(decrypted))
-            {
-                return true;
-            }
-            // else
-            return false;
+            return data.SequenceEqual(decrypted);
         }
 
         /// <summary>
