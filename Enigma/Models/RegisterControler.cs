@@ -84,7 +84,7 @@ namespace Enigma
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
             var haystackSize = needle.Length * 10;
-            var startLocation = 0;
+            int startLocation;
             if (new DriveInfo(rootDir).AvailableFreeSpace > haystackSize)
             {
                 var haystack = new byte[haystackSize];
