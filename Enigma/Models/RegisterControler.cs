@@ -86,13 +86,8 @@ namespace Enigma
         }
 
         /// <summary>
-        /// ImplemNeedleInAHaystack
+        /// Implementation of 'Needle in a Haystack' steganography.
         /// </summary>
-        /// <param name="rootDir"></param>
-        /// <param name="path"></param>
-        /// <param name="needle"></param>
-        /// <param name="salt"></param>
-        /// <param name="passwordDigest"></param>
         private void HideMyNeedle(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
@@ -110,17 +105,17 @@ namespace Enigma
                 startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
 
                 var startLocationBytes = BitConverter.GetBytes(startLocation);
+
                 //if (BitConverter.IsLittleEndian)
-                //{
                 //    Array.Reverse(startLocationBytes);
-                //}
+
                 Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4); // copy startLocation
 
                 var needleSize = BitConverter.GetBytes(needle.Length);
+
                 //if (BitConverter.IsLittleEndian)
-                //{
                 //    Array.Reverse(haystackSizeBytes);
-                //}
+
                 Buffer.BlockCopy(needleSize, 0, haystack, 4, 4); // copy needleSize
 
                 Buffer.BlockCopy(salt, 0, haystack, 8, 16); // copy salt
