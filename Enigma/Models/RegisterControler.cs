@@ -54,6 +54,11 @@ namespace Enigma
             data.AddUser(username, password, File.ReadAllBytes(certificateFilePath));
         }
 
+        /// <summary>
+        /// User key is encripted using AES-256-OFB. Users password is stored as a SHA256 hash in the haystack.
+        /// </summary>
+        /// <param name="privateKeyPath">Path to users private key.</param>
+        /// <param name="password">User chosen password which is used to create KEY and IV that are used for AES encryption.</param>
         internal void EncryptUserKey(string privateKeyPath, string password)
         {
             var passwordBytes = Encoding.ASCII.GetBytes(password);
@@ -69,8 +74,8 @@ namespace Enigma
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
 
-            NeedleInAHaystack(new FileInfo(privateKeyPath).Directory.Root.FullName,
-                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv).Encrypt(keyRaw), ref salt, ref passwordDigest);
+            HideMyNeedle(new FileInfo(privateKeyPath).Directory.Root.FullName,
+                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), ref salt, ref passwordDigest);
 
             // data scrambling
             new RNGCryptoServiceProvider().GetBytes(iv);
@@ -80,7 +85,15 @@ namespace Enigma
             new RNGCryptoServiceProvider().GetBytes(passwordBytes);
         }
 
-        private void NeedleInAHaystack(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
+        /// <summary>
+        /// ImplemNeedleInAHaystack
+        /// </summary>
+        /// <param name="rootDir"></param>
+        /// <param name="path"></param>
+        /// <param name="needle"></param>
+        /// <param name="salt"></param>
+        /// <param name="passwordDigest"></param>
+        private void HideMyNeedle(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
@@ -93,7 +106,7 @@ namespace Enigma
             {
                 var haystack = new byte[haystackSize];
                 new RNGCryptoServiceProvider().GetBytes(haystack);
-               
+
                 startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
 
                 var startLocationBytes = BitConverter.GetBytes(startLocation);
