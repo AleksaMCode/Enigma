@@ -28,7 +28,7 @@ namespace Enigma
             }
 
             // verify if client certificate is signed by proper root
-            var isChainIssuedByRoot = chain.ChainElements.Cast<X509ChainElement>().All(x => x.Certificate.Thumbprint == authority.Thumbprint); // or Any insted of All
+            var isChainIssuedByRoot = chain.ChainElements.Cast<X509ChainElement>().Any(x => x.Certificate.Thumbprint == authority.Thumbprint);
 
             if (!isChainIssuedByRoot)
             {

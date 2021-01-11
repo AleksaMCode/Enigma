@@ -42,7 +42,7 @@ namespace Enigma
             {
                 throw new Exception("Certificate is invalid.");
             }
-            else if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == false)
+            else if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
             {
                 throw new Exception("Certificate has been revoked.");
             }
