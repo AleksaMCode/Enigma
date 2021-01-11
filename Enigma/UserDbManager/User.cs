@@ -14,8 +14,6 @@ namespace Enigma
 
         public byte[] PassHash { get; set; }
 
-        public bool IsExternal { get; set; }
-
         public byte[] PublicCertificate { get; set; }
 
         public bool IsPasswordValid(string password)
