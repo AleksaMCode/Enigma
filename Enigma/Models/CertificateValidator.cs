@@ -9,7 +9,7 @@ namespace Enigma.Models
 {
     public static class CertificateValidator
     {
-        public static bool VerifyCertificate(X509Certificate2 certificateToValidate)
+        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string msg)
         {
             var authority = new X509Certificate2(/*ROOT CA location*/);
 
@@ -24,6 +24,7 @@ namespace Enigma.Models
 
             if (!isChainValid)
             {
+                msg = "Certificate has expired.";
                 return false;
             }
 
@@ -32,9 +33,11 @@ namespace Enigma.Models
 
             if (!isChainIssuedByRoot)
             {
+                msg = "Certificate isn't signed by a proper root CA.";
                 return false;
             }
 
+            msg = null;
             return true;
         }
 
