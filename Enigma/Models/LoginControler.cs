@@ -51,7 +51,7 @@ namespace Enigma
             var privateParameters = new KeyFileParser(keyRaw).GetParameters();
             var publicKeyProvider = (RSACryptoServiceProvider)user.Certificate.PublicKey.Key;
 
-            if (!RsaAlgorithm.AreKeysMatched(publicKeyProvider.ExportParameters(false), privateParameters))
+            if (!RsaAlgorithm.CompareKeys(publicKeyProvider.ExportParameters(false), privateParameters))
             {
                 throw new Exception("The given private key does not match this user's certificate.");
             }
