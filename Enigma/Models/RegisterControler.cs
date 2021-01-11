@@ -147,6 +147,10 @@ namespace Enigma.Models
             }
         }
 
+        /// <summary>
+        /// Generates a random password with a high entropy.
+        /// </summary>
+        /// <returns>Random ASCII password.</returns>
         internal string GenerateRandomPassword()
         {
             var passArray = new char[30];
@@ -192,6 +196,10 @@ namespace Enigma.Models
             return new string(delimiter);
         }
 
+        /// <summary>
+        /// Generates a random passphrase that contains between 6 and 10 words using a <em>Diceware</em> method (<see href="https://www.eff.org/dice">EFF Dice-Generated Passphrases</see>).
+        /// </summary>
+        /// <returns>Random ASCII password createad using a <em>Diceware</em> method.</returns>
         internal string GeneratePassphrase()
         {
             var diceRollResult = 0;
