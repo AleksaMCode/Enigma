@@ -45,9 +45,21 @@ namespace Enigma
         }
 
         /// <summary>
-        /// Compares public RSA key with a public key extracted from a private RSA key. 
+        /// Compares public RSA key with a public key extracted from a private RSA key.
+        /// This method is slower than AreKeysMatched method.
         /// </summary>
         /// <returns>true if the keys match, otherwise returns false.</returns>
+        public static bool CompareKeys(RSAParameters publicKey, RSAParameters privateKey)
+        {
+            return ByteArrayCompare(publicKey.Modulus, privateKey.Modulus) && ByteArrayCompare(publicKey.Exponent, privateKey.Exponent);
+        }
+
+        /// <summary>
+        /// Compares public RSA key with a public key extracted from a private RSA key.
+        /// This method is slower than CompareKeys method.
+        /// </summary>
+        /// <returns>true if the keys match, otherwise returns false.</returns>
+        [ObsoleteAttribute("This method is obsolete. Call CompareKeys instead.", true)]
         public static bool AreKeysMatched2(RSAParameters publicKey, RSAParameters privateKey)
         {
             var pemObject1 = DotNetUtilities.GetRsaPublicKey(publicKey);
