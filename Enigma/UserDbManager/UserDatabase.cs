@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -30,6 +31,12 @@ namespace Enigma.UserDbManager
 
         public void AddUser(string username, string password, byte[] certificate)
         {
+            // check if the username is unique.
+            if (GetUser(username) != null)
+            {
+                throw new Exception(String.Format("Username '{0}' already exists.", username));
+            }
+
             var passBytes = Encoding.ASCII.GetBytes(password);
 
             // The NIST guidelines require that passwords be salted with at least 32 bits of data and hashed with
