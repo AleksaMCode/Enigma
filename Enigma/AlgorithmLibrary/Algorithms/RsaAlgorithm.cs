@@ -17,10 +17,10 @@ namespace Enigma
             Key = rsaKeyParams;
         }
 
-
         /// <summary>
         /// Compares public RSA key with a private RSA key. Random data is first encrypted using a private key
         /// and then decrypted with a public key. If the original data matches the obtained data then the keys match.
+        /// This method is slower than CompareKeys method.
         /// </summary>
         /// <returns>true if the keys match, otherwise returns false.</returns>
         public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
@@ -46,12 +46,12 @@ namespace Enigma
 
         /// <summary>
         /// Compares public RSA key with a public key extracted from a private RSA key.
-        /// This method is slower than AreKeysMatched method.
+        /// This method is faster than AreKeysMatched method.
         /// </summary>
         /// <returns>true if the keys match, otherwise returns false.</returns>
         public static bool CompareKeys(RSAParameters publicKey, RSAParameters privateKey)
         {
-            return ByteArrayCompare(publicKey.Modulus, privateKey.Modulus) && ByteArrayCompare(publicKey.Exponent, privateKey.Exponent);
+            return publicKey.Modulus.SequenceEqual(privateKey.Modulus) && publicKey.Exponent.SequenceEqual(privateKey.Exponent);
         }
 
         /// <summary>
@@ -71,6 +71,7 @@ namespace Enigma
             return ByteArrayCompare(rsaParams1.Modulus, rsaParams2.Modulus) && ByteArrayCompare(rsaParams1.Exponent, rsaParams2.Exponent);
         }
 
+        [Obsolete("Only used in a deprecated method AreKeysMatched2")]
         private static bool ByteArrayCompare(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
         {
             return array1.SequenceEqual(array2);
