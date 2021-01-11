@@ -1,9 +1,7 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 
 namespace Enigma
@@ -19,6 +17,12 @@ namespace Enigma
             Key = rsaKeyParams;
         }
 
+
+        /// <summary>
+        /// Compares public RSA key with a private RSA key. Random data is first encrypted using a private key
+        /// and then decrypted with a public key. If the original data matches the obtained data then the keys match.
+        /// </summary>
+        /// <returns>true if the keys match, otherwise returns false.</returns>
         public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
         {
             var data = new byte[16];
@@ -40,16 +44,19 @@ namespace Enigma
             return false;
         }
 
-        // TODO: test this method
-        public static bool AreKeysMatched(string publicKey, RSAParameters privateKey)
+        /// <summary>
+        /// Compares public RSA key with a public key extracted from a private RSA key. 
+        /// </summary>
+        /// <returns>true if the keys match, otherwise returns false.</returns>
+        public static bool AreKeysMatched2(RSAParameters publicKey, RSAParameters privateKey)
         {
-            var rdr = new StringReader(publicKey);
-            var pemReader = new PemReader(rdr);
+            var pemObject1 = DotNetUtilities.GetRsaPublicKey(publicKey);
+            var rsaParams1 = DotNetUtilities.ToRSAParameters((RsaKeyParameters)pemObject1);
 
-            var pemObject1 = (AsymmetricKeyParameter)pemReader.ReadObject();
             var pemObject2 = DotNetUtilities.GetRsaKeyPair(privateKey);
+            var rsaParams2 = DotNetUtilities.ToRSAParameters((RsaKeyParameters)pemObject2.Public);
 
-            return pemObject1.Equals(pemObject2.Public);
+            return ByteArrayCompare(rsaParams1.Modulus, rsaParams2.Modulus) && ByteArrayCompare(rsaParams1.Exponent, rsaParams2.Exponent);
         }
 
         private static bool ByteArrayCompare(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
