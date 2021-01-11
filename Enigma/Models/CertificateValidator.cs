@@ -80,7 +80,7 @@ namespace Enigma.Models
         }
 
         /// <summary>
-        /// Check if certificate has been revoked.
+        /// Check if certificate key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>.
         /// </summary>
         /// <param name="certificateToValidate"> Certificate that is checked.</param>
         /// <returns>true if the key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>, otherwise returns false.</returns>
