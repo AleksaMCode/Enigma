@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -49,6 +50,11 @@ namespace Enigma
             var pemObject2 = DotNetUtilities.GetRsaKeyPair(privateKey);
 
             return pemObject1.Equals(pemObject2.Public);
+        }
+
+        private static bool ByteArrayCompare(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
+        {
+            return array1.SequenceEqual(array2);
         }
 
         public byte[] Encrypt(byte[] data)
