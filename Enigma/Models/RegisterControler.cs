@@ -83,15 +83,17 @@ namespace Enigma
         private void NeedleInAHaystack(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
-            var haystackSize = needle.Length * 10;
+            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+            csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+
+            var haystackSize = (needle.Length + csprng.Next(1_024, 4_096)) * 100_000;
             int startLocation;
+
             if (new DriveInfo(rootDir).AvailableFreeSpace > haystackSize)
             {
                 var haystack = new byte[haystackSize];
                 new RNGCryptoServiceProvider().GetBytes(haystack);
-
-                var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-                csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+               
                 startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
 
                 var startLocationBytes = BitConverter.GetBytes(startLocation);
