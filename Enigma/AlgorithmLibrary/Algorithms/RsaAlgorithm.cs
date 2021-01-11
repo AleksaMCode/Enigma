@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 
-namespace Enigma
+namespace Enigma.AlgorithmLibrary.Algorithms
 {
     public class RsaAlgorithm : IAsymmetricAlgorithm
     {

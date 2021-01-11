@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Enigma.AlgorithmLibrary;
 
 namespace Enigma.EFS.Attributes
 {

@@ -1,4 +1,4 @@
-﻿namespace Enigma
+namespace Enigma.AlgorithmLibrary
 {
     /// <summary>
     /// EnigmaEFS works by encrypting a file with a unique symmetric key (Key + IV), also known as the File Encryption Key, or FEK.

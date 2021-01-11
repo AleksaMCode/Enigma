@@ -4,11 +4,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Enigma.AlgorithmLibrary.Algorithms;
+using Enigma.UserDbManager;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Prng;
 using Org.BouncyCastle.Security;
 
-namespace Enigma
+namespace Enigma.Models
 {
     public class RegisterControler
     {

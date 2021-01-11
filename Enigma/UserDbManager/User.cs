@@ -2,7 +2,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Enigma
+namespace Enigma.UserDbManager
 {
     public class User
     {

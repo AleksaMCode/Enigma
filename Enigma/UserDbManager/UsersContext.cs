@@ -1,7 +1,7 @@
-﻿using System.Data.Entity;
+using System.Data.Entity;
 using System.Data.SQLite;
 
-namespace Enigma
+namespace Enigma.UserDbManager
 {
     internal class UsersContext : DbContext
     {

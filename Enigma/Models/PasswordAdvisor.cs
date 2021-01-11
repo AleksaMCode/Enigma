@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Enigma.Enums;
 
-namespace Enigma
+namespace Enigma.Models
 {
     public static class PasswordAdvisor
     {

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Enigma
+namespace Enigma.PrivateKeyParsers
 {
     internal class ASNPrivateKeyParser : IDisposable
     {

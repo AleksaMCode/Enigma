@@ -1,4 +1,4 @@
-namespace Enigma
+namespace Enigma.AlgorithmLibrary.Algorithms
 {
     /// <summary>
     /// Interface for implementation all symmetric-key algorithms.

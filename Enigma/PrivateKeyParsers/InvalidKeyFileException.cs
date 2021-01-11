@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 
-namespace Enigma
+namespace Enigma.PrivateKeyParsers
 {
     public class InvalidKeyFileException : Exception
     {

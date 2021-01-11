@@ -4,8 +4,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Enigma.AlgorithmLibrary.Algorithms;
+using Enigma.PrivateKeyParsers;
+using Enigma.UserDbManager;
 
-namespace Enigma
+namespace Enigma.Models
 {
     public class LoginControler
     {

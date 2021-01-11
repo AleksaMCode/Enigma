@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Enigma
+namespace Enigma.PrivateKeyParsers
 {
     public class KeyFileParser
     {

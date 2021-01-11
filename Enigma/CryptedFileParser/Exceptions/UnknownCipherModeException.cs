@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Enigma
+namespace Enigma.CryptedFileParser.Exceptions
 {
     public class UnknownCipherModeException : Exception
     {

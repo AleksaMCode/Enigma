@@ -1,12 +1,13 @@
 using System;
 using System.Security.Cryptography;
+using Enigma.CryptedFileParser.Exceptions;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace Enigma
+namespace Enigma.AlgorithmLibrary.Algorithms
 {
     /// <summary>
     /// Camellia specifies the 128-bit block size and 128-, 192-, and 256-bit key sizes, the same interface as the Advanced Encryption Standard (AES).

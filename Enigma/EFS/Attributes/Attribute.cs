@@ -1,6 +1,7 @@
-﻿using System;
+using System;
+using Enigma.Enums;
 
-namespace Enigma
+namespace Enigma.EFS.Attributes
 {
     public abstract class Attribute : ISaveObject
     {

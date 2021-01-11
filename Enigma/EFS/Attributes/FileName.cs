@@ -1,4 +1,6 @@
-namespace Enigma
+using Enigma.Enums;
+
+namespace Enigma.EFS.Attributes
 {
     public class FileName : Attribute
     {

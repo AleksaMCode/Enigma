@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Enigma
+namespace Enigma.EFS
 {
     /// <summary>
     /// Allows to create, modify or manipulate an Enigma Encripted File System.

@@ -1,4 +1,4 @@
-namespace Enigma
+namespace Enigma.Enums
 {
     public enum EnigmaEFSError
     {

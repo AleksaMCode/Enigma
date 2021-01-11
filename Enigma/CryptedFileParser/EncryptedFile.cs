@@ -1,8 +1,10 @@
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Enigma.AlgorithmLibrary.Algorithms;
 
-namespace Enigma
+namespace Enigma.CryptedFileParser
 {
     public class EncryptedFile
     {

@@ -1,7 +1,9 @@
 using System;
 using System.Security.Cryptography;
+using Enigma.AlgorithmLibrary.Algorithms;
+using Enigma.CryptedFileParser.Exceptions;
 
-namespace Enigma
+namespace Enigma.AlgorithmLibrary
 {
     internal static class AlgorithmUtility
     {

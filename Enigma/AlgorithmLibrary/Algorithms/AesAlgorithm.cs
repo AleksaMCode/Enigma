@@ -1,13 +1,14 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Enigma.CryptedFileParser.Exceptions;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
 
 
-namespace Enigma
+namespace Enigma.AlgorithmLibrary.Algorithms
 {
     public class AesAlgorithm : IAlgorithm
     {

@@ -1,7 +1,8 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Enigma.UserDbManager;
 
-namespace Enigma
+namespace Enigma.Models
 {
     public class UserInformation
     {

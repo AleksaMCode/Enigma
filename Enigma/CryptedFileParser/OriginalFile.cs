@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Enigma
+namespace Enigma.CryptedFileParser
 {
     public class OriginalFile
     {

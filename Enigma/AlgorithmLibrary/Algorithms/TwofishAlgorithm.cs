@@ -1,12 +1,13 @@
 using System;
 using System.Security.Cryptography;
+using Enigma.CryptedFileParser.Exceptions;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace Enigma
+namespace Enigma.AlgorithmLibrary.Algorithms
 {
     public class TwofishAlgorithm : IAlgorithm
     {
