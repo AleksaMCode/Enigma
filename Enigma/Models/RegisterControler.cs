@@ -59,6 +59,7 @@ namespace Enigma.Models
             }
 
             data.AddUser(username, password, File.ReadAllBytes(certificateFilePath));
+            Directory.CreateDirectory(String.Format(@"D:\EnigmaEFS\{0}", username));
         }
 
         /// <summary>
