@@ -67,8 +67,8 @@ namespace Enigma
                 return certificateToValidate.Version < 3;
             }
 
-            var keyUsageFlags = extensions.Select((ext) => ext.KeyUsages).ToList();
-            return keyUsageFlags.Contains(X509KeyUsageFlags.KeyEncipherment) && keyUsageFlags.Contains(X509KeyUsageFlags.DigitalSignature);
+            var keyUsageFlags = extensions.Select(ext => ext.KeyUsages).ToList()[0];
+            return keyUsageFlags.HasFlag(X509KeyUsageFlags.DigitalSignature) && keyUsageFlags.HasFlag(X509KeyUsageFlags.KeyEncipherment);
         }
     }
 }
