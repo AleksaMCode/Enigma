@@ -91,7 +91,7 @@ namespace Enigma
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
 
-            return new AesAlgorithm(key, iv).Decrypt(needle);
+            return new AesAlgorithm(key, iv, "OFB").Decrypt(needle);
         }
     }
 }
