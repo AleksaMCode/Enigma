@@ -45,9 +45,9 @@ namespace Enigma.Models
             {
                 throw new Exception("Key length has to be at least 2048 bits.");
             }
-            if (CertificateValidator.VerifyCertificate(cert, out var msg) == false)
+            if (CertificateValidator.VerifyCertificate(cert, out var errorMsg) == false)
             {
-                throw new Exception(msg);
+                throw new Exception(errorMsg);
             }
             else if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
             {
@@ -93,7 +93,7 @@ namespace Enigma.Models
         }
 
         /// <summary>
-        /// Implementation of 'Needle in a Haystack' steganography.
+        /// Implementation of <em>Needle in a Haystack</em> steganography. Encrypted RSA key in its entirety is hidden in a 100,000 times bigger binary file.
         /// </summary>
         private void HideMyNeedle(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
         {
