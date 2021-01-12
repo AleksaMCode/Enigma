@@ -34,7 +34,7 @@ namespace Enigma.UserDbManager
             // check if the username is unique.
             if (GetUser(username) != null)
             {
-                throw new Exception(String.Format("Username '{0}' already exists.", username));
+                throw new Exception(string.Format("Username '{0}' already exists.", username));
             }
 
             var passBytes = Encoding.ASCII.GetBytes(password);

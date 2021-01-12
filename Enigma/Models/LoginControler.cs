@@ -30,7 +30,7 @@ namespace Enigma.Models
                     throw new Exception("Certificate error.");
                 }
 
-                if (CertificateValidator.VerifyCertificate(userCert, out string errorMsg, false) == false)
+                if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
                 {
                     throw new Exception(errorMsg);
                 }
