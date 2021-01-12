@@ -83,7 +83,7 @@ namespace Enigma.Models
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
 
             HideMyNeedle(new FileInfo(privateKeyPath).Directory.Root.FullName,
-                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), ref salt, ref passwordDigest);
+                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
 
             // data scrambling
             new RNGCryptoServiceProvider().GetBytes(iv);
@@ -96,7 +96,7 @@ namespace Enigma.Models
         /// <summary>
         /// Implementation of <em>Needle in a Haystack</em> steganography. Encrypted RSA key in its entirety is hidden in a 100,000 times bigger binary file.
         /// </summary>
-        private void HideMyNeedle(string rootDir, string path, byte[] needle, ref byte[] salt, ref byte[] passwordDigest)
+        private void HideMyNeedle(string rootDir, string path, byte[] needle, byte[] salt, byte[] passwordDigest)
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
@@ -131,7 +131,6 @@ namespace Enigma.Models
                 Buffer.BlockCopy(passwordDigest, 0, haystack, 24, 32); // copy passwordDigest
 
                 Buffer.BlockCopy(needle, 0, haystack, startLocation, needle.Length); // copy the needle (encrypted key)
-
 
                 using var stream = new FileStream(path, FileMode.Create);
                 using var writter = new BinaryWriter(stream);
