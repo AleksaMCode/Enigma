@@ -22,7 +22,7 @@ namespace Enigma.AlgorithmLibrary
             }
         }
 
-        private static int ParseKeySize(string keySizeAscii)
+        public static int ParseKeySize(string keySizeAscii)
         {
             return Convert.ToInt32(keySizeAscii) / 8;
         }
@@ -142,6 +142,21 @@ namespace Enigma.AlgorithmLibrary
                 default:
                 {
                     throw new UnknownCipherModeException(mode);
+                }
+            }
+        }
+
+        public static int GetIvSizeFromAlgoName(string algoName)
+        {
+            switch (algoName)
+            {
+                case "3DES":
+                {
+                    return 8;
+                }
+                default: // AES, CAMLL or 2FISH
+                {
+                    return 16;
                 }
             }
         }

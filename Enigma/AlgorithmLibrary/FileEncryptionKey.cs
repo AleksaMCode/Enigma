@@ -62,8 +62,8 @@ namespace Enigma.AlgorithmLibrary
 
         private void ParseKeyAndIv(byte[] keyAndIvBlock)
         {
-            Key = new byte[GetKeySizeFromAlgoName(AlgorithmName)];
-            IV = new byte[GetIvSizeFromAlgoName(AlgorithmName, AlgorithmKeySize)];
+            Key = new byte[AlgorithmUtility.ParseKeySize(AlgorithmKeySize)];
+            IV = new byte[AlgorithmUtility.GetIvSizeFromAlgoName(AlgorithmName)];
 
             Buffer.BlockCopy(keyAndIvBlock, 0, Key, 0, Key.Length);
             Buffer.BlockCopy(keyAndIvBlock, Key.Length, IV, 0, IV.Length);
