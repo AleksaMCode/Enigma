@@ -45,7 +45,7 @@ namespace Enigma.Models
             {
                 throw new Exception("Key length has to be at least 2048 bits.");
             }
-            if (CertificateValidator.VerifyCertificate(cert, out var errorMsg) == false)
+            if (CertificateValidator.VerifyCertificate(cert, out var errorMsg, true) == false)
             {
                 throw new Exception(errorMsg);
             }

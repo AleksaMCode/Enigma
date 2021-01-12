@@ -10,14 +10,17 @@ namespace Enigma.Models
     public static class CertificateValidator
     {
         /// <summary>
-        /// Checks if the certificate has expired and it also checks if it is issued by a proper root certificate.
+        /// Checks if the certificate has expired and it also checks if it is issued by a proper root certificate if the <paramref name="checkRoot"/> is set to true.
         /// </summary>
         /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <param name="error">String describing error.</param>
+        /// <param name="checkRoot">If set to <see cref="true"/> true, <see cref="VerifyCertificate(X509Certificate2, out string, bool)"/>  will check if certificate is issued by a proper root certificate. </param>
         /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise returns false.</returns>
-        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error)
+        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error, bool checkRoot)
         {
+            // root certificate that this application trusts
             var authority = new X509Certificate2(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\ca.pem");
+            error = null;
 
             using var chain = new X509Chain();
             chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
@@ -33,18 +36,23 @@ namespace Enigma.Models
                 error = "Certificate has expired.";
                 return false;
             }
-
-            // verify if client certificate is signed by proper root
-            var isChainIssuedByRoot = chain.ChainElements.Cast<X509ChainElement>().Any(x => x.Certificate.Thumbprint == authority.Thumbprint);
-
-            if (!isChainIssuedByRoot)
+            else if (!checkRoot)
             {
-                error = "Certificate isn't signed by a proper root CA.";
-                return false;
+                return true;
             }
+            else // if checkRoot == true
+            {
+                // verify if client certificate is signed by proper root
+                var isChainIssuedByRoot = chain.ChainElements.Cast<X509ChainElement>().Any(x => x.Certificate.Thumbprint == authority.Thumbprint);
 
-            error = null;
-            return true;
+                if (!isChainIssuedByRoot)
+                {
+                    error = "Certificate isn't signed by a proper root CA.";
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         /// <summary>
