@@ -29,7 +29,7 @@ namespace Enigma.UserDbManager
             return context.Users.Where(u => u.Username == username).SingleOrDefault();
         }
 
-        public void AddUser(string username, string password, byte[] certificate)
+        public void AddUser(string username, string password, byte[] certificate, bool usbKey)
         {
             // check if the username is unique.
             if (GetUser(username) != null)
@@ -57,6 +57,7 @@ namespace Enigma.UserDbManager
                 PublicCertificate = certificate,
                 Salt = salt,
                 PassHash = passHash,
+                UsbKey = usbKey ? 1 : 0
             };
 
             context.Users.Add(toAdd);

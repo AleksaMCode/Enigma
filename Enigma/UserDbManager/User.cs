@@ -16,6 +16,8 @@ namespace Enigma.UserDbManager
 
         public byte[] PublicCertificate { get; set; }
 
+        public int UsbKey { get; set; }
+
         public bool IsPasswordValid(string password)
         {
             var passBytes = Encoding.ASCII.GetBytes(password);

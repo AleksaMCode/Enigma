@@ -21,7 +21,7 @@ namespace Enigma.Models
             data = db;
         }
 
-        internal void Register(string username, string password, string certificateFilePath)
+        internal void Register(string username, string password, string certificateFilePath, bool usbKey)
         {
             if (password.Contains(username))
             {
@@ -58,7 +58,7 @@ namespace Enigma.Models
                 throw new Exception("Certificate must have 'digitalSignature' and 'keyEncipherment' set as it's key usage.");
             }
 
-            data.AddUser(username, password, File.ReadAllBytes(certificateFilePath));
+            data.AddUser(username, password, File.ReadAllBytes(certificateFilePath), usbKey);
             Directory.CreateDirectory(string.Format(@"D:\EnigmaEFS\{0}", username));
         }
 
