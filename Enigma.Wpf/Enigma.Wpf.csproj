@@ -79,25 +79,31 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
+    <Compile Include="Converters\StringToPrivateKeyOptionConverter.cs" />
+    <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="ViewModels\InitialFormViewModel.cs" />
+    <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBaseWithValidation.cs" />
     <Compile Include="Views\InitialForm.xaml.cs">
       <DependentUpon>InitialForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MainAppView.xaml.cs">
+      <DependentUpon>MainAppView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="CustomStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\DataTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InitialForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainAppView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

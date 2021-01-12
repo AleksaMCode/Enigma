@@ -3,10 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ViewModels="clr-namespace:Enigma.Wpf.ViewModels"
     xmlns:Views="clr-namespace:Enigma.Wpf.Views">
+    <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <DataTemplate DataType="{x:Type ViewModels:MainWindowViewModel}">
         <Views:MainWindow />
     </DataTemplate>
     <DataTemplate DataType="{x:Type ViewModels:InitialFormViewModel}">
         <Views:InitialForm />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type ViewModels:MainAppViewModel}">
+        <Views:MainAppView />
     </DataTemplate>
 </ResourceDictionary>

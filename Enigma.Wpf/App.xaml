@@ -6,11 +6,5 @@
     xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d1p1:Ignorable="d"
     StartupUri="Views/MainWindow.xaml">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="CustomStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
+    <Application.Resources />
 </Application>
