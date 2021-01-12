@@ -18,8 +18,8 @@ namespace Enigma.Models
         /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise returns false.</returns>
         public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error, bool checkRoot)
         {
-            // root certificate that this application trusts
-            var authority = new X509Certificate2(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\ca.pem");
+            var authority = new X509Certificate2(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\ca.pem");    // root certificate that this application trusts
+
             error = null;
 
             using var chain = new X509Chain();
@@ -62,7 +62,7 @@ namespace Enigma.Models
         /// <returns>true if the key is equal or greater than 2048 bits, otherwise returns false.</returns>
         public static bool VerifyCertificateKeyLength(X509Certificate2 certificateToValidate)
         {
-            //Since 2015, NIST recommends a minimum of 2048 - bit keys for RSA, an update to the widely - accepted recommendation of a 1024 - bit minimum since at least 2002.
+            // Since 2015, NIST recommends a minimum of 2048 bit keys for RSA, an update to the widely accepted recommendation of a 1024 bit minimum since at least 2002.
             return certificateToValidate.PublicKey.Key.KeySize >= 2048;
         }
 
