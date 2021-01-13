@@ -98,6 +98,7 @@
     <Compile Include="EFS\Attributes\SecurityDescriptor.cs" />
     <Compile Include="EFS\Attributes\StandardInformation.cs" />
     <Compile Include="EFS\EnigmaEFS.cs" />
+    <Compile Include="EFS\EnigmaEfsUtility.cs" />
     <Compile Include="EFS\ISaveObject.cs" />
     <Compile Include="Enums\AttributeType.cs" />
     <Compile Include="Enums\EnigmaEFSError.cs" />

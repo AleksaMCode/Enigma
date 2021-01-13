@@ -6,13 +6,14 @@ namespace Enigma.EFS.Attributes
     public abstract class Attribute : ISaveObject
     {
         /// <summary>
-        /// Attribute type code.
+        /// Type of the header.
         /// </summary>
         public AttributeType Type { get; set; }
-        /// <summary>
-        /// Max. size of the file that can be encrypted is 4.294967295 GB.
-        /// </summary>
-        public uint TotalLength { get; set; }
+
+        public Attribute(AttributeType type)
+        {
+            Type = type;
+        }
 
         /// <summary>
         /// Gets the <see cref="AttributeType"/> for the used header.
@@ -22,19 +23,19 @@ namespace Enigma.EFS.Attributes
         {
             if(data.Length - offset < 4)
             {
-                throw new Exception("Can't parse Attribute Type, file is *.at type");
+                throw new Exception("Can't parse Attribute Type, file isn't *.at.");
             }
 
             return (AttributeType)BitConverter.ToUInt32(data, offset);
         }
 
         /// <summary>
-        /// Get the total length of values <see cref="Type"/> and <see cref="TotalLength"/>.
+        /// Get the total length of value <see cref="Type"/>.
         /// </summary>
-        /// <returns>Total size of two attributes stored in <see cref="Attribute"/> </returns>.
+        /// <returns>Total size of attribute stored in <see cref="Attribute"/>.</returns>
         public virtual uint GetSaveLength()
         {
-            return 8;
+            return 4;
         }
 
     }
