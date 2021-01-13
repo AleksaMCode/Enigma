@@ -94,7 +94,6 @@
     <Compile Include="CryptedFileParser\Exceptions\UnknownHashAlgoException.cs" />
     <Compile Include="CryptedFileParser\OriginalFile.cs" />
     <Compile Include="EFS\Attributes\Attribute.cs" />
-    <Compile Include="EFS\Attributes\FileName.cs" />
     <Compile Include="EFS\Attributes\SecurityDescriptor.cs" />
     <Compile Include="EFS\Attributes\StandardInformation.cs" />
     <Compile Include="EFS\EnigmaEFS.cs" />

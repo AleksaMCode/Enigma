@@ -4,7 +4,7 @@ namespace Enigma.Enums
     {
         Unkown = 0,
         STANDARD_INFORMATION = 0x10,
-        FILE_NAME = 0x30,
+        //FILE_NAME = 0x30,
         SECURITY_DESCRIPTOR = 0x50,
         DATA = 0x80,
         /// <summary>
