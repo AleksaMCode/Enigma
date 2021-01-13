@@ -14,6 +14,10 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         public uint TotalLength { get; set; }
 
+        /// <summary>
+        /// Gets the <see cref="AttributeType"/> for the used header.
+        /// </summary>
+        /// <returns><see cref="AttributeType"/>  of the header.</returns>
         public static AttributeType GetAttributeType(byte[] data, int offset)
         {
             if(data.Length - offset < 4)
@@ -24,6 +28,10 @@ namespace Enigma.EFS.Attributes
             return (AttributeType)BitConverter.ToUInt32(data, offset);
         }
 
+        /// <summary>
+        /// Get the total length of values <see cref="Type"/> and <see cref="TotalLength"/>.
+        /// </summary>
+        /// <returns>Total size of two attributes stored in <see cref="Attribute"/> </returns>.
         public virtual uint GetSaveLength()
         {
             return 8;
