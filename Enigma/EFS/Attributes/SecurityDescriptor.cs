@@ -93,7 +93,7 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Writting Security Descriptor header to <see cref="byte"/>[].
         /// </summary>
-        public byte[] UnparseStandardInformation()
+        public byte[] UnparseSecurityDescriptor()
         {
             // max. expected size when using 4,096 RSA keys for all user, max. values for AlgorithmNameSignature and HashAlgorithmName, SHA512 hash for signature and 128 bits IV is 2,195 B
             var securityDescriptorHeaderd = new byte[2_195];
@@ -154,7 +154,7 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         /// <param name="data">Raw data.</param>
         /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
-        public void ParseStandardInformation(byte[] data, int offset)
+        public void ParseUnparseSecurityDescriptor(byte[] data, int offset)
         {
 
         }
