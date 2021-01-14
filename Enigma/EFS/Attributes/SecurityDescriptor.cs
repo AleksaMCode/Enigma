@@ -46,13 +46,14 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
-        /// This construtor is used when a file is first encrypted. Iv contains random data.
+        /// This construtor is used when a file is first encrypted. Key and Iv contain csprng data.
         /// </summary>
         /// <param name="fek">Owners <see cref="FileEncryptionKey"/>.</param>
-        public SecurityDescriptor(int ownerId, string algorithmNameSignature, RSAParameters ownerPublicKey) : base(AttributeType.SECURITY_DESCRIPTOR)
+        public SecurityDescriptor(int ownerId, string algorithmNameSignature, string hashAlgorithmName, RSAParameters ownerPublicKey) : base(AttributeType.SECURITY_DESCRIPTOR)
         {
             OwnerId = ownerId;
             AlgorithmNameSignature = algorithmNameSignature;
+            HashAlgorithmName = hashAlgorithmName;
 
             var algorithm = AlgorithmUtility.GetAlgorithmFromNameSignature(AlgorithmNameSignature);
             IV = algorithm.AdditionalData;
