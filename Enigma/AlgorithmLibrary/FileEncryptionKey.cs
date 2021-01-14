@@ -26,6 +26,11 @@ namespace Enigma.AlgorithmLibrary
             Key = key;
         }
 
+        /// <summary>
+        /// Encrypts the key used for symmetric encryption of the file using a public RSA key.
+        /// </summary>
+        /// <param name="publicKey">Users public RSA key used for encryption of the shared key.</param>
+        /// <returns>Encrypted <see cref="Key"/>.</returns>
         public byte[] UnparseFek(RSAParameters publicKey)
         {
             var fekData = new byte[1 + Key.Length];                                 // Key Length + Key
@@ -36,6 +41,11 @@ namespace Enigma.AlgorithmLibrary
             return new RsaAlgorithm(publicKey).Encrypt(fekData);                    // encrypt then return FEK data, size is always module of RSA key size, 2048, 3072 or 4096
         }
 
+        /// <summary>
+        /// Parsing encrypted FEK data from <see cref="byte"/>[].
+        /// </summary>
+        /// <param name="fekEncrypted">Encrypted FEK data.</param>
+        /// <param name="privateKey">Users private RSA key used for decryption of encrypted FEK data.</param>
         public void ParseFek(byte[] fekEncrypted, RSAParameters privateKey)
         {
             var fekData = new RsaAlgorithm(privateKey).Decrypt(fekEncrypted);       // decryption of FEK data (Key length + Key)
