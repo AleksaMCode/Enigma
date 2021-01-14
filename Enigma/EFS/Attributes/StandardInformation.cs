@@ -86,6 +86,8 @@ namespace Enigma.EFS.Attributes
 
         /// <summary>
         /// Parsing header data from encrypted file.
+        /// <param name="data">Raw data.</param>
+        /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
         /// </summary>
         public void ParseStandardInformation(byte[] data, int offset)
         {

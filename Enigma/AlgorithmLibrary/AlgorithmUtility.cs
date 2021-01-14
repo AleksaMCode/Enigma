@@ -55,7 +55,36 @@ namespace Enigma.AlgorithmLibrary
             {
                 return new TripleDesAlgorithm(tokens[1]);
             }
+        }
 
+        public static IAlgorithm GetAlgorithmFromNameSignature(string algoName, byte[] key, byte[] iv)
+        {
+            if (algoName.Length > maxAlgoNameSignatureSize)
+            {
+                throw new UnknownCryptAlgoException(algoName);
+            }
+
+            // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
+            // split the name in AlgoName, Ciphermode for 3DES, e.q. 3DSES-OFB
+            var tokens = algoName.Split('-');
+
+            if (tokens[0].Equals("AES"))
+            {
+                return new AesAlgorithm(key, iv, tokens[3]);
+            }
+            else if (tokens[0].Equals("2FISH"))
+            {
+                return new TwofishAlgorithm(key, iv, tokens[3]);
+            }
+            else if (tokens[0].Equals("CAMLL"))
+            {
+                return new CamelliaAlgorithm(key, iv, tokens[3]);
+            }
+            // 3DES
+            else
+            {
+                return new TripleDesAlgorithm(key, iv, tokens[1]);
+            }
         }
 
         public static string GetNameSignatureFromHashAlgo(HashAlgorithm hashAlgo)
