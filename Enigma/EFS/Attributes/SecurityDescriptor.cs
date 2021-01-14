@@ -32,7 +32,7 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Dictionary used to store IDs and encrypted of users that owner has shared file with.
         /// </summary>
-        public Dictionary<int, byte[]> Others = null;
+        public Dictionary<int, byte[]> Users = null;
 
         /// <summary>
         /// Initialization vector used with CBC, OFB and CFB Block cipher mode of operation. ECB mode doesn't use IV.
@@ -58,7 +58,7 @@ namespace Enigma.EFS.Attributes
 
             var algorithm = AlgorithmUtility.GetAlgorithmFromNameSignature(AlgorithmNameSignature);
             IV = algorithm.AdditionalData;
-            Others.Add(ownerId, new FileEncryptionKey(algorithm.Key).UnparseFek(ownerPublicKey));
+            Users.Add(ownerId, new FileEncryptionKey(algorithm.Key).UnparseFek(ownerPublicKey));
         }
 
         /// <summary>
@@ -69,12 +69,12 @@ namespace Enigma.EFS.Attributes
         /// <param name="publicKey">Users public RSA key.</param>
         public void ShareFile(int userId, RSAParameters ownerPrivateKey, RSAParameters userPublicKey)
         {
-            if (!Others.ContainsKey(userId) && Others.Count <= 4)
+            if (!Users.ContainsKey(userId) && Users.Count <= 4)
             {
                 var usersFek = new FileEncryptionKey();
-                usersFek.ParseFek(Others[userId], ownerPrivateKey);
+                usersFek.ParseFek(Users[userId], ownerPrivateKey);
 
-                Others.Add(userId, usersFek.UnparseFek(userPublicKey));
+                Users.Add(userId, usersFek.UnparseFek(userPublicKey));
             }
         }
 
@@ -84,9 +84,9 @@ namespace Enigma.EFS.Attributes
         /// <param name="userId">Unique user identifier from the database.</param>
         public void UnshareFile(int userId)
         {
-            if (Others.ContainsKey(userId))
+            if (Users.ContainsKey(userId))
             {
-                Others.Remove(userId);
+                Users.Remove(userId);
             }
         }
 
@@ -124,9 +124,9 @@ namespace Enigma.EFS.Attributes
             offset += 4;
 
 
-            Buffer.BlockCopy(BitConverter.GetBytes(Others.Count), 0, securityDescriptorHeaderd, offset, 4);                                 // unparse number of users that have access to this file
+            Buffer.BlockCopy(BitConverter.GetBytes(Users.Count), 0, securityDescriptorHeaderd, offset, 4);                                  // unparse number of users that have access to this file
             offset += 4;
-            foreach (var user in Others)                                                                                                    // unparsing of userId (key) + encrypted Key (value)
+            foreach (var user in Users)                                                                                                     // unparsing of userId (key) + encrypted Key (value)
             {
                 Buffer.BlockCopy(BitConverter.GetBytes(user.Key), 0, securityDescriptorHeaderd, offset, 4);                                 // unparse userId
                 offset += 4;
@@ -156,7 +156,54 @@ namespace Enigma.EFS.Attributes
         /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
         public void ParseUnparseSecurityDescriptor(byte[] data, int offset)
         {
+            Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                                                  // parse Type
+            offset += 4;
 
+            var algorithmNameSignatureLength = data[offset];                                                                            // parse AlgorithmNameSignature length
+            offset += 1;
+            var AlgorithmNameSignatureBytes = new byte[algorithmNameSignatureLength];
+            Buffer.BlockCopy(data, offset, AlgorithmNameSignatureBytes, 0, algorithmNameSignatureLength);                               // parse AlgorithmNameSignature
+            offset += algorithmNameSignatureLength;
+            AlgorithmNameSignature = Encoding.ASCII.GetString(AlgorithmNameSignatureBytes);
+
+            var hashAlgorithmNameLength = data[offset];                                                                                 // parse HashAlgorithmName length
+            offset += 1;
+            var hashAlgorithmNameBytes = new byte[hashAlgorithmNameLength];
+            Buffer.BlockCopy(data, offset, hashAlgorithmNameBytes, 0, hashAlgorithmNameLength);                                         // parse HashAlgorithmName
+            offset += hashAlgorithmNameLength;
+            HashAlgorithmName = Encoding.ASCII.GetString(hashAlgorithmNameBytes);
+
+            var ivLength = data[offset];                                                                                                // parse IV length
+            offset += 1;
+            IV = new byte[ivLength];
+            Buffer.BlockCopy(data, offset, IV, 0, ivLength);                                                                            // parse IV
+            offset += ivLength;
+
+            OwnerId = BitConverter.ToInt32(data, offset);                                                                               // parse ownerId (int value)
+            offset += 4;
+
+            var numberOfUsers = BitConverter.ToInt32(data, offset);                                                                     // parse number of users that have access to this file
+            offset += 4;
+
+            for (var i = 0; i < numberOfUsers; ++i)
+            {
+                var userId = BitConverter.ToInt32(data, offset);                                                                        // parse userId
+                offset += 4;
+
+                var userEncryptedKeyLength = BitConverter.ToInt32(data, offset);                                                        // parse encrypted Key length
+                offset += 4;
+
+                var userEncryptedKey = new byte[userEncryptedKeyLength];
+                Buffer.BlockCopy(data, offset, userEncryptedKey, 0, userEncryptedKeyLength);                                            // parse encrypted Key
+                offset += userEncryptedKeyLength;
+
+                Users.Add(userId, userEncryptedKey);
+            }
+
+            var signatureLength = BitConverter.ToInt16(data, offset);                                                                   // parse Signature length
+            offset += 1;
+            Signature = new byte[signatureLength];
+            Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
         }
     }
 }
