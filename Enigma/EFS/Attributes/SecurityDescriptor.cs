@@ -157,14 +157,5 @@ namespace Enigma.EFS.Attributes
         {
 
         }
-
-        /// <summary>
-        /// Get the total size of the information stored in Security Descriptor header.
-        /// </summary>
-        /// <returns>Total size of information stored in <see cref="SecurityDescriptor"/> </returns>.
-        public override uint GetSaveLength()
-        {
-            return base.GetSaveLength() + ?;
-        }
     }
 }
