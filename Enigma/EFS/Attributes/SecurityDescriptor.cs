@@ -93,7 +93,7 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Writting Security Descriptor header to <see cref="byte"/>[].
         /// </summary>
-        public byte[] UnparseStandardInformation(RSAParameters ownerPublicKey)
+        public byte[] UnparseStandardInformation()
         {
             // max. expected size when using 4,096 RSA keys for all user, max. values for AlgorithmNameSignature and HashAlgorithmName, SHA512 hash for signature and 128 bits IV is 2,195 B
             var securityDescriptorHeaderd = new byte[2_195];
