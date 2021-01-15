@@ -3,6 +3,9 @@ using Enigma.Enums;
 
 namespace Enigma.EFS.Attributes
 {
+    /// <summary>
+    /// Represents the abstract base class from which all implementations of the Encrypted File Headers must inherit.
+    /// </summary>
     public abstract class Attribute : ISaveObject
     {
         /// <summary>
@@ -37,6 +40,5 @@ namespace Enigma.EFS.Attributes
         {
             return 4;
         }
-
     }
 }

@@ -4,7 +4,7 @@ using Enigma.Enums;
 namespace Enigma.EFS.Attributes
 {
     /// <summary>
-    /// Represents a header in encrypted file used to store different times (C, A and M time), owner id and the total length of the encrypted file.
+    /// Representsa header in encrypted file used to store different times (C, A and M time), owner id and the total length of the encrypted file.
     /// STANDARD_INFORMATION header size is fixed at 44 bytes.
     /// </summary>
     public class StandardInformation : Attribute

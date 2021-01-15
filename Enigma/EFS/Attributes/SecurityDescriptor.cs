@@ -8,9 +8,9 @@ using Enigma.Enums;
 namespace Enigma.EFS.Attributes
 {
     /// <summary>
-    /// Represents a header in encrypted file used to store owners and shared users <see cref="FileEncryptionKey"/>, file signature, algorithms name used for encryption and hash
-    /// algorithms name used for signing the original file. The symmetric encryption algorithm used will vary, depending on the users choice. Header also contains hashing algorithm
-    /// that user chose to sign his file. SECURITY_DESCRIPTOR header file is not fixed. It depend on the value of fields.
+    /// Represents a header in encrypted file used to store owners and shared users encrypted <see cref="FileEncryptionKey"/>, file signature and algorithms name used for encryption.
+    /// The symmetric encryption algorithm used will vary, depending on the users choice. Header also contains hashing algorithm
+    /// that user chose to sign his original file. SECURITY_DESCRIPTOR header file is not fixed. It depend on the value of fields.
     /// </summary>
     public class SecurityDescriptor : Attribute
     {
@@ -42,6 +42,9 @@ namespace Enigma.EFS.Attributes
 
         public byte[] Signature { get; set; }
 
+        /// <summary>
+        /// This construtor is used when reading/modifying encrypted file.
+        /// </summary>
         public SecurityDescriptor() : base(AttributeType.SECURITY_DESCRIPTOR)
         {
         }

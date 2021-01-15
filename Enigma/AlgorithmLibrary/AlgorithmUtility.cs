@@ -5,18 +5,36 @@ using Enigma.CryptedFileParser.Exceptions;
 
 namespace Enigma.AlgorithmLibrary
 {
+    /// <summary>
+    /// Helper function used for symmetric encryption/decryption.
+    /// </summary>
     internal static class AlgorithmUtility
     {
         /// <summary>
-        /// Maximum length of the AlgorithmNameSignature.
+        /// Maximum length of the algorithm name signature.
         /// </summary>
         public static readonly int maxAlgoNameSignatureSize = 13;
 
         /// <summary>
-        /// Maximum length of the HashAlgorithmNameSignature.
+        /// Maximum length of the hash algorithm name signature.
         /// </summary>
         public static readonly int maxHashAlgoNameSignatureSize = 6;
 
+        /// <summary>
+        /// Parses key size stored as <see cref="string"/> to <see cref="int"/>.
+        /// </summary>
+        /// <param name="keySizeAscii">Size of the key used in symmetric algorithm.</param>
+        /// <returns>Parsed key size in bytes.</returns>
+        public static int ParseKeySize(string keySizeAscii)
+        {
+            return Convert.ToInt32(keySizeAscii) / 8;
+        }
+
+        /// <summary>
+        /// Gets the algorithm name signature from the symmetric algorithm interface <see cref="IAlgorithm"/>.
+        /// </summary>
+        /// <param name="algo">Symmetric algorithm interface used for encryption.</param>
+        /// <returns>Algorithm name signature from the symmetric algorithms method <see cref="IAlgorithm.GetAlgorithmNameSignature"/>.</returns>
         public static string GetNameSignatureFromAlgorithm(IAlgorithm algo)
         {
             return (algo is AesAlgorithm) || (algo is CamelliaAlgorithm) || (algo is TwofishAlgorithm) || (algo is TripleDesAlgorithm)
@@ -24,11 +42,11 @@ namespace Enigma.AlgorithmLibrary
                 : throw new UnknownCryptAlgoException(algo.GetAlgorithmNameSignature());
         }
 
-        public static int ParseKeySize(string keySizeAscii)
-        {
-            return Convert.ToInt32(keySizeAscii) / 8;
-        }
-
+        /// <summary>
+        /// Gets the symmetric algorithm from the algorithms name signature.
+        /// </summary>
+        /// <param name="algoName">Algorithms name signature.</param>
+        /// <returns>New instance of the symmetric algorithm.</returns>
         public static IAlgorithm GetAlgorithmFromNameSignature(string algoName)
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
@@ -59,6 +77,13 @@ namespace Enigma.AlgorithmLibrary
             }
         }
 
+        /// <summary>
+        /// Gets the symmetric algorithm from the algorithms name signature, key and iv value.
+        /// </summary>
+        /// <param name="algoName">Algorithms name signature.</param>
+        /// <param name="key">Algorithms key.</param>
+        /// <param name="iv">Algoirthms iv.</param>
+        /// <returns>New instance of the symmetric algorithm.</returns>
         public static IAlgorithm GetAlgorithmFromNameSignature(string algoName, byte[] key, byte[] iv)
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
@@ -88,6 +113,11 @@ namespace Enigma.AlgorithmLibrary
             }
         }
 
+        /// <summary>
+        /// Gets the hash algorithm name signature from the hash algorithm class <see cref="HashAlgorithm"/>.
+        /// </summary>
+        /// <param name="hashAlgo">Hash algorithm used for hashing.</param>
+        /// <returns>Hash algorithm name signature.</returns>
         public static string GetNameSignatureFromHashAlgo(HashAlgorithm hashAlgo)
         {
             if (hashAlgo is MD5)
@@ -116,6 +146,11 @@ namespace Enigma.AlgorithmLibrary
             }
         }
 
+        /// <summary>
+        /// Gets the hash algorithm from the hash algorithm name signature.
+        /// </summary>
+        /// <param name="algoName">Hash algorithm name signature.</param>
+        /// <returns>New instance of the hash algorithm.</returns>
         public static HashAlgorithm GetHashAlgoFromNameSignature(string algoName)
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
@@ -149,6 +184,11 @@ namespace Enigma.AlgorithmLibrary
             }
         }
 
+        /// <summary>
+        /// Gets the symmetric algorithm mode of operation <see cref="CipherMode"/> from the mode name.
+        /// </summary>
+        /// <param name="mode">Mode of operation name.</param>
+        /// <returns><see cref="CipherMode"/> enum that matches modes name.</returns>
         public static CipherMode GetCipherMode(string mode)
         {
             switch (mode)
@@ -176,6 +216,11 @@ namespace Enigma.AlgorithmLibrary
             }
         }
 
+        /// <summary>
+        /// Gets the Iv size for the currently used symmetric algorithm.
+        /// </summary>
+        /// <param name="algoName">Name of the symmetric algorithm.</param>
+        /// <returns>8 B size for 3DES, otherwise 16 B size.</returns>
         public static int GetIvSizeFromAlgoName(string algoName)
         {
             switch (algoName)
