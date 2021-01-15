@@ -57,12 +57,10 @@ namespace Enigma.EFS.Attributes
         /// This constructor is used when a file is first encrypted.
         /// </summary>
         /// <param name="userID">Id of the user who created a new file from the database.</param>
-        /// <param name="fileSize">Total length of file in bytes.</param>
-        public StandardInformation(uint userID, uint fileSize) : base(AttributeType.STANDARD_INFORMATION)
+        public StandardInformation(uint userID) : base(AttributeType.STANDARD_INFORMATION)
         {
             CreationTime = AlteredTime = ReadTime = DateTime.Now;
             ATimeUserId = RTimeUserId = OwnerId = userID;
-            TotalLength = fileSize;
         }
 
         /// <summary>
