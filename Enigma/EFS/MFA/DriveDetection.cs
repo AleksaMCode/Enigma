@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Enigma.MFA
+namespace Enigma.EFS.MFA
 {
     /// <summary>
     /// Class is used to detect a new hardware RSA key and OTP used for MFA and account recovery.

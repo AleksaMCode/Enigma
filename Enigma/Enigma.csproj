@@ -102,7 +102,7 @@
     <Compile Include="Enums\AttributeType.cs" />
     <Compile Include="Enums\EnigmaEFSError.cs" />
     <Compile Include="Enums\PasswordEntropy.cs" />
-    <Compile Include="MFA\DriveDetection.cs" />
+    <Compile Include="EFS\MFA\DriveDetection.cs" />
     <Compile Include="Models\CertificateValidator.cs" />
     <Compile Include="Models\LoginControler.cs" />
     <Compile Include="Models\PasswordAdvisor.cs" />
