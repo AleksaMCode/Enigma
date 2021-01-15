@@ -47,15 +47,15 @@ namespace Enigma.AlgorithmLibrary
 
             if (tokens[0].Equals("AES"))
             {
-                return new AesAlgorithm(ParseKeySize(tokens[1]), tokens[3]);
+                return new AesAlgorithm(ParseKeySize(tokens[1]), tokens[2]);
             }
             else if (tokens[0].Equals("2FISH"))
             {
-                return new TwofishAlgorithm(ParseKeySize(tokens[1]), tokens[3]);
+                return new TwofishAlgorithm(ParseKeySize(tokens[1]), tokens[2]);
             }
             else if (tokens[0].Equals("CAMLL"))
             {
-                return new CamelliaAlgorithm(ParseKeySize(tokens[1]), tokens[3]);
+                return new CamelliaAlgorithm(ParseKeySize(tokens[1]), tokens[2]);
             }
             // 3DES
             else
@@ -77,20 +77,19 @@ namespace Enigma.AlgorithmLibrary
 
             if (tokens[0].Equals("AES"))
             {
-                return new AesAlgorithm(key, iv, tokens[3]);
+                return new AesAlgorithm(key, iv, tokens[2]);
             }
             else if (tokens[0].Equals("2FISH"))
             {
-                return new TwofishAlgorithm(key, iv, tokens[3]);
+                return new TwofishAlgorithm(key, iv, tokens[2]);
             }
             else if (tokens[0].Equals("CAMLL"))
             {
-                return new CamelliaAlgorithm(key, iv, tokens[3]);
+                return new CamelliaAlgorithm(key, iv, tokens[2]);
             }
-            // 3DES
-            else
+            else // 3DES
             {
-                return new TripleDesAlgorithm(key, iv, tokens[1]);
+                return new TripleDesAlgorithm(key, iv, tokens[2]);
             }
         }
 
