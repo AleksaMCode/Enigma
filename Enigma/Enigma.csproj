@@ -99,6 +99,7 @@
     <Compile Include="EFS\EnigmaEFS.cs" />
     <Compile Include="EFS\EnigmaEfsUtility.cs" />
     <Compile Include="EFS\ISaveObject.cs" />
+    <Compile Include="EFS\LittleEndianConverter.cs" />
     <Compile Include="Enums\AttributeType.cs" />
     <Compile Include="Enums\EnigmaEFSError.cs" />
     <Compile Include="Enums\PasswordEntropy.cs" />
