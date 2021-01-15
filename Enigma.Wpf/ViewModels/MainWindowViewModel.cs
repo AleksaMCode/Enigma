@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Enigma.Controls;
+using Enigma.Interfaces;
 using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -18,10 +20,12 @@ namespace Enigma.Wpf.ViewModels
         private bool isLoadingBoxShown;
         private bool runAnimation;
         private string progressTextAnimation;
+        private IFlyoutPanel flyoutControl;
 
         public MainWindowViewModel()
         {
             CurrentControl = new InitialFormViewModel(this);
+            FlyoutControl = new FlyoutPanel();
         }
 
         public object CurrentControl
@@ -31,8 +35,15 @@ namespace Enigma.Wpf.ViewModels
             private set
             {
                 previousControl = currentControl;
-                Set("CurrentControl", ref currentControl, value);
+                Set(() => CurrentControl, ref currentControl, value);
             }
+        }
+
+        public IFlyoutPanel FlyoutControl
+        {
+            get => flyoutControl;
+
+            private set => Set(() => FlyoutControl, ref flyoutControl, value);
         }
 
         public bool IsBoxVisible
@@ -100,6 +111,19 @@ namespace Enigma.Wpf.ViewModels
             runAnimation = false;
         }
 
+        public void OpenFlyoutPanel(object content)
+        {
+            flyoutControl.ContentControl = content;
+            flyoutControl.IsOpen = true;
+
+        }
+
+        public void CloseFlyoutPanel()
+        {
+            flyoutControl.IsOpen = false;
+            flyoutControl.ContentControl = null;
+        }
+
         public void ShowMessage(string title, string message)
         {
             MessageTitle = title;
@@ -114,7 +138,7 @@ namespace Enigma.Wpf.ViewModels
             MessageText = loadingMessage;
             runAnimation = true;
 
-            var pauseTime = 500;
+            const int pauseTime = 500;
             var phases = new string[] { "..", "...", "....", ".....", "....", "...", "..", "." };
 
             ProgressTextAnimation = phases[phases.Length - 1];

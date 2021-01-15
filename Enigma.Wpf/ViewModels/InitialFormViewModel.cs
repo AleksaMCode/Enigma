@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
@@ -13,7 +13,7 @@ namespace Enigma.Wpf.ViewModels
     {
         private readonly INavigator navigator;
         private string username;
-        private PrivateKeyOption privateKeySignupOption = PrivateKeyOption.File;
+        private PrivateKeyOption privateKeySignupOption;
 
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {

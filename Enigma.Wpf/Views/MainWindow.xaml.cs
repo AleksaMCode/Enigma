@@ -10,8 +10,8 @@ namespace Enigma.Wpf.Views
     {
         public MainWindow()
         {
-            InitializeComponent();
             DataContext = new MainWindowViewModel();
+            InitializeComponent();
         }
     }
 }

@@ -10,6 +10,8 @@ namespace Enigma.Wpf.Interfaces
 
         void ShowProgressBox(string loadingMessage);
 
+        void OpenFlyoutPanel(object content);
+
         void HideProgressBox();
     }
 }
