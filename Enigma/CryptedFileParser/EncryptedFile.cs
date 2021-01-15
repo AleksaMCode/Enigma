@@ -8,8 +8,6 @@ namespace Enigma.CryptedFileParser
 {
     public class EncryptedFile
     {
-        internal readonly Stream EncrypteFileContent;
-
         /// <summary>
         /// Represents an encrypted version of the original name of the file.
         /// </summary>
@@ -24,12 +22,6 @@ namespace Enigma.CryptedFileParser
         /// Standard Information, File Name and Security Descriptor header.
         /// </summary>
         public Attribute[] Headers = new Attribute[3];
-
-        internal EncryptedFile(Stream encrypteFileContent)
-        {
-            encrypteFileContent.Position = 0;
-            EncrypteFileContent = encrypteFileContent;
-        }
 
         /// <summary>
         /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm.
