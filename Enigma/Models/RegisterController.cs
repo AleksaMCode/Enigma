@@ -12,11 +12,11 @@ using Org.BouncyCastle.Security;
 
 namespace Enigma.Models
 {
-    public class RegisterControler
+    public class RegisterController
     {
         private readonly UserDatabase data;
 
-        public RegisterControler(UserDatabase db)
+        public RegisterController(UserDatabase db)
         {
             data = db;
         }

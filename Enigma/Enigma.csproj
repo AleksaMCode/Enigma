@@ -105,9 +105,9 @@
     <Compile Include="Enums\PasswordEntropy.cs" />
     <Compile Include="EFS\MFA\DriveDetection.cs" />
     <Compile Include="Models\CertificateValidator.cs" />
-    <Compile Include="Models\LoginControler.cs" />
+    <Compile Include="Models\LoginController.cs" />
     <Compile Include="Models\PasswordAdvisor.cs" />
-    <Compile Include="Models\RegisterControler.cs" />
+    <Compile Include="Models\RegisterController.cs" />
     <Compile Include="Models\UserInformation.cs" />
     <Compile Include="PrivateKeyParsers\ASNParser.cs" />
     <Compile Include="PrivateKeyParsers\InvalidKeyFileException.cs" />

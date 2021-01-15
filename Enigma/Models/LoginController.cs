@@ -10,7 +10,7 @@ using Enigma.UserDbManager;
 
 namespace Enigma.Models
 {
-    public class LoginControler
+    public class LoginController
     {
         private string privateKeyPath;
         private readonly string userDatabasePath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db";

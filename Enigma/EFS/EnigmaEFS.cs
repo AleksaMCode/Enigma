@@ -5,13 +5,13 @@ namespace Enigma.EFS
     /// <summary>
     /// Allows to create, modify or manipulate an Enigma Encripted File System.
     /// </summary>
-    public class EnigmaEFS
+    public class EnigmaEfs
     {
         private readonly string mountLocation = @"D:";
         private readonly string rootDir = @"D:\EnigmaEFS";
         private readonly string sharedDir = @"D:\EnigmaEFS\Shared";
         public long AvailableFreeSpace { get; set; }
-        public EnigmaEFS()
+        public EnigmaEfs()
         {
             // EFS "mount"
             if (Directory.Exists(mountLocation))
