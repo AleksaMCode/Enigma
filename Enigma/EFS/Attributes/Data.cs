@@ -53,11 +53,22 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         /// <param name="data">Raw data.</param>
         /// <param name="offset">ffset from the start of the raw data <see cref="byte"/>[].</param>
-        /// <param name="encryptedDataSize">Size of the encrypted data stored inside of the header.</param>
+        /// <param name="encryptedDataSize">Size of the encrypted data stored inside of the header.
+        /// This information is stored as <see cref="StandardInformation.TotalLength"/> in the <see cref="StandardInformation"/> header.</param>
         public void ParseData(byte[] data, int offset, int encryptedDataSize)
         {
             EncryptedData = new byte[encryptedDataSize];
             Buffer.BlockCopy(data, offset, EncryptedData, 0, encryptedDataSize);
+        }
+
+        /// <summary>
+        /// Get the total size of the information stored in Data header.
+        /// </summary>
+        public override uint GetSaveLength()
+        {
+            return EncryptedData != null
+                ? (uint)EncryptedData.Length
+                : throw new NotImplementedException("Size of the Data header is not set.");
         }
     }
 }
