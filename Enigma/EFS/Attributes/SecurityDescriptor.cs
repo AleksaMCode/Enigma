@@ -208,5 +208,10 @@ namespace Enigma.EFS.Attributes
             Signature = new byte[signatureLength];
             Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
         }
+
+        public override uint GetSaveLength()
+        {
+            throw new NotImplementedException("Size of the Security Descriptor header is not fixed.");
+        }
     }
 }
