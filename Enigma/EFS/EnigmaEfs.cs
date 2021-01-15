@@ -17,12 +17,12 @@ namespace Enigma.EFS
             if (Directory.Exists(mountLocation))
             {
                 // create a new root directory if one isn't already created
-                if (!Directory.Exists(mountLocation))
+                if (!Directory.Exists(rootDir))
                 {
                     Directory.CreateDirectory(rootDir);
                 }
                 // create a new shared directory if one isn't already created
-                else if (Directory.Exists(mountLocation) && !Directory.Exists(mountLocation))
+                if (!Directory.Exists(sharedDir))
                 {
                     Directory.CreateDirectory(sharedDir);
                 }
