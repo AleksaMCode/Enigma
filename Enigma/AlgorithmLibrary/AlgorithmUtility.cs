@@ -6,7 +6,7 @@ using Enigma.CryptedFileParser.Exceptions;
 namespace Enigma.AlgorithmLibrary
 {
     /// <summary>
-    /// Helper function used for symmetric encryption/decryption.
+    /// Helper class used for symmetric encryption/decryption.
     /// </summary>
     internal static class AlgorithmUtility
     {

@@ -2,6 +2,9 @@ using System;
 
 namespace Enigma.EFS
 {
+    /// <summary>
+    /// Helper class used for <see cref="DateTime"/> conversions using <see cref="LittleEndianConverter"/> class.
+    /// </summary>
     public static class EnigmaEfsUtility
     {
         private static readonly long maxFileTime = DateTime.MaxValue.ToFileTimeUtc();
@@ -23,12 +26,7 @@ namespace Enigma.EFS
         {
             var fileTime = BitConverter.ToInt64(data, offset);
 
-            if (fileTime >= maxFileTime)
-            {
-                return DateTime.MaxValue;
-            }
-
-            return DateTime.FromFileTimeUtc(fileTime);
+            return fileTime >= maxFileTime ? DateTime.MaxValue : DateTime.FromFileTimeUtc(fileTime);
         }
     }
 }

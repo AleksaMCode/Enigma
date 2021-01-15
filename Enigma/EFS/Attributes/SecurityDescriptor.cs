@@ -209,6 +209,9 @@ namespace Enigma.EFS.Attributes
             Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
         }
 
+        /// <summary>
+        /// Method is not implemented. It throws an exception if used.
+        /// </summary>
         public override uint GetSaveLength()
         {
             throw new NotImplementedException("Size of the Security Descriptor header is not fixed.");

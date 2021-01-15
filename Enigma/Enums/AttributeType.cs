@@ -1,5 +1,8 @@
 namespace Enigma.Enums
 {
+    /// <summary>
+    /// Represents Encrypted File Headers.
+    /// </summary>
     public enum AttributeType : uint
     {
         Unkown = 0,
