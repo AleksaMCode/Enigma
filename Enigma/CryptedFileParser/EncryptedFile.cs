@@ -18,7 +18,7 @@ namespace Enigma.CryptedFileParser
         /// <summary>
         /// All encrypted files have the same extension. At stands for Alan Turing.
         /// </summary>
-        public readonly string fileExtension = "at";
+        public readonly string FileExtension = "at";
 
         /// <summary>
         /// Standard Information, File Name and Security Descriptor header.
@@ -49,6 +49,15 @@ namespace Enigma.CryptedFileParser
         public void NameDecryption(ref string name, AesAlgorithm aes)
         {
             name = Encoding.ASCII.GetString(aes.Decrypt(Encoding.ASCII.GetBytes(EncriptedName)));
+        }
+
+        /// <summary>
+        /// Creates encrypted files full name that contains encrypted file name and extension separated with '<b>.</b>'.
+        /// </summary>
+        /// <returns>Encrypted files full name.</returns>
+        public string GetEncryptedFileFullName()
+        {
+            return EncriptedName + "." + FileExtension;
         }
     }
 }
