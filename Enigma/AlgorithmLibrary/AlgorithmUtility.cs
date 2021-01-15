@@ -19,14 +19,9 @@ namespace Enigma.AlgorithmLibrary
 
         public static string GetNameSignatureFromAlgorithm(IAlgorithm algo)
         {
-            if ((algo is AesAlgorithm) || (algo is CamelliaAlgorithm) || (algo is TwofishAlgorithm) || (algo is TripleDesAlgorithm))
-            {
-                return algo.GetAlgorithmNameSignature();
-            }
-            else
-            {
-                throw new UnknownCryptAlgoException(algo.GetAlgorithmNameSignature());
-            }
+            return (algo is AesAlgorithm) || (algo is CamelliaAlgorithm) || (algo is TwofishAlgorithm) || (algo is TripleDesAlgorithm)
+                ? algo.GetAlgorithmNameSignature()
+                : throw new UnknownCryptAlgoException(algo.GetAlgorithmNameSignature());
         }
 
         public static int ParseKeySize(string keySizeAscii)
