@@ -44,5 +44,14 @@ namespace Enigma.CryptedFileParser
             }
             return false;
         }
+
+        /// <summary>
+        /// Creates original files full name that contains file name and extension separated with '<b>.</b>'.
+        /// </summary>
+        /// <returns>Original file full name.</returns>
+        public string GetOriginalFileFullName()
+        {
+            return FileName + "." + FileExtension;
+        }
     }
 }
