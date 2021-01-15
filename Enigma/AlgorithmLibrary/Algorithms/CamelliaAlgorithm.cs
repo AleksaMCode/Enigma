@@ -10,20 +10,41 @@ using Org.BouncyCastle.Crypto.Parameters;
 namespace Enigma.AlgorithmLibrary.Algorithms
 {
     /// <summary>
-    /// Camellia specifies the 128-bit block size and 128-, 192-, and 256-bit key sizes, the same interface as the Advanced Encryption Standard (AES).
+    /// Wrapper for the <see cref="Org.BouncyCastle"/> CamelliaEngine class and the Camellia algorithm. It has a same interface as AES algorithm.
     /// </summary>
     public class CamelliaAlgorithm : IAlgorithm
     {
+        /// <summary>
+        /// Represents the name of the symmetric algorithm.
+        /// </summary>
         public static readonly string NameSignature = "CAMLL";
 
+        /// <summary>
+        /// Represents block cipher mode of operation for <see cref="CamelliaAlgorithm"/>.
+        /// </summary>
         public static string ModeSignature = null;
 
+        /// <summary>
+        /// Represents the secret key for the symmetric algorithm. Camellia specifies 128-, 192-, and 256-bit key sizes.
+        /// </summary>
         public byte[] Key { get; set; }
 
+        /// <summary>
+        /// Represents the initialization vector (IV) for the symmetric algorithm.
+        /// IV is a fixed-size input to a cryptographic primitive used for encryption/decryption.
+        /// Camellia specifies the 128-bit block size, so the IV is always set to 16 B.
+        /// </summary>
         public byte[] IV { get; set; }
 
         public byte[] AdditionalData => IV;
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CamelliaAlgorithm"/> class with the specified key size and block cipher mode of operation
+        /// using a csprng values for <see cref="Key"/> and <see cref="IV"/> created with .NETs <see cref="RNGCryptoServiceProvider"/>.
+        /// </summary>
+        /// <param name="keySize">Size of the <see cref="Key"/> used for the symmetric algorithm.</param>
+        /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public CamelliaAlgorithm(int keySize, string mode = "CBC")
         {
             if (keySize == 16 || keySize == 24 || keySize == 16)
@@ -49,6 +70,12 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CamelliaAlgorithm"/> class with the specified key and iv values and block cipher mode of operation.
+        /// </summary>
+        /// <param name="key">Specified key value used for the symmetric algorithm.</param>
+        /// <param name="iv">Specified iv value used for the symmetric algorithm.</param>
+        /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public CamelliaAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             if ((key.Length == 16 || key.Length == 24 || key.Length == 32) && (iv.Length == 16))
@@ -63,6 +90,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             }
         }
 
+        /// <summary>
+        /// Creates a symmetric encryptor/decryptor object using the specified key and initialization vector (IV).
+        /// </summary>
+        /// <param name="forEncryption">true to create a symmetric encryptor object; false to create a symmetric decryptor object.</param>
+        /// <returns>A symmetric encryptor object.</returns>
         public IBufferedCipher CreateCamelliaCipher(bool forEncryption)
         {
             IBufferedCipher cipher;
@@ -151,7 +183,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
                 {
                     // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to
                     // added padding. By simply cutting of the padding from end of the array, we overcome a mismatch problem when comparing to the original array.
-                    Array.Resize<byte>(ref decrypted, len); //potential problem with Array.Resize: new array created on a new memory location
+                    Array.Resize<byte>(ref decrypted, len); // potential problem with Array.Resize: new array created on a new memory location
                 }
                 return decrypted;
             }

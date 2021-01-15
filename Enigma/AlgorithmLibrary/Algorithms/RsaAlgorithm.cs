@@ -6,23 +6,35 @@ using Org.BouncyCastle.Security;
 
 namespace Enigma.AlgorithmLibrary.Algorithms
 {
+    /// <summary>
+    /// Wrapper for the .NET RSACryptoServiceProvider class and the RSA algorithm.
+    /// </summary>
     public class RsaAlgorithm : IAsymmetricAlgorithm
     {
+        /// <summary>
+        /// Represents the name of the asymmetric algorithm.
+        /// </summary>
         public static readonly string NameSignature = "RSA";
 
+        /// <summary>
+        /// Represents the public/private key for the asymmetric algorithm. RSA wrapper <see cref="RsaAlgorithm"/> allows 2048-, 3072- and 4096-bit key sizes.
+        /// </summary>
         public RSAParameters Key { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RsaAlgorithm"/> class with the specified public/private key.
+        /// </summary>
+        /// <param name="rsaKeyParams">Private or public RSA key.</param>
         public RsaAlgorithm(RSAParameters rsaKeyParams)
         {
             Key = rsaKeyParams;
         }
 
         /// <summary>
-        /// Compares public RSA key with a private RSA key. Random data is first encrypted using a private key
-        /// and then decrypted with a public key. If the original data matches the obtained data then the keys match.
-        /// This method is slower than CompareKeys method.
+        /// Compares public RSA key with a private RSA key by encrypting/decrypting random 16 bytes of data.
+        /// This method is slower than <see cref="CompareKeys(RSAParameters, RSAParameters)"/> method.
         /// </summary>
-        /// <returns>true if the keys match, otherwise returns false.</returns>
+        /// <returns>true if the keys match, otherwise false.</returns>
         public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
         {
             var data = new byte[16];
@@ -40,20 +52,20 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Compares public RSA key with a public key extracted from a private RSA key.
-        /// This method is faster than AreKeysMatched method.
+        /// Compares public RSA key extracted from <see cref="System.Security.Cryptography.X509Certificates"/> certificate with a public key extracted from a private RSA key.
+        /// This method is faster than <see cref="AreKeysMatched(RSAParameters, RSAParameters)"/> method.
         /// </summary>
-        /// <returns>true if the keys match, otherwise returns false.</returns>
+        /// <returns>true if the keys match, otherwise false.</returns>
         public static bool CompareKeys(RSAParameters publicKey, RSAParameters privateKey)
         {
             return publicKey.Modulus.SequenceEqual(privateKey.Modulus) && publicKey.Exponent.SequenceEqual(privateKey.Exponent);
         }
 
         /// <summary>
-        /// Compares public RSA key with a public key extracted from a private RSA key.
-        /// This method is slower than CompareKeys method.
+        /// Compares public RSA key extracted from <see cref="System.Security.Cryptography.X509Certificates"/> certificate with a public key extracted from a private RSA key.
+        /// This method is slower than <see cref="CompareKeys(RSAParameters, RSAParameters)"/> method.
         /// </summary>
-        /// <returns>true if the keys match, otherwise returns false.</returns>
+        /// <returns>true if the keys match, otherwise false.</returns>
         [ObsoleteAttribute("This method is obsolete. Call CompareKeys instead.", true)]
         public static bool AreKeysMatched2(RSAParameters publicKey, RSAParameters privateKey)
         {
@@ -66,6 +78,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return ByteArrayCompare(rsaParams1.Modulus, rsaParams2.Modulus) && ByteArrayCompare(rsaParams1.Exponent, rsaParams2.Exponent);
         }
 
+        /// <summary>
+        /// Helper method for <see cref="AreKeysMatched2(RSAParameters, RSAParameters)"/> obsolete method.
+        /// <returns>true if arrays mathch; false if arrays don't match.</returns>
         [Obsolete("Only used in a deprecated method AreKeysMatched2")]
         private static bool ByteArrayCompare(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
         {

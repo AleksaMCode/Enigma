@@ -7,8 +7,15 @@ namespace Enigma.AlgorithmLibrary
 {
     internal static class AlgorithmUtility
     {
-        public static readonly int maxAlgoNameSignatureSize = 13;       // e.q. 2FISH-256-OFB
-        public static readonly int maxHashAlgoNameSignatureSize = 6;    // e.q. SHA256
+        /// <summary>
+        /// Maximum length of the AlgorithmNameSignature.
+        /// </summary>
+        public static readonly int maxAlgoNameSignatureSize = 13;
+
+        /// <summary>
+        /// Maximum length of the HashAlgorithmNameSignature.
+        /// </summary>
+        public static readonly int maxHashAlgoNameSignatureSize = 6;
 
         public static string GetNameSignatureFromAlgorithm(IAlgorithm algo)
         {

@@ -10,21 +10,41 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace Enigma.AlgorithmLibrary.Algorithms
 {
+    /// <summary>
+    /// Wrapper for the .NET AesManaged class and the AES algorithm.
+    /// </summary>
     public class AesAlgorithm : IAlgorithm
     {
+        /// <summary>
+        /// Represents the name of the symmetric algorithm.
+        /// </summary>
         public static readonly string NameSignature = "AES";
 
+        /// <summary>
+        /// Represents block cipher mode of operation for <see cref="AesAlgorithm"/>.
+        /// </summary>
         public static string ModeSignature = null;
 
         /// <summary>
-        /// For AES, the legal key sizes are 128, 192, and 256 bits.
+        /// Represents the secret key for the symmetric algorithm. For AES, the legal key sizes are 128, 192 and 256 bits.
         /// </summary>
         public byte[] Key { get; set; }
 
+        /// <summary>
+        /// Represents the initialization vector (IV) for the symmetric algorithm.
+        /// IV is a fixed-size input to a cryptographic primitive used for encryption/decryption.
+        /// AES specifies the 128-bit block size, so the IV is always set to 16 B.
+        /// </summary>
         public byte[] IV { get; set; }
 
         public byte[] AdditionalData => IV;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AesAlgorithm"/> class with the specified key size and block cipher mode of operation
+        /// using a csprng values for <see cref="Key"/> and <see cref="IV"/> created with .NETs <see cref="RNGCryptoServiceProvider"/>.
+        /// </summary>
+        /// <param name="keySize">Size of the <see cref="Key"/> used for the symmetric algorithm.</param>
+        /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public AesAlgorithm(int keySize, string mode = "CBC")
         {
             if (keySize == 16 || keySize == 24 || keySize == 16)
@@ -43,6 +63,12 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             ModeSignature = mode;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AesAlgorithm"/> class with the specified key and iv values and block cipher mode of operation.
+        /// </summary>
+        /// <param name="key">Specified key value used for the symmetric algorithm.</param>
+        /// <param name="iv">Specified iv value used for the symmetric algorithm.</param>
+        /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public AesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             if ((key.Length == 16 || key.Length == 24 || key.Length == 32) && (iv.Length == 16))
@@ -57,6 +83,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             }
         }
 
+        /// <summary>
+        /// Creates a symmetric encryptor/decryptor object using the specified key and initialization vector (IV) for OFB or CFB block cipher mode of operation.
+        /// </summary>
+        /// <param name="forEncryption">true to create a symmetric encryptor object; false to create a symmetric decryptor object.</param>
+        /// <returns>A symmetric encryptor object used for OFB or CFB block cipher mode of operation.</returns>
         public IBufferedCipher CreateAesCipher(bool forEncryption)
         {
             IBufferedCipher cipher;

@@ -9,25 +9,42 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace Enigma.AlgorithmLibrary.Algorithms
 {
+    /// <summary>
+    /// Wrapper for the .NET TripleDESCryptoServiceProvider class and the 3DES algorithm.
+    /// </summary>
     public class TripleDesAlgorithm : IAlgorithm
     {
+        /// <summary>
+        /// Represents the name of the symmetric algorithm.
+        /// </summary>
         public static readonly string NameSignature = "3DES";
 
+        /// <summary>
+        /// Represents block cipher mode of operation for <see cref="TripleDesAlgorithm"/>.
+        /// </summary>
         public static string ModeSignature = null;
 
         /// <summary>
+        /// Represents the secret key for the symmetric algorithm.
         /// TripleDES takes three 64-bit keys, for an overall key length of 192 bits. Algorithm uses only 168 bits out of 192 bits.
-        /// TripleDES uses three successive iterations of the DES algorithm. It can use either two or three 56-bit keys.
+        /// TripleDES uses three successive iterations of the DES algorithm. It can use either two or three 56-bit keys, but this Wrapper uses three 56-bit keys.
         /// </summary>
         public byte[] Key { get; set; }
 
         /// <summary>
-        /// The block size for TripleDES is 64 bits.
+        /// Represents the initialization vector (IV) for the symmetric algorithm.
+        /// IV is a fixed-size input to a cryptographic primitive used for encryption/decryption.
+        /// The block size for TripleDES is 64 bits, so the IV is always set to 8 B.
         /// </summary>
         public byte[] IV { get; set; }
 
         public byte[] AdditionalData => IV;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TripleDesAlgorithm"/> class with the specified block cipher mode of operation
+        /// using a csprng values for <see cref="Key"/> and <see cref="IV"/> created with .NETs <see cref="RNGCryptoServiceProvider"/>.
+        /// </summary>
+        /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public TripleDesAlgorithm(string mode = "CBC")
         {
             Key = new byte[24]; // 24 B = 192 b
@@ -39,6 +56,12 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             ModeSignature = mode;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TripleDesAlgorithm"/> class with the specified key and iv values and block cipher mode of operation.
+        /// </summary>
+        /// <param name="key">Specified key value used for the symmetric algorithm.</param>
+        /// <param name="iv">Specified iv value used for the symmetric algorithm.</param>
+        /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public TripleDesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
             if (key.Length == 24 && iv.Length == 8)
@@ -53,6 +76,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             }
         }
 
+        /// <summary>
+        /// Creates a symmetric encryptor/decryptor object using the specified key and initialization vector (IV) for OFB block cipher mode of operation.
+        /// </summary>
+        /// <param name="forEncryption">true to create a symmetric encryptor object; false to create a symmetric decryptor object.</param>
+        /// <returns>A symmetric encryptor object used for OFB block cipher mode of operation.</returns>
         public IBufferedCipher CreateTripleDesCipher(bool forEncryption)
         {
             IBufferedCipher cipher;
