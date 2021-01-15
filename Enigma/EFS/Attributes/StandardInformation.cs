@@ -45,17 +45,19 @@ namespace Enigma.EFS.Attributes
         public uint TotalLength { get; set; }
 
         /// <summary>
-        /// This construtor is used when reading/modifying encrypted file.
+        /// Initializes a new instance of the <see cref="StandardInformation"/> class.
+        /// This constructor is used when reading/modifying encrypted file.
         /// </summary>
         public StandardInformation() : base(AttributeType.STANDARD_INFORMATION)
         {
         }
 
         /// <summary>
-        /// This construtor is used when a file is first encrypted.
+        /// Initializes a new instance of the <see cref="StandardInformation"/> class with the specified parameters.
+        /// This constructor is used when a file is first encrypted.
         /// </summary>
-        /// <param name="userID">Id of the user who created a new file.</param>
-        /// <param name="fileSize">Total length of file bytes. </param>
+        /// <param name="userID">Id of the user who created a new file from the database.</param>
+        /// <param name="fileSize">Total length of file in bytes.</param>
         public StandardInformation(uint userID, uint fileSize) : base(AttributeType.STANDARD_INFORMATION)
         {
             CreationTime = AlteredTime = ReadTime = DateTime.Now;

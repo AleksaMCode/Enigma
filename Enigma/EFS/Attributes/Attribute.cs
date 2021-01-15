@@ -13,6 +13,10 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         public AttributeType Type { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Attribute"/> class with the type of the header.
+        /// </summary>
+        /// <param name="type">Type of the header.</param>
         public Attribute(AttributeType type)
         {
             Type = type;

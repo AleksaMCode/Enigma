@@ -43,16 +43,21 @@ namespace Enigma.EFS.Attributes
         public byte[] Signature { get; set; }
 
         /// <summary>
-        /// This construtor is used when reading/modifying encrypted file.
+        /// Initializes a new instance of the <see cref="SecurityDescriptor"/> class.
+        /// This constructor is used when reading/modifying encrypted file.
         /// </summary>
         public SecurityDescriptor() : base(AttributeType.SECURITY_DESCRIPTOR)
         {
         }
 
         /// <summary>
-        /// This construtor is used when a file is first encrypted. Key and Iv contain csprng data.
+        /// Initializes a new instance of the <see cref="SecurityDescriptor"/> class with the specified parameters.
+        /// This constructor is used when a file is first encrypted.
         /// </summary>
-        /// <param name="fek">Owners <see cref="FileEncryptionKey"/>.</param>
+        /// <param name="ownerId">Users Id from the database.</param>
+        /// <param name="algorithmNameSignature">Full name of the used symmetric algorithm.</param>
+        /// <param name="hashAlgorithmName">Name of the hash algorithm used for file signing.</param>
+        /// <param name="ownerPublicKey">Users public RSA key.</param>
         public SecurityDescriptor(int ownerId, string algorithmNameSignature, string hashAlgorithmName, RSAParameters ownerPublicKey) : base(AttributeType.SECURITY_DESCRIPTOR)
         {
             OwnerId = ownerId;
