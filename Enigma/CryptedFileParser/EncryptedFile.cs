@@ -19,9 +19,23 @@ namespace Enigma.CryptedFileParser
         public readonly string FileExtension = "at";
 
         /// <summary>
-        /// Standard Information, File Name and Security Descriptor header.
+        /// Standard Information, Security Descriptor and Data header.
         /// </summary>
         public Attribute[] Headers = new Attribute[3];
+
+        public EncryptedFile()
+        {
+            Headers[0] = new StandardInformation();
+            Headers[1] = new SecurityDescriptor();
+            Headers[2] = new Data();
+        }
+
+        public EncryptedFile(uint userId, string algorithmNameSignature, string hashAlgorithmName, RSAParameters ownerPublicKey)
+        {
+            Headers[0] = new StandardInformation(userId);
+            Headers[1] = new SecurityDescriptor((int)userId, algorithmNameSignature, hashAlgorithmName, ownerPublicKey);
+            Headers[2] = new Data();
+        }
 
         /// <summary>
         /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm.
