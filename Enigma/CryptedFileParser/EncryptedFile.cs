@@ -11,10 +11,13 @@ namespace Enigma.CryptedFileParser
         internal readonly Stream EncrypteFileContent;
 
         /// <summary>
-        /// Users public key is used for name encryption.
+        /// Represents an encrypted version of the original name of the file.
         /// </summary>
         public string EncriptedName { get; internal set; } = null;
 
+        /// <summary>
+        /// All encrypted files have the same extension. At stands for Alan Turing.
+        /// </summary>
         public readonly string fileExtension = "at";
 
         /// <summary>
@@ -28,30 +31,24 @@ namespace Enigma.CryptedFileParser
             EncrypteFileContent = encrypteFileContent;
         }
 
-        public void NameEncryption(string name, RSAParameters publicKey)
+        /// <summary>
+        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm.
+        /// </summary>
+        /// <param name="name">Full name of the file (name + extension) that is being encrypted.</param>
+        /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
+        public void NameEncryption(string name, AesAlgorithm aes)
         {
-            var originalNameArray = Encoding.ASCII.GetBytes(name);
-
-            var encryptRSA = new RsaAlgorithm(publicKey);
-            var encriptedNameArray = encryptRSA.Encrypt(originalNameArray);
-
-            EncriptedName = Encoding.ASCII.GetString(encriptedNameArray);
+            EncriptedName = Encoding.ASCII.GetString(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
         }
 
-        public bool NameDecryption(RSAParameters privateKey, ref string name)
+        /// <summary>
+        /// Decrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm.
+        /// </summary>
+        /// <param name="name">Full name of the file (name + extension) that is being encrypted.</param>
+        /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
+        public void NameDecryption(ref string name, AesAlgorithm aes)
         {
-            if (EncriptedName == null)
-            {
-                return false;
-            }
-
-            var encriptedNameArray = Encoding.ASCII.GetBytes(EncriptedName);
-
-            var decryptRSA = new RsaAlgorithm(privateKey);
-            var originalNameArray = decryptRSA.Decrypt(encriptedNameArray);
-
-            name = Encoding.ASCII.GetString(originalNameArray);
-            return true;
+            name = Encoding.ASCII.GetString(aes.Decrypt(Encoding.ASCII.GetBytes(EncriptedName)));
         }
     }
 }
