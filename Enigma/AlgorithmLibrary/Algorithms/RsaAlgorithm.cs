@@ -110,7 +110,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return decryptedData;
         }
 
-        public byte[] Signature(byte[] data, HashAlgorithm hashAlgo)
+        public byte[] CreateSignature(byte[] data, HashAlgorithm hashAlgo)
         {
             using var rsaProvider = new RSACryptoServiceProvider();
 
