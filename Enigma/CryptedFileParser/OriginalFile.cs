@@ -1,4 +1,4 @@
-using System.IO;
+using System;
 
 namespace Enigma.CryptedFileParser
 {
@@ -29,10 +29,15 @@ namespace Enigma.CryptedFileParser
             }
             else
             {
-                // throw an exception
+                throw new Exception(string.Format("File type '{0}' is not supported", tokens[1]));
             }
         }
 
+        /// <summary>
+        /// Checks if the file extension is allowed.
+        /// </summary>
+        /// <param name="fileExtension">Extension of the file.</param>
+        /// <returns>true if file type is permitted, otherwise false.</returns>
         public bool ExtensionCheck(string fileExtension)
         {
             foreach (var extension in allowedExtensions)
