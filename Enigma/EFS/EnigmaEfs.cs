@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Enigma.CryptedFileParser;
 using Enigma.Models;
 
@@ -59,7 +60,7 @@ namespace Enigma.EFS
         {
             var fileSize = new FileInfo(locationOfFile).Length;
 
-            if(fileSize > 4_000_000_000)
+            if (fileSize > 4_000_000_000)
             {
                 throw new Exception("File can't be larger than 4 GB.");
             }
@@ -90,6 +91,24 @@ namespace Enigma.EFS
             using var stream = new FileStream(locationOnFs + "\\" + originalFile.GetOriginalFileFullName(), FileMode.Create);
             using var writter = new BinaryWriter(stream);
             writter.Write(originalFile.FileContent);
+        }
+
+        public void CreateTxtFile(string text, string locationOnFs, string fileName)
+        {
+            var textFile = new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt");
+
+            using var stream = new FileStream(locationOnFs + "\\" + textFile.GetOriginalFileFullName(), FileMode.Create);
+            using var writter = new BinaryWriter(stream);
+            writter.Write(textFile.FileContent);
+        }
+
+        public void EditTxtFile(string text, string locationOnFs)
+        {
+            var textFile = new OriginalFile(Encoding.ASCII.GetBytes(text), locationOnFs.Substring(locationOnFs.LastIndexOf('\\') + 1));
+
+            using var stream = new FileStream(locationOnFs + "\\" + textFile.GetOriginalFileFullName(), FileMode.Create);
+            using var writter = new BinaryWriter(stream);
+            writter.Write(textFile.FileContent);
         }
     }
 }
