@@ -28,12 +28,14 @@ namespace Enigma.CryptedFileParser
         {
             Headers[0] = new StandardInformation();
             Headers[1] = new SecurityDescriptor();
+            Headers[2] = new Data();
         }
 
         public EncryptedFile(string fileName, uint userId, string algorithmNameSignature, string hashAlgorithmName, RSAParameters ownerPublicKey, RSAParameters ownerPrivateKey)
         {
             Headers[0] = new StandardInformation(userId);
             Headers[1] = new SecurityDescriptor((int)userId, algorithmNameSignature, hashAlgorithmName, ownerPublicKey);
+            Headers[2] = new Data();
             NameEncryption(fileName, new AesAlgorithm(((SecurityDescriptor)Headers[1]).GetKey((int)userId, ownerPrivateKey), ((SecurityDescriptor)Headers[1]).IV, "OFB"));
         }
 
