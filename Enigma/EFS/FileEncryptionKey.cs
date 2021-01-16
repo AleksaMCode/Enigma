@@ -50,9 +50,9 @@ namespace Enigma.EFS
         {
             var fekData = new RsaAlgorithm(privateKey).Decrypt(fekEncrypted);       // decryption of FEK data (Key length + Key)
 
-            var keyLength = BitConverter.ToInt16(fekData, 0);                       // parse Key length
+            var keyLength = fekEncrypted[0];                                        // parse Key length
             Key = new byte[keyLength];
-            Buffer.BlockCopy(fekData, 2, Key, 0, Key.Length);                       // parse Key byte[]
+            Buffer.BlockCopy(fekData, 1, Key, 0, Key.Length);                       // parse Key byte[]
         }
     }
 }
