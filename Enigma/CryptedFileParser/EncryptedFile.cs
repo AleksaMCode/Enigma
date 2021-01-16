@@ -33,7 +33,7 @@ namespace Enigma.CryptedFileParser
         {
             Headers[0] = new StandardInformation(userId);
             Headers[1] = new SecurityDescriptor((int)userId, algorithmNameSignature, hashAlgorithmName, ownerPublicKey);
-            NameEncryption(fileName, new AesAlgorithm(((SecurityDescriptor)Headers[1]).GetKey(userId, ownerPrivateKey), ((SecurityDescriptor)Headers[1]).IV, "OFB"));
+            NameEncryption(fileName, new AesAlgorithm(((SecurityDescriptor)Headers[1]).GetKey((int)userId, ownerPrivateKey), ((SecurityDescriptor)Headers[1]).IV, "OFB"));
         }
 
         /// <summary>
