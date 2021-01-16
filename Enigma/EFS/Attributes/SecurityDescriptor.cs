@@ -162,7 +162,7 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         /// <param name="data">Raw data.</param>
         /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
-        public void ParseUnparseSecurityDescriptor(byte[] data, int offset)
+        public void ParseUnparseSecurityDescriptor(byte[] data, ref int offset)
         {
             Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                                                  // parse Type
             offset += 4;
@@ -212,6 +212,7 @@ namespace Enigma.EFS.Attributes
             offset += 1;
             Signature = new byte[signatureLength];
             Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
+            offset += signatureLength;
         }
 
         /// <summary>
