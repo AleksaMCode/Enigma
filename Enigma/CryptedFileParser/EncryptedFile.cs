@@ -64,6 +64,11 @@ namespace Enigma.CryptedFileParser
             var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
             Headers[2] = new Data(originalFile.FileContent,
                 AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
+
+            // create a file signature
+            ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).
+                CreateSignature(originalFile.FileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName));
+
             var dataHeader = ((Data)Headers[2]).UnparseData();
 
             var encryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
@@ -75,7 +80,7 @@ namespace Enigma.CryptedFileParser
             return encryptedFile;
         }
 
-        public OriginalFile Decrypt(byte[] encryptedFile, int userId, RSAParameters userPrivateKey)
+        public OriginalFile Decrypt(byte[] encryptedFile, int userId, RSAParameters userPrivateKey, RSAParameters ownerPublicKey)
         {
             var offset = 0;
             ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
@@ -86,7 +91,12 @@ namespace Enigma.CryptedFileParser
 
             var fileName = NameDecryption(new AesAlgorithm(fileKey, ((SecurityDescriptor)Headers[1]).IV, "OFB"));
 
-            return new OriginalFile(((Data)Headers[2]).Decrypt(AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, fileKey, ((SecurityDescriptor)Headers[1]).IV)), fileName);
+            var fileContent = ((Data)Headers[2]).Decrypt(AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, fileKey, ((SecurityDescriptor)Headers[1]).IV));
+
+            // if file signature isn't valid Exception will be thrown!
+            return new RsaAlgorithm(ownerPublicKey).VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature)
+                ? new OriginalFile(fileContent, fileName)
+                : throw new CryptographicException("File integrity has been compromised.");
         }
 
         /// <summary>
