@@ -110,5 +110,15 @@ namespace Enigma.EFS
             using var writter = new BinaryWriter(stream);
             writter.Write(textFile.FileContent);
         }
+
+        public void DeleteFile(string path)
+        {
+            File.Delete(path);
+        }
+
+        public void DeleteDirectory(string path)
+        {
+            Directory.Delete(path, true);
+        }
     }
 }
