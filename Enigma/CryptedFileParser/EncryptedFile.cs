@@ -1,6 +1,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using Enigma.AlgorithmLibrary;
 using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.EFS.Attributes;
 
@@ -71,14 +72,18 @@ namespace Enigma.CryptedFileParser
             return encryptedFile;
         }
 
-        public OriginalFile Decrypt(byte[] encryptedFile, string encryptedFileName, int userId, RSAParameters userPrivateKey)
+        public OriginalFile Decrypt(byte[] encryptedFile, int userId, RSAParameters userPrivateKey)
         {
             var offset = 0;
             ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
             ((SecurityDescriptor)Headers[1]).ParseUnparseSecurityDescriptor(encryptedFile, ref offset);
-            ((Data)Headers[0]).ParseData(encryptedFile, offset);
+            ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
 
-            var fileName = NameDecryption(new AesAlgorithm(((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV, "OFB"));
+            var fileKey = ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey);
+
+            var fileName = NameDecryption(new AesAlgorithm(fileKey, ((SecurityDescriptor)Headers[1]).IV, "OFB"));
+
+            return new OriginalFile(((Data)Headers[2]).Decrypt(AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, fileKey, ((SecurityDescriptor)Headers[1]).IV)), fileName);
         }
 
         /// <summary>
