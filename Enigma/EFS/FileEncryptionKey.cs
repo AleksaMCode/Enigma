@@ -52,7 +52,7 @@ namespace Enigma.EFS
 
             var keyLength = BitConverter.ToInt16(fekData, 0);                       // parse Key length
             Key = new byte[keyLength];
-            Buffer.BlockCopy(fekData, 0, Key, 0, Key.Length);                       // parse Key byte[]
+            Buffer.BlockCopy(fekData, 2, Key, 0, Key.Length);                       // parse Key byte[]
         }
     }
 }
