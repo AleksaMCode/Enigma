@@ -33,12 +33,12 @@ namespace Enigma.EFS
         /// <returns>Encrypted <see cref="Key"/>.</returns>
         public byte[] UnparseFek(RSAParameters publicKey)
         {
-            var fekData = new byte[1 + Key.Length];                                 // Key Length + Key
+            var fekData = new byte[2 + Key.Length];                                         // Key Length + Key
 
-            fekData[0] = (byte)Key.Length;                                          // unparse Key length; max. size the key is 256 bits
-            Buffer.BlockCopy(Key, 0, fekData, 1, Key.Length);                       // unparse Key byte[]
+            Buffer.BlockCopy(BitConverter.GetBytes((short)Key.Length), 0, fekData, 0, 2);   // unparse Key length; max. key size is 256 bits
+            Buffer.BlockCopy(Key, 0, fekData, 1, Key.Length);                               // unparse Key byte[]
 
-            return new RsaAlgorithm(publicKey).Encrypt(fekData);                    // encrypt then return FEK data, size is always module of RSA key size, 2048, 3072 or 4096
+            return new RsaAlgorithm(publicKey).Encrypt(fekData);                            // encrypt then return FEK data, size is always module of RSA key size, 2048, 3072 or 4096
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace Enigma.EFS
         /// <param name="privateKey">Users private RSA key used for decryption of encrypted FEK data.</param>
         public void ParseFek(byte[] fekEncrypted, RSAParameters privateKey)
         {
-            var fekData = new RsaAlgorithm(privateKey).Decrypt(fekEncrypted);       // decryption of FEK data (Key length + Key)
+            var fekData = new RsaAlgorithm(privateKey).Decrypt(fekEncrypted);               // decryption of FEK data (Key length + Key)
 
-            var keyLength = fekEncrypted[0];                                        // parse Key length
+            var keyLength = BitConverter.ToInt16(fekData, 0);                               // parse Key length
             Key = new byte[keyLength];
-            Buffer.BlockCopy(fekData, 1, Key, 0, Key.Length);                       // parse Key byte[]
+            Buffer.BlockCopy(fekData, 2, Key, 0, Key.Length);                               // parse Key byte[]
         }
     }
 }
