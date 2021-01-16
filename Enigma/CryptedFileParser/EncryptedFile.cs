@@ -35,7 +35,6 @@ namespace Enigma.CryptedFileParser
         {
             Headers[0] = new StandardInformation(userId);
             Headers[1] = new SecurityDescriptor((int)userId, algorithmNameSignature, hashAlgorithmName, ownerPublicKey);
-            Headers[2] = new Data();
             NameEncryption(fileName, new AesAlgorithm(((SecurityDescriptor)Headers[1]).GetKey((int)userId, ownerPrivateKey), ((SecurityDescriptor)Headers[1]).IV, "OFB"));
         }
 
@@ -59,17 +58,19 @@ namespace Enigma.CryptedFileParser
             return Encoding.ASCII.GetString(aes.Decrypt(Encoding.ASCII.GetBytes(EncriptedName)));
         }
 
-        public byte[] Encrypt(OriginalFile originalFile, IAlgorithm algorithm)
+        public byte[] Encrypt(OriginalFile originalFile, int userId, RSAParameters userPrivateKey)
         {
             var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
             var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
+            Headers[2] = new Data(originalFile.FileContent,
+                AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
             var dataHeader = ((Data)Headers[2]).UnparseData();
 
             var encryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
 
             Buffer.BlockCopy(standardInformationHeader, 0, encryptedFile, 0, standardInformationHeader.Length);
-            Buffer.BlockCopy(securityDescriptorHeader, standardInformationHeader.Length, encryptedFile, 0, securityDescriptorHeader.Length);
-            Buffer.BlockCopy(dataHeader, standardInformationHeader.Length + securityDescriptorHeader.Length, encryptedFile, 0, dataHeader.Length);
+            Buffer.BlockCopy(securityDescriptorHeader, 0, encryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
+            Buffer.BlockCopy(dataHeader, 0, encryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
 
             return encryptedFile;
         }
