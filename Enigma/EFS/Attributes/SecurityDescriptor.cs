@@ -30,7 +30,8 @@ namespace Enigma.EFS.Attributes
         public int OwnerId { get; set; }
 
         /// <summary>
-        /// Dictionary used to store IDs and encrypted of users that owner has shared file with.
+        /// Dictionary used to store IDs and encrypted FEKs of users that have access to the file.
+        /// First entry is reserved for owner of the file.
         /// </summary>
         public Dictionary<int, byte[]> Users = null;
 
@@ -96,6 +97,19 @@ namespace Enigma.EFS.Attributes
             {
                 Users.Remove(userId);
             }
+        }
+
+        /// <summary>
+        /// Gets users decrypted Key used for symmetric encryption/decryption of the file.
+        /// </summary>
+        /// <param name="userId">Unique user identifier from the database.</param>
+        /// <param name="userPrivatKey">Users private RSA key used for decryption of encrypted FEK data.</param>
+        /// <returns>Decrypted Key used for symmetric encryption/decryption of the file.</returns>
+        public byte[] GetKey(int userId, RSAParameters userPrivatKey)
+        {
+            var usersFek = new FileEncryptionKey();
+            usersFek.ParseFek(Users[userId], userPrivatKey);
+            return usersFek.Key;
         }
 
         /// <summary>
