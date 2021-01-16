@@ -41,6 +41,9 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         public byte[] IV { get; set; }
 
+        /// <summary>
+        /// File signature used for achieving integrity of a file.
+        /// </summary>
         public byte[] Signature { get; set; }
 
         /// <summary>
