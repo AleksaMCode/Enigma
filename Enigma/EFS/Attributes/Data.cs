@@ -49,16 +49,31 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
+        /// Writting Data header to <see cref="byte"/>[].
+        /// </summary>
+        public byte[] UnparseData()
+        {
+            var dataHeader = new byte[GetSaveLength()];
+
+            Buffer.BlockCopy(BitConverter.GetBytes((uint)Type), 0, dataHeader, 0, 4);                   // unparse Type
+            Buffer.BlockCopy(EncryptedData, 0, dataHeader, 4, EncryptedData.Length);                    // unparse EncryptedData
+
+            return dataHeader;
+        }
+
+        /// <summary>
         /// Parsing header data from encrypted file.
         /// </summary>
         /// <param name="data">Raw data.</param>
-        /// <param name="offset">ffset from the start of the raw data <see cref="byte"/>[].</param>
+        /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
         /// <param name="encryptedDataSize">Size of the encrypted data stored inside of the header.
         /// This information is stored as <see cref="StandardInformation.TotalLength"/> in the <see cref="StandardInformation"/> header.</param>
         public void ParseData(byte[] data, int offset, int encryptedDataSize)
         {
+            Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                  // parse Type
+            offset += 4;
             EncryptedData = new byte[encryptedDataSize];
-            Buffer.BlockCopy(data, offset, EncryptedData, 0, encryptedDataSize);
+            Buffer.BlockCopy(data, offset, EncryptedData, 0, encryptedDataSize);                        // parse EncryptedData
         }
 
         /// <summary>
@@ -67,7 +82,7 @@ namespace Enigma.EFS.Attributes
         public override uint GetSaveLength()
         {
             return EncryptedData != null
-                ? (uint)EncryptedData.Length
+                ? base.GetSaveLength() + (uint)EncryptedData.Length
                 : throw new NotImplementedException("Size of the Data header is not set.");
         }
     }
