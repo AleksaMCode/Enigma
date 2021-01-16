@@ -4,7 +4,7 @@ namespace Enigma.CryptedFileParser
 {
     public class OriginalFile
     {
-        public Stream FileContent { get; internal set; }
+        public byte[] FileContent { get; internal set; }
 
         public string FileName { get; internal set; }
 
@@ -15,7 +15,7 @@ namespace Enigma.CryptedFileParser
         /// </summary>
         private readonly string[] allowedExtensions = { "txt", "docx", "png", "jpeg", "pdf" };
 
-        public OriginalFile(Stream fileContent, string fileName)
+        public OriginalFile(byte[] fileContent, string fileName)
         {
             // tokens[0] = file_name
             // tokens[1] = file_extension
