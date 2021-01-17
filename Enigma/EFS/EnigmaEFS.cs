@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -119,6 +120,22 @@ namespace Enigma.EFS
         public void DeleteDirectory(string path)
         {
             Directory.Delete(path, true);
+        }
+
+        public void ReadFile(string locationOnEfs, RSAParameters ownerPublicKey, out string tempFilePath)
+        {
+            var encryptedFile = new EncryptedFile();
+            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(locationOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey);
+            tempFilePath = Path.GetTempPath() + "Enigma-" + Guid.NewGuid().ToString() + "." + originalFile.FileExtension;
+
+            using (var stream = new FileStream(tempFilePath, FileMode.Create))
+            {
+                using var writter = new BinaryWriter(stream);
+                writter.Write(originalFile.FileContent);
+            }
+
+            var startInfo = new ProcessStartInfo(tempFilePath);
+            Process.Start(startInfo);
         }
     }
 }
