@@ -88,6 +88,7 @@
     <Compile Include="AlgorithmLibrary\Algorithms\TwofishAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\AlgorithmUtility.cs" />
     <Compile Include="EFS\Attributes\Data.cs" />
+    <Compile Include="EFS\EnigmaEfs.cs" />
     <Compile Include="EFS\FileEncryptionKey.cs" />
     <Compile Include="CryptedFileParser\EncryptedFile.cs" />
     <Compile Include="CryptedFileParser\Exceptions\UnknownCipherModeException.cs" />
