@@ -22,7 +22,6 @@ namespace Enigma.EFS
         /// </summary>
         private readonly UserInformation currentUser;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="EnigmaEfs"/> class with the specified user information.
         /// </summary>
@@ -92,7 +91,6 @@ namespace Enigma.EFS
                 return false;
             }
         }
-
 
         /// <summary>
         /// Uplaods selected file. File is first encrypted after which is stored on the specified path on encrypted file system.
