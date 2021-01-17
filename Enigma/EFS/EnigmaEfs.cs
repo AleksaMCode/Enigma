@@ -63,14 +63,7 @@ namespace Enigma.EFS
         public bool CanItBeStored(long size)
         {
             var availableFreeSpace = new DriveInfo(mountLocation).AvailableFreeSpace;
-            if (size < availableFreeSpace)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return size < availableFreeSpace;
         }
 
         /// <summary>
