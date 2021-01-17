@@ -66,7 +66,7 @@ namespace Enigma.Models
         /// </summary>
         /// <param name="privateKeyPath">Path to users private key.</param>
         /// <param name="password">User chosen password which is used to create KEY and IV that are used for AES encryption.</param>
-        internal void EncryptUserKey(string privateKeyPath, string password)
+        public void EncryptUserKey(string privateKeyPath, string password)
         {
             var passwordBytes = Encoding.ASCII.GetBytes(password);
             var keyRaw = File.ReadAllBytes(privateKeyPath);
@@ -150,7 +150,7 @@ namespace Enigma.Models
         /// Generates a random password with a high entropy.
         /// </summary>
         /// <returns>Random ASCII password.</returns>
-        internal string GenerateRandomPassword()
+        public string GenerateRandomPassword()
         {
             var passArray = new char[30];
             string password;
@@ -199,7 +199,7 @@ namespace Enigma.Models
         /// Generates a random passphrase that contains between 6 and 10 words using a <em>Diceware</em> method (<see href="https://www.eff.org/dice">EFF Dice-Generated Passphrases</see>).
         /// </summary>
         /// <returns>Random ASCII password createad using a <em>Diceware</em> method.</returns>
-        internal string GeneratePassphrase()
+        public string GeneratePassphrase()
         {
             var diceRollResult = 0;
             string passphrase;
