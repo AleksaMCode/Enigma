@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Enigma.CryptedFileParser
 {
@@ -13,7 +14,7 @@ namespace Enigma.CryptedFileParser
         /// <summary>
         /// List of allowed file extensions.
         /// </summary>
-        private readonly string[] allowedExtensions = { "txt", "docx", "png", "jpeg", "pdf" };
+        private readonly HashSet<string> allowedExtensions = new HashSet<string> { "txt", "docx", "doc", "png", "jpeg", "jpg", "pdf", "xlsx", "xls", "ppt", "pptx" };
 
         public OriginalFile(byte[] fileContent, string fileName)
         {
@@ -40,14 +41,7 @@ namespace Enigma.CryptedFileParser
         /// <returns>true if file type is permitted, otherwise false.</returns>
         public bool ExtensionCheck(string fileExtension)
         {
-            foreach (var extension in allowedExtensions)
-            {
-                if (fileExtension.Equals(extension))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return allowedExtensions.Contains(fileExtension);
         }
 
         /// <summary>
