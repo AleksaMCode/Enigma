@@ -9,7 +9,7 @@ using Enigma.Models;
 namespace Enigma.EFS
 {
     /// <summary>
-    /// Allows to create, modify or manipulate an Enigma Encripted File System.
+    /// Allows to create, modify or manipulate an Enigma Encrypted File System.
     /// </summary>
     public class EnigmaEfs
     {
@@ -44,10 +44,15 @@ namespace Enigma.EFS
                 {
                     Directory.CreateDirectory(sharedDir);
                 }
+
+                if (!Directory.Exists(user.user.Username))
+                {
+                    Directory.CreateDirectory(user.user.Username);
+                }
             }
             else
             {
-                // error handle
+                throw new Exception("Mount location for Enigma Encrypted File System is missing.");
             }
         }
 
@@ -235,7 +240,7 @@ namespace Enigma.EFS
         public void RemoveTempFiles()
         {
             var filesToDelete = Directory.GetFiles(Path.GetTempPath(), "Enigma-*");
-            foreach(var fileName in filesToDelete)
+            foreach (var fileName in filesToDelete)
             {
                 File.Delete(fileName);
             }
