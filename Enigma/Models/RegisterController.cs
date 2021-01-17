@@ -21,7 +21,7 @@ namespace Enigma.Models
             data = db;
         }
 
-        internal void Register(string username, string password, string certificateFilePath, bool usbKey)
+        public void Register(string username, string password, string certificateFilePath, bool usbKey)
         {
             if (password.Contains(username))
             {
@@ -59,7 +59,6 @@ namespace Enigma.Models
             }
 
             data.AddUser(username, password, File.ReadAllBytes(certificateFilePath), usbKey);
-            Directory.CreateDirectory(string.Format(@"D:\EnigmaEFS\{0}", username));
         }
 
         /// <summary>

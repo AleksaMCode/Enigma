@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Enigma.Enums;
+using Enigma.Models;
+using Enigma.UserDbManager;
 using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight.Command;
 
@@ -68,8 +70,8 @@ namespace Enigma.Wpf.ViewModels
                 if (IsValid())
                 {
                     var password = passBox.Password;
-                    // check password strength, if username exists etc
-                    // write errors with ShowMessage
+                    var register = new RegisterController(new UserDatabase(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db"));
+                    register.Register(username, passBox.Password,/*usercert is missing*/, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                     /* then create private key of file based on what user chose, something like:
 
