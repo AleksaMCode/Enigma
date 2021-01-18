@@ -33,7 +33,7 @@ namespace Enigma.EFS.Attributes
         /// Dictionary used to store IDs and encrypted FEKs of users that have access to the file.
         /// First entry is reserved for owner of the file.
         /// </summary>
-        public Dictionary<int, byte[]> Users = null;
+        public Dictionary<int, byte[]> Users = new Dictionary<int, byte[]>();
 
         /// <summary>
         /// Initialization vector used with CBC, OFB and CFB Block cipher mode of operation. ECB mode doesn't use IV.
