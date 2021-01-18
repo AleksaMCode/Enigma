@@ -84,15 +84,17 @@ namespace Enigma.CryptedFileParser
         /// <returns>Encrypted file in its raw form.</returns>
         public byte[] Encrypt(OriginalFile originalFile, int userId, RSAParameters userPrivateKey)
         {
-            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
-            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
-            Headers[2] = new Data(originalFile.FileContent,
-                AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
-
             // create a file signature
             ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).
                 CreateSignature(originalFile.FileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName));
 
+            Headers[2] = new Data(originalFile.FileContent,
+                AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
+            ((StandardInformation)Headers[0]).TotalLength += (uint)((Data)Headers[2]).EncryptedData.Length;
+
+
+            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
+            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
             var dataHeader = ((Data)Headers[2]).UnparseData();
 
             var encryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
