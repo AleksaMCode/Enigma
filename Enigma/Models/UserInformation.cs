@@ -17,7 +17,7 @@ namespace Enigma.Models
         /// <summary>
         /// Users private RSA key.
         /// </summary>
-        public RSAParameters PrivateKey { get; }
+        public RSAParameters PrivateKey { get; set; }
 
         /// <summary>
         /// Users username from the database.
