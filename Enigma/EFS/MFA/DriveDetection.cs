@@ -6,7 +6,7 @@ using System.Linq;
 namespace Enigma.EFS.MFA
 {
     /// <summary>
-    /// Class is used to detect a new hardware RSA key and OTP used for MFA and account recovery.
+    /// Class is used to detect a new hardware RSA key used for MFA.
     /// </summary>
     public class DriveDetection
     {
@@ -61,7 +61,7 @@ namespace Enigma.EFS.MFA
                     ? File.ReadAllBytes(path)
                     : throw new Exception("Usb key has been compromised or wrong usb has been inserted.");
 
-                nextDriveLetter++;
+                SetNextDriveLetter();
                 return true;
             }
             else
