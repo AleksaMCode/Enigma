@@ -125,7 +125,18 @@ namespace Enigma.CryptedFileParser
 
             var fileName = NameDecryption(new AesAlgorithm(fileKey, ((SecurityDescriptor)Headers[1]).IV, "OFB"));
 
-            var fileContent = ((Data)Headers[2]).Decrypt(AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, fileKey, ((SecurityDescriptor)Headers[1]).IV));
+            byte[] fileContent;
+
+            // Try to decrypt encrypted file. Exception will be thrown if Key, Iv or algorithm signature is changed.
+            // Unauthorised algorithm change doesn't always have to trigger this exception and file decryption will be successful. Such file will fail signature check test below.
+            try
+            {
+                fileContent = ((Data)Headers[2]).Decrypt(AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, fileKey, ((SecurityDescriptor)Headers[1]).IV));
+            }
+            catch (Exception e)
+            {
+                throw new CryptographicException("Unsuccessful decryption. File has been compromised.", e);
+            }
 
             // if file signature isn't valid Exception will be thrown!
             return new RsaAlgorithm(ownerPublicKey).VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature)
