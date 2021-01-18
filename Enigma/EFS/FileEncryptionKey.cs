@@ -36,7 +36,7 @@ namespace Enigma.EFS
             var fekData = new byte[2 + Key.Length];                                         // Key Length + Key
 
             Buffer.BlockCopy(BitConverter.GetBytes((short)Key.Length), 0, fekData, 0, 2);   // unparse Key length; max. key size is 256 bits
-            Buffer.BlockCopy(Key, 0, fekData, 1, Key.Length);                               // unparse Key byte[]
+            Buffer.BlockCopy(Key, 0, fekData, 2, Key.Length);                               // unparse Key byte[]
 
             return new RsaAlgorithm(publicKey).Encrypt(fekData);                            // encrypt then return FEK data, size is always module of RSA key size, 2048, 3072 or 4096
         }
