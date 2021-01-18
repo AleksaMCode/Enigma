@@ -78,15 +78,28 @@ namespace Enigma.EFS.Attributes
         /// Key used for file encryption is encrypted for the shared user using their public RSA key.
         /// </summary>
         /// <param name="userId">Unique user identifier from the database.</param>
-        /// <param name="publicKey">Users public RSA key.</param>
-        public void ShareFile(int userId, RSAParameters ownerPrivateKey, RSAParameters userPublicKey)
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <param name="loggedInUserPrivateKey">Private RSA key of the logged-in user.</param>
+        /// <param name="userPublicKey">Users public RSA key.</param>
+        public void ShareFile(int loggedInUserId, int userId, RSAParameters loggedInUserPrivateKey, RSAParameters userPublicKey)
         {
-            if (!Users.ContainsKey(userId) && Users.Count <= 4)
+            if (OwnerId == loggedInUserId)
             {
-                var usersFek = new FileEncryptionKey();
-                usersFek.ParseFek(Users[userId], ownerPrivateKey);
+                if (Users.Count > 4)
+                {
+                    throw new Exception("File can't be shared with more than 4 users.");
+                }
+                if (!Users.ContainsKey(userId))
+                {
+                    var usersFek = new FileEncryptionKey();
+                    usersFek.ParseFek(Users[loggedInUserId], loggedInUserPrivateKey);
 
-                Users.Add(userId, usersFek.UnparseFek(userPublicKey));
+                    Users.Add(userId, usersFek.UnparseFek(userPublicKey));
+                }
+            }
+            else
+            {
+                throw new Exception("Only file owner can share this file.");
             }
         }
 
@@ -94,11 +107,19 @@ namespace Enigma.EFS.Attributes
         /// Unshare a file after sharing it with other specific user on EnigmaEfs.
         /// </summary>
         /// <param name="userId">Unique user identifier from the database.</param>
-        public void UnshareFile(int userId)
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        public void UnshareFile(int loggedInUserId, int userId)
         {
-            if (Users.ContainsKey(userId))
+            if (OwnerId == loggedInUserId)
             {
-                Users.Remove(userId);
+                if (Users.ContainsKey(userId))
+                {
+                    Users.Remove(userId);
+                }
+            }
+            else
+            {
+                throw new Exception("Only file owner can unshare this file.");
             }
         }
 
@@ -110,9 +131,16 @@ namespace Enigma.EFS.Attributes
         /// <returns>Decrypted Key used for symmetric encryption/decryption of the file.</returns>
         public byte[] GetKey(int userId, RSAParameters userPrivatKey)
         {
-            var usersFek = new FileEncryptionKey();
-            usersFek.ParseFek(Users[userId], userPrivatKey);
-            return usersFek.Key;
+            if (Users.ContainsKey(userId))
+            {
+                var usersFek = new FileEncryptionKey();
+                usersFek.ParseFek(Users[userId], userPrivatKey);
+                return usersFek.Key;
+            }
+            else
+            {
+                throw new Exception("You don't have access to this file.");
+            }
         }
 
         /// <summary>
