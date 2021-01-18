@@ -149,7 +149,7 @@ namespace Enigma.EFS.Attributes
         public byte[] UnparseSecurityDescriptor()
         {
             // max. expected size when using 4,096 RSA keys for all user, max. values for AlgorithmNameSignature and HashAlgorithmName, SHA512 hash for signature and 128 bits IV is 2,195 B
-            var securityDescriptorHeaderd = new byte[2_707];
+            var securityDescriptorHeaderd = new byte[2_709];
             var offset = 0;
 
             var AlgorithmNameSignatureBytes = Encoding.ASCII.GetBytes(AlgorithmNameSignature);
@@ -189,8 +189,8 @@ namespace Enigma.EFS.Attributes
                 offset += user.Value.Length;
             }
 
-            securityDescriptorHeaderd[offset] = (byte)Signature.Length;                                                                     // unparse Signature length
-            offset += 1;
+            Buffer.BlockCopy(BitConverter.GetBytes(Signature.Length), 0, securityDescriptorHeaderd, offset, 4);                             // unparse Signature length
+            offset += 4;
             Buffer.BlockCopy(Signature, 0, securityDescriptorHeaderd, offset, Signature.Length);                                            // unparse Signature
             offset += Signature.Length;
 
@@ -258,7 +258,7 @@ namespace Enigma.EFS.Attributes
                 Users.Add(userId, userEncryptedKey);
             }
 
-            var signatureLength = BitConverter.ToInt16(data, offset);                                                                   // parse Signature length
+            var signatureLength = BitConverter.ToInt32(data, offset);                                                                   // parse Signature length
             offset += 1;
             Signature = new byte[signatureLength];
             Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
