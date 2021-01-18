@@ -236,6 +236,11 @@ namespace Enigma.EFS.Attributes
             offset += 4;
 
             var numberOfUsers = BitConverter.ToInt32(data, offset);                                                                     // parse number of users that have access to this file
+            // security mechanism
+            if(numberOfUsers > 4)
+            {
+                throw new Exception("File has been subjected to the unauthorized change.");
+            }
             offset += 4;
 
             for (var i = 0; i < numberOfUsers; ++i)
