@@ -84,6 +84,8 @@ namespace Enigma.CryptedFileParser
         {
             var offset = 0;
             ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
+            offset += (int)((StandardInformation)Headers[0]).GetSaveLength();
+
             ((SecurityDescriptor)Headers[1]).ParseUnparseSecurityDescriptor(encryptedFile, ref offset);
             ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
 
