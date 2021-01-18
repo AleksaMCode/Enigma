@@ -31,8 +31,9 @@ namespace Enigma.CryptedFileParser
         /// Initializes a new instance of the <see cref="EncryptedFile"/> class.
         /// This constructor is used when reading/modifying encrypted file.
         /// </summary>
-        public EncryptedFile()
+        public EncryptedFile(string fileName)
         {
+            EncriptedName = fileName;
             Headers[0] = new StandardInformation();
             Headers[1] = new SecurityDescriptor();
             Headers[2] = new Data();

@@ -127,7 +127,7 @@ namespace Enigma.EFS
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
         public void Download(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
         {
-            var encryptedFile = new EncryptedFile();
+            var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
             var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey);
 
             if (CanItBeStored(originalFile.FileContent.Length, pathOnFs.Substring(0, 2)))
@@ -204,7 +204,7 @@ namespace Enigma.EFS
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
         public void OpenFile(string pathOnEfs, RSAParameters ownerPublicKey)
         {
-            var encryptedFile = new EncryptedFile();
+            var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
             var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey);
 
             var tempFilePath = Path.GetTempPath() + "Enigma-" + Guid.NewGuid().ToString() + "." + originalFile.FileExtension;
