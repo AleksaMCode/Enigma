@@ -7,6 +7,9 @@ using Enigma.EFS.Attributes;
 
 namespace Enigma.CryptedFileParser
 {
+    /// <summary>
+    /// Represents Enigmas EFS encrypted file.
+    /// </summary>
     public class EncryptedFile
     {
         /// <summary>
@@ -24,6 +27,10 @@ namespace Enigma.CryptedFileParser
         /// </summary>
         public EFS.Attributes.Attribute[] Headers = new EFS.Attributes.Attribute[3];
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EncryptedFile"/> class.
+        /// This constructor is used when reading/modifying encrypted file.
+        /// </summary>
         public EncryptedFile()
         {
             Headers[0] = new StandardInformation();
@@ -31,6 +38,16 @@ namespace Enigma.CryptedFileParser
             Headers[2] = new Data();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EncryptedFile"/> class.
+        /// This constructor is used when encrypted file is created. 
+        /// </summary>
+        /// <param name="fileName">Full name of the original file.</param>
+        /// <param name="userId">Id of the file owner.</param>
+        /// <param name="algorithmNameSignature">Full name of the algorithm used for file encryption.</param>
+        /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
+        /// <param name="ownerPublicKey">Public RSA key of the file owner.</param>
+        /// <param name="ownerPrivateKey">Private RSA key of the file owner.</param>
         public EncryptedFile(string fileName, uint userId, string algorithmNameSignature, string hashAlgorithmName, RSAParameters ownerPublicKey, RSAParameters ownerPrivateKey)
         {
             Headers[0] = new StandardInformation(userId);
@@ -58,6 +75,13 @@ namespace Enigma.CryptedFileParser
             return Encoding.ASCII.GetString(aes.Decrypt(Encoding.ASCII.GetBytes(EncriptedName)));
         }
 
+        /// <summary>
+        /// Encrypts original file using set parameters.
+        /// </summary>
+        /// <param name="originalFile">Original, un-encrypted file.</param>
+        /// <param name="userId">Id of the user who is encrypting original file.</param>
+        /// <param name="userPrivateKey">Private RSA key of the user encrypting the file.</param>
+        /// <returns>Encrypted file in its raw form.</returns>
         public byte[] Encrypt(OriginalFile originalFile, int userId, RSAParameters userPrivateKey)
         {
             var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
@@ -80,6 +104,14 @@ namespace Enigma.CryptedFileParser
             return encryptedFile;
         }
 
+        /// <summary>
+        /// Decrypts encrypted file using parameters contained inside headers of the encrypted file.
+        /// </summary>
+        /// <param name="encryptedFile">Encrypted file in its raw form.</param>
+        /// <param name="userId">Id of the user decrypting the file.</param>
+        /// <param name="userPrivateKey">Private RSA key of the user decrypting the file.</param>
+        /// <param name="ownerPublicKey">Public RSA key of the file owner used to verify file signature.</param>
+        /// <returns>Decrypted file.</returns>
         public OriginalFile Decrypt(byte[] encryptedFile, int userId, RSAParameters userPrivateKey, RSAParameters ownerPublicKey)
         {
             var offset = 0;
