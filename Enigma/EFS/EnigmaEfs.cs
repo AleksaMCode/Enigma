@@ -44,9 +44,9 @@ namespace Enigma.EFS
                     Directory.CreateDirectory(sharedDir);
                 }
 
-                if (!Directory.Exists(user.user.Username))
+                if (!Directory.Exists(rootDir + "\\" + user.user.Username))
                 {
-                    Directory.CreateDirectory(user.user.Username);
+                    Directory.CreateDirectory(rootDir + "\\" + user.user.Username);
                 }
             }
             else
