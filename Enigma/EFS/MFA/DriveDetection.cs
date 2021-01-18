@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Enigma.EFS.MFA
         {
             if (drives.Remove(nextDriveLetter))
             {
-                nextDriveLetter = '0';
+                nextDriveLetter--;
                 return true;
             }
             else
@@ -47,20 +48,26 @@ namespace Enigma.EFS.MFA
                 ;
             }
 
-            if (Directory.Exists(nextDriveLetter + ":"))
+            drives.Add(nextDriveLetter);
+
+            // read a file to memory
+            var path = nextDriveLetter + ":\\" + "key.bin";
+
+            if (Directory.GetFiles(nextDriveLetter + ":").Length == 1)
             {
-                // read a file to memory
-                if (File.Exists("*.at"))
-                {
+                path += ":\\" + "key.bin";
 
-                }
-                else
-                {
-                    return false;
-                }
+                data = File.Exists(path)
+                    ? File.ReadAllBytes(path)
+                    : throw new Exception("Usb key has been compromised or wrong usb has been inserted.");
+
+                nextDriveLetter++;
+                return true;
             }
-
-            return false;
+            else
+            {
+                throw new Exception("Usb key has been compromised or wrong usb has been inserted.");
+            }
         }
     }
 }
