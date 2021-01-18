@@ -237,7 +237,7 @@ namespace Enigma.EFS.Attributes
 
             var numberOfUsers = BitConverter.ToInt32(data, offset);                                                                     // parse number of users that have access to this file
             // security mechanism
-            if(numberOfUsers > 4)
+            if (numberOfUsers > 4)
             {
                 throw new Exception("File has been subjected to the unauthorized change.");
             }
@@ -259,7 +259,7 @@ namespace Enigma.EFS.Attributes
             }
 
             var signatureLength = BitConverter.ToInt32(data, offset);                                                                   // parse Signature length
-            offset += 1;
+            offset += 4;
             Signature = new byte[signatureLength];
             Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
             offset += signatureLength;
