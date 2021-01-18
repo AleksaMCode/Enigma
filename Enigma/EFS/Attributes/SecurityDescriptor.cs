@@ -194,7 +194,7 @@ namespace Enigma.EFS.Attributes
             Buffer.BlockCopy(Signature, 0, securityDescriptorHeaderd, offset, Signature.Length);                                            // unparse Signature
             offset += Signature.Length;
 
-            if (offset < 2_707)
+            if (offset < 2_709)
             {
                 Array.Resize<byte>(ref securityDescriptorHeaderd, offset); // potential problem with Array.Resize: new array created on a new memory location
             }
