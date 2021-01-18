@@ -62,7 +62,7 @@ namespace Enigma.CryptedFileParser
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         public void NameEncryption(string name, AesAlgorithm aes)
         {
-            EncriptedName = Encoding.ASCII.GetString(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
+            EncriptedName = Convert.ToBase64String(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Enigma.CryptedFileParser
         /// <returns>Full name of the file (name + extension).</returns>
         public string NameDecryption(AesAlgorithm aes)
         {
-            return Encoding.ASCII.GetString(aes.Decrypt(Encoding.ASCII.GetBytes(EncriptedName)));
+            return Encoding.ASCII.GetString(aes.Decrypt(Convert.FromBase64String(EncriptedName)));
         }
 
         /// <summary>
