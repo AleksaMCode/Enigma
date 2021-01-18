@@ -148,7 +148,7 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         public byte[] UnparseSecurityDescriptor()
         {
-            // max. expected size when using 4,096 RSA keys for all user, max. values for AlgorithmNameSignature and HashAlgorithmName, SHA512 hash for signature and 128 bits IV is 2,195 B
+            // max. expected size when using 4,096 RSA keys for all user, max. values for AlgorithmNameSignature and HashAlgorithmName, SHA512 hash for signature and 128 bits IV is 2,709 B
             var securityDescriptorHeaderd = new byte[2_709];
             var offset = 0;
 
