@@ -179,7 +179,7 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         /// <param name="data">Raw data.</param>
         /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
-        public void ParseUnparseSecurityDescriptor(byte[] data, ref int offset)
+        public void ParseSecurityDescriptor(byte[] data, ref int offset)
         {
             Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                                                  // parse Type
             offset += 4;
