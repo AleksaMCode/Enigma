@@ -100,6 +100,16 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
+        /// Returns file owners unique identifier.
+        /// </summary>
+        /// <param name="encryptedFile">Encrypted file in its raw form.</param>
+        /// <returns>Owners id.</returns>
+        public static int GetFileOwnerId(byte[] encryptedFile)
+        {
+            return (int)BitConverter.ToUInt32(encryptedFile, 16);
+        }
+
+        /// <summary>
         /// Creates encrypted files full name that contains encrypted file name and extension separated with '<b>.</b>'.
         /// </summary>
         /// <returns>Encrypted files full name.</returns>
