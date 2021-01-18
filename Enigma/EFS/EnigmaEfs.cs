@@ -198,24 +198,32 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Reads users encrypted file. File is first decrypted and stored as a temporary file in temporary folder after which is opened in a default app for that file set on the computer. 
+        /// Opens users encrypted file. File is first decrypted and stored as a temporary file in a <em>temporary folder</em> after which is opened in a default app for that file set on the computer. 
         /// </summary>
         /// <param name="pathOnEfs">The name of the encrypted file including files path and encrypted name with .at extension.</param>
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
-        public void ReadFile(string pathOnEfs, RSAParameters ownerPublicKey)
+        public void OpenFile(string pathOnEfs, RSAParameters ownerPublicKey)
         {
             var encryptedFile = new EncryptedFile();
             var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey);
+
             var tempFilePath = Path.GetTempPath() + "Enigma-" + Guid.NewGuid().ToString() + "." + originalFile.FileExtension;
 
-            using (var stream = new FileStream(tempFilePath, FileMode.Create))
+            if (CanItBeStored(originalFile.FileContent.Length, tempFilePath.Substring(0, 2)))
             {
-                using var writter = new BinaryWriter(stream);
-                writter.Write(originalFile.FileContent);
-            }
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    using var writter = new BinaryWriter(stream);
+                    writter.Write(originalFile.FileContent);
+                }
 
-            var startInfo = new ProcessStartInfo(tempFilePath);
-            Process.Start(startInfo);
+                var startInfo = new ProcessStartInfo(tempFilePath);
+                Process.Start(startInfo);
+            }
+            else
+            {
+                throw new Exception("Insufficient storage available. File can't be read.");
+            }
         }
 
         /// <summary>
