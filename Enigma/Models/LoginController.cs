@@ -34,6 +34,11 @@ namespace Enigma.Models
                 {
                     throw new Exception(errorMsg);
                 }
+
+                if(CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+                {
+                    throw new Exception("Certificate has been revoked.");
+                }
             }
             else
             {
@@ -44,7 +49,7 @@ namespace Enigma.Models
             return new UserInformation(user);
         }
 
-        public void LoginPartTwo(string privateKeyPath, string password, ref UserInformation user)
+        public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)
         {
             this.privateKeyPath = privateKeyPath;
 
