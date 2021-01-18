@@ -47,7 +47,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public TwofishAlgorithm(int keySize, string mode = "CBC")
         {
-            if (keySize == 16 || keySize == 24 || keySize == 16)
+            if (keySize == 16 || keySize == 24 || keySize == 32)
             {
                 Key = new byte[keySize]; // 32 B, 24 B or 16 B
                 new RNGCryptoServiceProvider().GetBytes(Key);
