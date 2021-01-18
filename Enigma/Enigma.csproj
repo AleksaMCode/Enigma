@@ -106,6 +106,9 @@
     <Compile Include="Enums\PasswordEntropy.cs" />
     <Compile Include="EFS\MFA\DriveDetection.cs" />
     <Compile Include="Models\CertificateValidator.cs" />
+    <Compile Include="Models\EfsDirectory.cs" />
+    <Compile Include="Models\EfsFile.cs" />
+    <Compile Include="Models\IEfsStorageObject.cs" />
     <Compile Include="Models\LoginController.cs" />
     <Compile Include="Models\PasswordAdvisor.cs" />
     <Compile Include="Models\RegisterController.cs" />
