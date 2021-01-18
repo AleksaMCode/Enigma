@@ -129,12 +129,12 @@ namespace Enigma.EFS.Attributes
         /// <param name="userId">Unique user identifier from the database.</param>
         /// <param name="userPrivatKey">Users private RSA key used for decryption of encrypted FEK data.</param>
         /// <returns>Decrypted Key used for symmetric encryption/decryption of the file.</returns>
-        public byte[] GetKey(int userId, RSAParameters userPrivatKey)
+        public byte[] GetKey(int userId, RSAParameters userPrivateKey)
         {
             if (Users.ContainsKey(userId))
             {
                 var usersFek = new FileEncryptionKey();
-                usersFek.ParseFek(Users[userId], userPrivatKey);
+                usersFek.ParseFek(Users[userId], userPrivateKey);
                 return usersFek.Key;
             }
             else
