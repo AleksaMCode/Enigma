@@ -27,13 +27,23 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
-        /// Gets a specific user from the database.
+        /// Gets a specific user from the database using username.
         /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
+        /// <param name="username">Username of the user whos data are retrieved from database.</param>
+        /// <returns>User who matches given username.</returns>
         public User GetUser(string username)
         {
             return context.Users.Where(u => u.Username == username).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Gets a specific user from the database using userid.
+        /// </summary>
+        /// <param name="userId">Id  of the user whos data are retrieved from database.</param>
+        /// <returns>User who matches given username.</returns>
+        public User GetUser(int userId)
+        {
+            return context.Users.Where(u => u.Id == userId).SingleOrDefault();
         }
 
         /// <summary>
