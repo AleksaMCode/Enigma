@@ -53,7 +53,7 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardInformation"/> class with the specified parameters.
+        /// Initializes a new instance of the <see cref="StandardInformation"/> class with specified parameters.
         /// This constructor is used when a file is first encrypted.
         /// </summary>
         /// <param name="userID">Id of the user who created a new file from the database.</param>
