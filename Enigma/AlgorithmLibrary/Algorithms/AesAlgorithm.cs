@@ -85,8 +85,8 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// <summary>
         /// Creates a symmetric encryptor/decryptor object using the specified key and initialization vector (IV) for OFB or CFB block cipher mode of operation.
         /// </summary>
-        /// <param name="forEncryption">true to create a symmetric encryptor object; false to create a symmetric decryptor object.</param>
-        /// <returns>A symmetric encryptor object used for OFB or CFB block cipher mode of operation.</returns>
+        /// <param name="forEncryption">Flag used to determine what object, a symmetric encryptor or a symmetric decryptor method returns.</param>
+        /// <returns>A symmetric encryptor/decryptor object used for OFB or CFB block cipher mode of operation.</returns>
         public IBufferedCipher CreateAesCipher(bool forEncryption)
         {
             IBufferedCipher cipher;
