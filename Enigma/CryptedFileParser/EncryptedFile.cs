@@ -13,7 +13,7 @@ namespace Enigma.CryptedFileParser
     public class EncryptedFile
     {
         /// <summary>
-        /// Represents an UTF-16 (u16LE) endoded of encrypted original name of the file.
+        /// Represents an Base64 encoded encrypted original name of the file.
         /// </summary>
         public string EncriptedName { get; internal set; } = null;
 
@@ -57,13 +57,15 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm and encodes it to UTF-16 (u16LE).
+        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm and encodes it to <see href="https://en.wikipedia.org/wiki/Base64">Base64</see>.
+        /// Since Base64 contains forward slash ('/') which is a <see href="https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file">reserved character</see> which can't be used for file naming, every '/' is replaced with '$'.
         /// </summary>
         /// <param name="name">Full name of the file (name + extension) that is being encrypted.</param>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         public void NameEncryption(string name, AesAlgorithm aes)
         {
-            EncriptedName = Encoding.Unicode.GetString(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
+            EncriptedName = Convert.ToBase64String(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
+            EncriptedName = EncriptedName.Replace('/', '$');
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace Enigma.CryptedFileParser
         /// <returns>Full name of the file (name + extension).</returns>
         public string NameDecryption(AesAlgorithm aes)
         {
-            return Encoding.ASCII.GetString(aes.Decrypt(Encoding.Unicode.GetBytes(EncriptedName)));
+            return Encoding.ASCII.GetString(aes.Decrypt(Convert.FromBase64String(EncriptedName.Replace('$', '/'))));
         }
 
         /// <summary>
