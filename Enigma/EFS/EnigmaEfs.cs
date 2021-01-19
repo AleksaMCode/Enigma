@@ -87,7 +87,8 @@ namespace Enigma.EFS
         /// <param name="pathOnEfs">Path on the encrypted file system where the file will be stored.</param>
         /// <param name="algorithmNameSignature">Name of the algorithm used for file encryption.</param>
         /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
-        public void Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName)
+        /// <param name="deleteOriginal">Flag used to remove an original copy of file.</param>
+        public void Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName, bool deleteOriginal = false)
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
@@ -118,6 +119,11 @@ namespace Enigma.EFS
             else
             {
                 throw new Exception("Insufficient storage available. File can't be uploaded.");
+            }
+
+            if(deleteOriginal)
+            {
+                DeleteFile(pathOnFs);
             }
         }
 
