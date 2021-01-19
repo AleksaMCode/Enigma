@@ -230,6 +230,29 @@ namespace Enigma.EFS
         }
 
         /// <summary>
+        /// Unshare a file with specific user on EnigmaEfs.
+        /// </summary>
+        /// <param name="pathOnEfs">The name of the shared file.</param>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <param name="userId">Unique user identifier from the database.</param>
+        public void Unshare(string pathOnEfs, int loggedInUserId, int userId)
+        {
+            var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
+            var updatedEncryptedFileRaw = encryptedFile.Unshare(File.ReadAllBytes(pathOnEfs), loggedInUserId, userId);
+
+            if (CanItBeStored(updatedEncryptedFileRaw.Length))
+            {
+                using var stream = new FileStream(@"D:\EnigmaEFS\Shared\" + encryptedFile.GetEncryptedFileFullName(), FileMode.Create);
+                using var writter = new BinaryWriter(stream);
+                writter.Write(updatedEncryptedFileRaw);
+            }
+            else
+            {
+                throw new Exception("Insufficient storage available. File can't be updated.");
+            }
+        }
+
+        /// <summary>
         /// Creates a new <em>.txt</em> file on file system.
         /// </summary>
         /// <param name="text">Content of the file.</param>

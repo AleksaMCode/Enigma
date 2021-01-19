@@ -240,6 +240,39 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
+        /// Unshare a file with specific user on EnigmaEfs.
+        /// </summary>
+        /// <param name="encryptedFile">Encrypted file in its raw form.</param>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <param name="userId">Unique user identifier from the database.</param>
+        /// <returns>Updated encrypted file.</returns>
+        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId)
+        {
+            var offset = 0;
+
+            ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
+            offset += (int)((StandardInformation)Headers[0]).GetSaveLength();
+
+            ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(encryptedFile, ref offset);
+            ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
+
+            // unshare a file with a user
+            ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
+
+            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
+            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
+            var dataHeader = ((Data)Headers[2]).UnparseData();
+
+            var updatedEncryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
+
+            Buffer.BlockCopy(standardInformationHeader, 0, updatedEncryptedFile, 0, standardInformationHeader.Length);
+            Buffer.BlockCopy(securityDescriptorHeader, 0, updatedEncryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
+            Buffer.BlockCopy(dataHeader, 0, updatedEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
+
+            return updatedEncryptedFile;
+        }
+
+        /// <summary>
         /// Returns file owners unique identifier.
         /// </summary>
         /// <param name="encryptedFile">Encrypted file in its raw form.</param>
