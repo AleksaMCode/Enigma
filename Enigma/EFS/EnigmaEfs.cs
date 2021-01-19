@@ -62,10 +62,9 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="size">Size of the file that is being uplaoded to EFS.</param>
         /// <returns></returns>
-        public bool CanItBeStored(long size)
+        private bool CanItBeStored(long size)
         {
-            var availableFreeSpace = new DriveInfo(mountLocation).AvailableFreeSpace;
-            return size < availableFreeSpace;
+            return size < new DriveInfo(mountLocation).AvailableFreeSpace;
         }
 
         /// <summary>
@@ -74,10 +73,9 @@ namespace Enigma.EFS
         /// <param name="size">Size of the file that is being downloaded to file system.</param>
         /// <param name="driveName">Name of the drive where file will be stored.</param>
         /// <returns></returns>
-        public bool CanItBeStored(long size, string driveName)
+        private bool CanItBeStored(long size, string driveName)
         {
-            var availableFreeSpace = new DriveInfo(driveName).AvailableFreeSpace;
-            return size < availableFreeSpace;
+            return size < new DriveInfo(driveName).AvailableFreeSpace;
         }
 
         /// <summary>
