@@ -6,21 +6,43 @@ using Enigma.EFS.Attributes;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// An MVVM model class used for representing Enigma encrypted files.
+    /// </summary>
     public class EfsFile : IEfsStorageObject
     {
         public bool DirFlag { get; } = false;
 
+        /// <summary>
+        /// Unencrypted name of the file.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Encrypted name of the file.
+        /// </summary>
         public string EncryptedName { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EfsFile"/> class using specified parameters.
+        /// </summary>
+        /// <param name="name">Encrypted name of the file.</param>
+        /// <param name="file">Encrpted file in raw form.</param>
+        /// <param name="userId">Unique identifier of the logged-in user.</param>
+        /// <param name="userPrivateKey">Users private RSA key.</param>
         public EfsFile(string name, byte[] file, int userId, RSAParameters userPrivateKey)
         {
             EncryptedName = name;
             DecryptName(file, userId, userPrivateKey);
         }
 
-        public void DecryptName(byte[] file, int userId, RSAParameters userPrivateKey)
+        /// <summary>
+        /// Decrypts the filename and initializes <see cref="Name"/> field value.
+        /// </summary>
+        /// <param name="file">Encrpted file in raw form.</param>
+        /// <param name="userId">Unique identifier of the logged-in user.</param>
+        /// <param name="userPrivateKey">Users private RSA key.</param>
+        private void DecryptName(byte[] file, int userId, RSAParameters userPrivateKey)
         {
             var offset = 44; // we are skipping StandardInformation header
             var securityDescriptorHeader = new SecurityDescriptor();
