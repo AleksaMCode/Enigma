@@ -17,10 +17,17 @@ namespace Enigma.EFS
         /// </summary>
         public byte[] Key { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileEncryptionKey"/> class.
+        /// </summary>
         public FileEncryptionKey()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileEncryptionKey"/> class using <see cref="byte"/>[].
+        /// </summary>
+        /// <param name="key"></param>
         public FileEncryptionKey(byte[] key)
         {
             Key = key;
