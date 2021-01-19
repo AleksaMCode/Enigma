@@ -15,7 +15,7 @@ namespace Enigma.CryptedFileParser
         /// <summary>
         /// Represents an Base64 encoded encrypted original name of the file.
         /// </summary>
-        public string EncriptedName { get; internal set; } = null;
+        public string EncryptedName { get; internal set; } = null;
 
         /// <summary>
         /// All encrypted files have the same extension. At stands for Alan Turing.
@@ -33,7 +33,7 @@ namespace Enigma.CryptedFileParser
         /// </summary>
         public EncryptedFile(string fileName)
         {
-            EncriptedName = fileName;
+            EncryptedName = fileName;
             Headers[0] = new StandardInformation();
             Headers[1] = new SecurityDescriptor();
             Headers[2] = new Data();
@@ -64,8 +64,8 @@ namespace Enigma.CryptedFileParser
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         public void NameEncryption(string name, AesAlgorithm aes)
         {
-            EncriptedName = Convert.ToBase64String(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
-            EncriptedName = EncriptedName.Replace('/', '$');
+            EncryptedName = Convert.ToBase64String(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
+            EncryptedName = EncryptedName.Replace('/', '$');
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Enigma.CryptedFileParser
         /// <returns>Full name of the file (name + extension).</returns>
         public string NameDecryption(AesAlgorithm aes)
         {
-            return Encoding.ASCII.GetString(aes.Decrypt(Convert.FromBase64String(EncriptedName.Replace('$', '/'))));
+            return Encoding.ASCII.GetString(aes.Decrypt(Convert.FromBase64String(EncryptedName.Replace('$', '/'))));
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Enigma.CryptedFileParser
         /// <returns>Encrypted files full name.</returns>
         public string GetEncryptedFileFullName()
         {
-            return EncriptedName + "." + FileExtension;
+            return EncryptedName + "." + FileExtension;
         }
     }
 }
