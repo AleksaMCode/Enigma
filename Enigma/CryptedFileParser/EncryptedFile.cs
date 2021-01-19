@@ -13,7 +13,7 @@ namespace Enigma.CryptedFileParser
     public class EncryptedFile
     {
         /// <summary>
-        /// Represents an encrypted version of the original name of the file.
+        /// Represents an UTF-16 (u16LE) endoded of encrypted original name of the file.
         /// </summary>
         public string EncriptedName { get; internal set; } = null;
 
@@ -57,23 +57,23 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm.
+        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm and encodes it to UTF-16 (u16LE).
         /// </summary>
         /// <param name="name">Full name of the file (name + extension) that is being encrypted.</param>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         public void NameEncryption(string name, AesAlgorithm aes)
         {
-            EncriptedName = Convert.ToBase64String(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
+            EncriptedName = Encoding.Unicode.GetString(aes.Encrypt(Encoding.ASCII.GetBytes(name)));
         }
 
         /// <summary>
-        /// Decrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm.
+        /// Decodes the file name and then decrypts it using the file Key and Iv values with AES-256-OFB algorithm.
         /// </summary>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         /// <returns>Full name of the file (name + extension).</returns>
         public string NameDecryption(AesAlgorithm aes)
         {
-            return Encoding.ASCII.GetString(aes.Decrypt(Convert.FromBase64String(EncriptedName)));
+            return Encoding.ASCII.GetString(aes.Decrypt(Encoding.Unicode.GetBytes(EncriptedName)));
         }
 
         /// <summary>
