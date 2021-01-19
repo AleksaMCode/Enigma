@@ -29,7 +29,7 @@ namespace Enigma.Models
             try
             {
                 var fileKey = securityDescriptorHeader.GetKey(userId, userPrivateKey); // if user isn't authorised to access the file, exception will be thrown
-                Name = Encoding.ASCII.GetString(new AesAlgorithm(fileKey, securityDescriptorHeader.IV, "OFB").Decrypt(Encoding.ASCII.GetBytes(EncryptedName)));
+                Name = Encoding.ASCII.GetString(new AesAlgorithm(fileKey, securityDescriptorHeader.IV, "OFB").Decrypt(Convert.FromBase64String(EncryptedName.Split('.')[0].Replace('$', '/'))));
             }
             // When reading files in Shared folder, users who don't have approved access will be able to see files in folder but won't be able to read them or see their real names.
             catch (Exception)
