@@ -91,7 +91,8 @@ namespace Enigma.CryptedFileParser
 
             Headers[2] = new Data(originalFile.FileContent,
                 AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
-            ((StandardInformation)Headers[0]).TotalLength += (uint)((Data)Headers[2]).EncryptedData.Length;
+
+            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
 
 
             var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
@@ -145,6 +146,59 @@ namespace Enigma.CryptedFileParser
             return new RsaAlgorithm(ownerPublicKey).VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature)
                 ? new OriginalFile(fileContent, fileName)
                 : throw new CryptographicException("File integrity has been compromised.");
+        }
+
+        /// <summary>
+        /// Updates contents of encrypted file using another unencrypted file. Iv and signature of the file is also changed.
+        /// </summary>
+        /// <param name="updateFile">Unencrypted file used to update encrypted file.</param>
+        /// <param name="oldEncryptedFile">>Encrypted file in its raw form that is being updated.</param>
+        /// <param name="userId">Id of the user updating the file. File can only be updated by a file owner.</param>
+        /// <param name="userPrivateKey">Private RSA key of the user updating the file.</param>
+        /// <returns>Updated encrypted file in its raw form.</returns>
+        public byte[] Update(OriginalFile updateFile, byte[] oldEncryptedFile, int userId, RSAParameters userPrivateKey)
+        {
+            if (userId != GetFileOwnerId(oldEncryptedFile))
+            {
+                throw new Exception("Only a file owner can modify its content.");
+            }
+
+            var offset = 0;
+
+            ((StandardInformation)Headers[0]).ParseStandardInformation(oldEncryptedFile, offset);
+            // update altered and read time of the file
+            ((StandardInformation)Headers[0]).AlteredTime = ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+            // update id of the user who is updating file; ATimeUserId doesn't need to change since only a file owner can edit the file
+            ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
+            offset += (int)((StandardInformation)Headers[0]).GetSaveLength();
+
+            ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(oldEncryptedFile, ref offset);
+
+            // update file signature
+            ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).
+                CreateSignature(updateFile.FileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName));
+
+            // update IV value
+            new RNGCryptoServiceProvider().GetBytes(((SecurityDescriptor)Headers[1]).IV);
+
+            Headers[2] = new Data(updateFile.FileContent,
+                            AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
+
+            // update the file size
+            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
+
+            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
+            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
+            var dataHeader = ((Data)Headers[2]).UnparseData();
+
+            var newEncryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
+
+            Buffer.BlockCopy(standardInformationHeader, 0, newEncryptedFile, 0, standardInformationHeader.Length);
+            Buffer.BlockCopy(securityDescriptorHeader, 0, newEncryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
+            Buffer.BlockCopy(dataHeader, 0, newEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
+
+            return newEncryptedFile;
         }
 
         /// <summary>
