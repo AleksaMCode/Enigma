@@ -40,7 +40,11 @@ namespace Enigma.Models
         {
             foreach (var file in Directory.GetFiles(path))
             {
-                objects.Add(new EfsFile(Path.GetFileName(file), File.ReadAllBytes(file), userId, userPrivateKey));
+                // only encrypted files can be added to the list
+                if (file.Split('.')[1].Equals("at"))
+                {
+                    objects.Add(new EfsFile(Path.GetFileName(file), File.ReadAllBytes(file), userId, userPrivateKey));
+                }
             }
             foreach (var dir in Directory.GetDirectories(path))
             {
