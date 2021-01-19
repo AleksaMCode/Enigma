@@ -77,8 +77,8 @@ namespace Enigma.EFS.Attributes
         /// Share a file with other specific user on EnigmaEfs. File can be shared max. with 3 other users.
         /// Key used for file encryption is encrypted for the shared user using their public RSA key.
         /// </summary>
-        /// <param name="userId">Unique user identifier from the database.</param>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <param name="userId">Unique user identifier from the database.</param>
         /// <param name="loggedInUserPrivateKey">Private RSA key of the logged-in user.</param>
         /// <param name="userPublicKey">Users public RSA key.</param>
         public void ShareFile(int loggedInUserId, int userId, RSAParameters loggedInUserPrivateKey, RSAParameters userPublicKey)

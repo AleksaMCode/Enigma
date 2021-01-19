@@ -154,7 +154,7 @@ namespace Enigma.CryptedFileParser
         /// Updates contents of encrypted file using another unencrypted file. Iv and signature of the file is also changed.
         /// </summary>
         /// <param name="updateFile">Unencrypted file used to update encrypted file.</param>
-        /// <param name="oldEncryptedFile">>Encrypted file in its raw form that is being updated.</param>
+        /// <param name="oldEncryptedFile">Encrypted file in its raw form that is being updated.</param>
         /// <param name="userId">Id of the user updating the file. File can only be updated by a file owner.</param>
         /// <param name="userPrivateKey">Private RSA key of the user updating the file.</param>
         /// <returns>Updated encrypted file in its raw form.</returns>
@@ -201,6 +201,42 @@ namespace Enigma.CryptedFileParser
             Buffer.BlockCopy(dataHeader, 0, newEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
 
             return newEncryptedFile;
+        }
+
+        /// <summary>
+        /// Share a file with other specific user on EnigmaEfs.
+        /// </summary>
+        /// <param name="encryptedFile">Encrypted file in its raw form.</param>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <param name="userId">Unique user identifier from the database.</param>
+        /// <param name="loggedInUserPrivateKey">Private RSA key of the logged-in user.</param>
+        /// <param name="userPublicKey">Users public RSA key.</param>
+        /// <returns>Updated encrypted file.</returns>
+        public byte[] Share(byte[] encryptedFile, int loggedInUserId, int userId, RSAParameters loggedInUserPrivateKey, RSAParameters userPublicKey)
+        {
+            var offset = 0;
+
+            ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
+            offset += (int)((StandardInformation)Headers[0]).GetSaveLength();
+
+            ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(encryptedFile, ref offset);
+            ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
+
+            // share a file with a new user
+            ((SecurityDescriptor)Headers[1]).ShareFile(loggedInUserId, userId, loggedInUserPrivateKey, userPublicKey);
+
+
+            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
+            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
+            var dataHeader = ((Data)Headers[2]).UnparseData();
+
+            var updatedEncryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
+
+            Buffer.BlockCopy(standardInformationHeader, 0, updatedEncryptedFile, 0, standardInformationHeader.Length);
+            Buffer.BlockCopy(securityDescriptorHeader, 0, updatedEncryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
+            Buffer.BlockCopy(dataHeader, 0, updatedEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
+
+            return updatedEncryptedFile;
         }
 
         /// <summary>
