@@ -40,7 +40,9 @@ namespace Enigma.EFS.Attributes
         public uint OwnerId { get; set; }
 
         /// <summary>
-        /// Length of the encrypted file. Max. size of the file that can be encrypted is 4.294967295 GB.
+        /// Length of the encrypted file. Max. theoretical size is less then 2^32 = 4.294967295 GB.
+        /// However, due to limitations in .NET, arrays can't be greater than 2 GB in total size.
+        /// Nevertheless array size can be increased to 4 GB (<see href="https://docs.microsoft.com/en-us/dotnet/framework/configure-apps/file-schema/runtime/gcallowverylargeobjects-element">how-to</see>).
         /// </summary>
         public uint TotalLength { get; set; }
 

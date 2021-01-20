@@ -90,9 +90,9 @@ namespace Enigma.EFS
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
-            if (fileSize > 4_000_000_000)
+            if (fileSize > 2_000_000_000)
             {
-                throw new Exception("File can't be larger than 4 GB.");
+                throw new Exception("File can't be larger than 2 GB.");
             }
 
             if (CanItBeStored(fileSize))
@@ -158,9 +158,9 @@ namespace Enigma.EFS
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
-            if (fileSize > 4_000_000_000)
+            if (fileSize > 2_000_000_000)
             {
-                throw new Exception("File can't be larger than 4 GB.");
+                throw new Exception("File can't be larger than 2 GB.");
             }
 
             if (!CanItBeStored(fileSize))
