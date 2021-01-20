@@ -94,20 +94,9 @@ namespace Enigma.CryptedFileParser
             Headers[2] = new Data(originalFile.FileContent,
                 AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
 
-            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
+            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;                    
 
-
-            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
-            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
-            var dataHeader = ((Data)Headers[2]).UnparseData();
-
-            var encryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
-
-            Buffer.BlockCopy(standardInformationHeader, 0, encryptedFile, 0, standardInformationHeader.Length);
-            Buffer.BlockCopy(securityDescriptorHeader, 0, encryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
-            Buffer.BlockCopy(dataHeader, 0, encryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
-
-            return encryptedFile;
+            return Flush();
         }
 
         /// <summary>
@@ -145,9 +134,19 @@ namespace Enigma.CryptedFileParser
             }
 
             // if file signature isn't valid Exception will be thrown!
-            return new RsaAlgorithm(ownerPublicKey).VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature)
-                ? new OriginalFile(fileContent, fileName)
-                : throw new CryptographicException("File integrity has been compromised.");
+            if (new RsaAlgorithm(ownerPublicKey)
+                .VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature))
+            {
+                // update encrypted file ReadTime and RTimeUserId
+                ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+                ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
+                return new OriginalFile(fileContent, fileName);
+            }
+            else
+            {
+                throw new CryptographicException("File integrity has been compromised.");
+            }
         }
 
         /// <summary>
@@ -190,17 +189,7 @@ namespace Enigma.CryptedFileParser
             // update the file size
             ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
 
-            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
-            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
-            var dataHeader = ((Data)Headers[2]).UnparseData();
-
-            var newEncryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
-
-            Buffer.BlockCopy(standardInformationHeader, 0, newEncryptedFile, 0, standardInformationHeader.Length);
-            Buffer.BlockCopy(securityDescriptorHeader, 0, newEncryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
-            Buffer.BlockCopy(dataHeader, 0, newEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
-
-            return newEncryptedFile;
+            return Flush();
         }
 
         /// <summary>
@@ -225,18 +214,7 @@ namespace Enigma.CryptedFileParser
             // share a file with a new user
             ((SecurityDescriptor)Headers[1]).ShareFile(loggedInUserId, userId, loggedInUserPrivateKey, userPublicKey);
 
-
-            var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
-            var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
-            var dataHeader = ((Data)Headers[2]).UnparseData();
-
-            var updatedEncryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
-
-            Buffer.BlockCopy(standardInformationHeader, 0, updatedEncryptedFile, 0, standardInformationHeader.Length);
-            Buffer.BlockCopy(securityDescriptorHeader, 0, updatedEncryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
-            Buffer.BlockCopy(dataHeader, 0, updatedEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
-
-            return updatedEncryptedFile;
+            return Flush();
         }
 
         /// <summary>
@@ -259,17 +237,26 @@ namespace Enigma.CryptedFileParser
             // unshare a file with a user
             ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
 
+            return Flush();
+        }
+
+        /// <summary>
+        /// Creates raw data of encrypted file.
+        /// </summary>
+        /// <returns>Encrypted file in raw form.</returns>
+        public byte[] Flush()
+        {
             var standardInformationHeader = ((StandardInformation)Headers[0]).UnparseStandardInformation();
             var securityDescriptorHeader = ((SecurityDescriptor)Headers[1]).UnparseSecurityDescriptor();
             var dataHeader = ((Data)Headers[2]).UnparseData();
 
-            var updatedEncryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
+            var encryptedFile = new byte[standardInformationHeader.Length + securityDescriptorHeader.Length + dataHeader.Length];
 
-            Buffer.BlockCopy(standardInformationHeader, 0, updatedEncryptedFile, 0, standardInformationHeader.Length);
-            Buffer.BlockCopy(securityDescriptorHeader, 0, updatedEncryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
-            Buffer.BlockCopy(dataHeader, 0, updatedEncryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
+            Buffer.BlockCopy(standardInformationHeader, 0, encryptedFile, 0, standardInformationHeader.Length);
+            Buffer.BlockCopy(securityDescriptorHeader, 0, encryptedFile, standardInformationHeader.Length, securityDescriptorHeader.Length);
+            Buffer.BlockCopy(dataHeader, 0, encryptedFile, standardInformationHeader.Length + securityDescriptorHeader.Length, dataHeader.Length);
 
-            return updatedEncryptedFile;
+            return encryptedFile;
         }
 
         /// <summary>

@@ -105,9 +105,7 @@ namespace Enigma.EFS
 
                 if (CanItBeStored(encryptedFileRaw.Length))
                 {
-                    using var stream = new FileStream(pathOnEfs + "\\" + encryptedFile.GetEncryptedFileFullName(), FileMode.Create);
-                    using var writter = new BinaryWriter(stream);
-                    writter.Write(encryptedFileRaw);
+                    CreateFile(encryptedFileRaw, pathOnEfs + "\\" + encryptedFile.GetEncryptedFileFullName());
                 }
                 else
                 {
@@ -119,7 +117,7 @@ namespace Enigma.EFS
                 throw new Exception("Insufficient storage available. File can't be uploaded.");
             }
 
-            if(deleteOriginal)
+            if (deleteOriginal)
             {
                 DeleteFile(pathOnFs);
             }
@@ -138,9 +136,11 @@ namespace Enigma.EFS
 
             if (CanItBeStored(originalFile.FileContent.Length, pathOnFs.Substring(0, 2)))
             {
-                using var stream = new FileStream(pathOnFs + "\\" + originalFile.GetOriginalFileFullName(), FileMode.Create);
-                using var writter = new BinaryWriter(stream);
-                writter.Write(originalFile.FileContent);
+                // write a new unencrypted file
+                CreateFile(originalFile.FileContent, pathOnFs + "\\" + originalFile.GetOriginalFileFullName());
+
+                // override existing encrypted file
+                CreateFile(encryptedFile.Flush(), pathOnEfs);
             }
             else
             {
@@ -194,9 +194,7 @@ namespace Enigma.EFS
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
-                using var stream = new FileStream(pathOnEfs.Substring(0, pathOnEfs.LastIndexOf('\\')) + "\\" + encryptedFile.GetEncryptedFileFullName(), FileMode.Create);
-                using var writter = new BinaryWriter(stream);
-                writter.Write(updatedEncryptedFileRaw);
+                CreateFile(updatedEncryptedFileRaw, pathOnEfs.Substring(0, pathOnEfs.LastIndexOf('\\')) + "\\" + encryptedFile.GetEncryptedFileFullName());
             }
             else
             {
@@ -219,9 +217,7 @@ namespace Enigma.EFS
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
-                using var stream = new FileStream(@"D:\EnigmaEFS\Shared\" + encryptedFile.GetEncryptedFileFullName(), FileMode.Create);
-                using var writter = new BinaryWriter(stream);
-                writter.Write(updatedEncryptedFileRaw);
+                CreateFile(updatedEncryptedFileRaw, sharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
             }
             else
             {
@@ -242,9 +238,7 @@ namespace Enigma.EFS
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
-                using var stream = new FileStream(@"D:\EnigmaEFS\Shared\" + encryptedFile.GetEncryptedFileFullName(), FileMode.Create);
-                using var writter = new BinaryWriter(stream);
-                writter.Write(updatedEncryptedFileRaw);
+                CreateFile(updatedEncryptedFileRaw, sharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
             }
             else
             {
@@ -261,10 +255,14 @@ namespace Enigma.EFS
         public void CreateTxtFile(string text, string pathOnFs, string fileName)
         {
             var textFile = new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt");
-
-            using var stream = new FileStream(pathOnFs + "\\" + textFile.GetOriginalFileFullName(), FileMode.Create);
-            using var writter = new BinaryWriter(stream);
-            writter.Write(textFile.FileContent);
+            if (CanItBeStored(textFile.FileContent.Length, pathOnFs.Substring(0, 2)))
+            {
+                CreateFile(textFile.FileContent, pathOnFs + "\\" + textFile.GetOriginalFileFullName());
+            }
+            else
+            {
+                throw new Exception("Insufficient storage available. File can't be created.");
+            }
         }
 
         /// <summary>
@@ -277,11 +275,7 @@ namespace Enigma.EFS
             var fileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
             if (fileName.Substring(fileName.LastIndexOf('.') + 1).Equals("txt"))
             {
-                var textFile = new OriginalFile(Encoding.ASCII.GetBytes(text), pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1));
-
-                using var stream = new FileStream(pathOnFs + "\\" + textFile.GetOriginalFileFullName(), FileMode.Create);
-                using var writter = new BinaryWriter(stream);
-                writter.Write(textFile.FileContent);
+                CreateTxtFile(text, pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1), fileName);
             }
             else
             {
@@ -321,11 +315,11 @@ namespace Enigma.EFS
 
             if (CanItBeStored(originalFile.FileContent.Length, tempFilePath.Substring(0, 2)))
             {
-                using (var stream = new FileStream(tempFilePath, FileMode.Create))
-                {
-                    using var writter = new BinaryWriter(stream);
-                    writter.Write(originalFile.FileContent);
-                }
+                // create a temporary file
+                CreateFile(originalFile.FileContent, tempFilePath);
+
+                // override existing encrypted file
+                CreateFile(encryptedFile.Flush(), pathOnEfs);
 
                 var startInfo = new ProcessStartInfo(tempFilePath);
                 Process.Start(startInfo);
@@ -334,6 +328,18 @@ namespace Enigma.EFS
             {
                 throw new Exception("Insufficient storage available. File can't be read.");
             }
+        }
+
+        /// <summary>
+        /// Writes data to file system.
+        /// </summary>
+        /// <param name="data">Data in raw form.</param>
+        /// <param name="path">Full path with a name of the file.</param>
+        private void CreateFile(byte[] data, string path)
+        {
+            using var stream = new FileStream(path, FileMode.Create);
+            using var writter = new BinaryWriter(stream);
+            writter.Write(data);
         }
 
         /// <summary>
