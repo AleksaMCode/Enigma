@@ -99,7 +99,7 @@ namespace Enigma.Models
         {
             // TODO: add MAC/HMAC and secure deletion of original RSA key
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-            csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
 
             var haystackSize = (needle.Length + csprng.Next(1_024, 4_096)) * 100_000;
             int startLocation;
@@ -156,7 +156,7 @@ namespace Enigma.Models
             string password;
 
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-            csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
 
             while (true)
             {
@@ -178,10 +178,14 @@ namespace Enigma.Models
             return password;
         }
 
+        /// <summary>
+        /// Generates random passphrase delimiter whose length varies between 3 and 5 characters.
+        /// </summary>
+        /// <returns>Random delimiter.</returns>
         private string GeneratePassphraseDelimiter()
         {
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-            csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
             var size = csprng.Next(3, 5);
 
             var delimiter = new char[size];
@@ -206,7 +210,7 @@ namespace Enigma.Models
             var delimiter = GeneratePassphraseDelimiter();
 
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-            csprng.SetSeed(DateTime.Now.Ticks); // is this a good seed value?
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
 
             var maxNumberOfWords = csprng.Next(6, 10);
 
@@ -232,7 +236,7 @@ namespace Enigma.Models
                         index = Convert.ToString(diceRollResult);
                         diceRollResult = 0;
 
-                        // can this be optimized?
+                        // TODO: can this be optimized?
                         using (var file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
                         {
                             while ((line = file.ReadLine()) != null)
