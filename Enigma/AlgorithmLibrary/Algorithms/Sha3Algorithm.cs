@@ -5,8 +5,19 @@ namespace Enigma.AlgorithmLibrary.Algorithms
     /// <summary>
     /// Wrapper abstract class for Bouncy Castle Sha3Digest and SHA3 algorithms.
     /// </summary>
-    public abstract class Sha3Algorithm
+    public class Sha3Algorithm
     {
+        public string AlgorithmName { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Sha3Algorithm"/> class with the specified algorithm name.
+        /// </summary>
+        /// <param name="algorithmName">Name of the SHA3 algoritm.</param>
+        public Sha3Algorithm(string algorithmName)
+        {
+            AlgorithmName = algorithmName;
+        }
+
         /// <summary>
         /// Computes the SHA3 hash value for the specified byte array.
         /// </summary>
