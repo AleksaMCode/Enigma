@@ -62,8 +62,8 @@
     <td>Output feedback</td>
   </tr>
   <tr>
-    <td>OFB</td>
-    <td>Initialization vector </td>
+    <td>IV</td>
+    <td>Initialization vector</td>
   </tr>
 </table>
 
