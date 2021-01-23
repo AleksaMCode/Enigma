@@ -128,7 +128,7 @@ Algorithm | Variant | Output size<br>(bits)
 
 ## Limitations and restrictions
 * <p align="justify">User can't store files larger than 2 GB.</p>
-* <p align="justify">User can only store <code>txt</code>, <code>doc</code>, <code>docx</code>, <code>pdf</code>, <code>xls</code>, <code>xlsx</code>, <code>ppt</code>, <code>pptx</code>, <code>png</code>, <code>jpg</code> and <code>jpeg</code> files.</p>
+* <p align="justify">User can only store <code>.txt</code>, <code>.doc</code>, <code>.docx</code>, <code>.pdf</code>, <code>.xls</code>, <code>.xlsx</code>, <code>.ppt</code>, <code>.pptx</code>, <code>.png</code>, <code>.jpg</code> and <code>.jpeg</code> files.</p>
 * <p align="justify">Only a file owner can update and/or delete a file.</p>
 * <p align="justify">Minimum RSA key size permited is 2,048 bits long.</p>
 
@@ -154,8 +154,11 @@ Algorithm | Variant | Output size<br>(bits)
 ## References
 ### Books
 <ul>
+    <li><p align="justify">Dirk Strauss - <i>Cryptography in .NET<i/></p></li>
+    <li><p align="justify">Michael Welschenbach - <i>Cryptography in C and C++<i/></p></li>
     <li><p align="justify">William Stallings - <i>Cryptography and Network Security: Principles and Practice</i></p></li>
-    <li><p align="justify">Bruce Schneier, Niels Ferguson, and Tadayoshi Kohno - <i>Cryptography Engineering: Design Principles and Practical Applications</i></p></li>
+    <li><p align="justify">John F. Dooley - <i>History of Cryptography and Cryptanalysis: Codes, Ciphers, and Their Algorithms</i></p></li>
+    <li><p align="justify">Bruce Schneier, Niels Ferguson, Tadayoshi Kohno - <i>Cryptography Engineering: Design Principles and Practical Applications</i></p></li>
 </ul>
 
 ### Links
