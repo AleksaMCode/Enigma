@@ -22,7 +22,7 @@
     - [Hashing algorithms](#hashing-algorithms)
   - [Passwords and keys](#passwords-and-keys)
     - [Password guidelines](#password-guidelines)
-    - [Password Entorpy](#password-entorpy)
+    - [Password Entropy](#password-entropy)
     - [Password protection and storage](#password-protection-and-storage)
   - [Certificate policies](#certificate-policies)
   - [Limitations and restrictions](#limitations-and-restrictions)
@@ -120,7 +120,7 @@ Algorithm | Variant | Output size<br>(bits)
     <li><p align="justify">Passwords can contain all printable ASCII characters including a space character.</p></li>
 </ol>
 
-### Password Entorpy
+### Password Entropy
 
 ### Password protection and storage
 
@@ -129,7 +129,7 @@ Algorithm | Variant | Output size<br>(bits)
 ## Limitations and restrictions
 * <p align="justify">User can't store files larger than 2 GB.</p>
 * <p align="justify">User can only store <code>.txt</code>, <code>.doc</code>, <code>.docx</code>, <code>.pdf</code>, <code>.xls</code>, <code>.xlsx</code>, <code>.ppt</code>, <code>.pptx</code>, <code>.png</code>, <code>.jpg</code> and <code>.jpeg</code> files.</p>
-* <p align="justify">Only a file owner can update and/or delete a file.</p>
+* <p align="justify">Only a file owner can share/unshare, update and delete a file.</p>
 * <p align="justify">Minimum RSA key size permited is 2,048 bits long.</p>
 
 ## Potential problems and known security bugs

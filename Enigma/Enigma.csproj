@@ -84,6 +84,7 @@
     <Compile Include="AlgorithmLibrary\Algorithms\IAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\IAsymmetricAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\RsaAlgorithm.cs" />
+    <Compile Include="AlgorithmLibrary\Algorithms\Sha3Algorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\TripleDesAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\Algorithms\TwofishAlgorithm.cs" />
     <Compile Include="AlgorithmLibrary\AlgorithmUtility.cs" />
