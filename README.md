@@ -154,8 +154,8 @@ Algorithm | Variant | Output size<br>(bits)
 ## References
 ### Books
 <ul>
-    <li><p align="justify">Dirk Strauss - <i>Cryptography in .NET<i/></p></li>
-    <li><p align="justify">Michael Welschenbach - <i>Cryptography in C and C++<i/></p></li>
+    <li><p align="justify">Dirk Strauss - <i>Cryptography in .NET</i></p></li>
+    <li><p align="justify">Michael Welschenbach - <i>Cryptography in C and C++</i></p></li>
     <li><p align="justify">William Stallings - <i>Cryptography and Network Security: Principles and Practice</i></p></li>
     <li><p align="justify">John F. Dooley - <i>History of Cryptography and Cryptanalysis: Codes, Ciphers, and Their Algorithms</i></p></li>
     <li><p align="justify">Bruce Schneier, Niels Ferguson, Tadayoshi Kohno - <i>Cryptography Engineering: Design Principles and Practical Applications</i></p></li>
