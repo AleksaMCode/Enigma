@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Enigma.AlgorithmLibrary.Algorithms;
@@ -15,6 +16,13 @@ namespace Enigma.Models
             var dataComp = new UserDatabase(userDatabasePath);
 
             var user = dataComp.GetUser(username);
+
+            if (user != null && user.LoginAttempt == 3)
+            {
+                // delete all users files
+                Directory.Delete(@"D:\EnigmaEFS\" + username, true);
+                dataComp.LockUser(user);
+            }
 
             if (user != null && user.IsPasswordValid(password))
             {
