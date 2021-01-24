@@ -152,7 +152,7 @@ namespace Enigma.UserDbManager
             using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256);
             var passHash = pbkdf2Hasher.GetBytes(256 / 8);
 
-            // user are prevented from reusing their old password
+            // users are prevented from reusing their old password
             if (passHash.SequenceEqual(user.PassHash))
             {
                 throw new Exception("Password reuse isn't allowed.");
