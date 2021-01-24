@@ -25,7 +25,7 @@ namespace Enigma.EFS
         private readonly UserInformation currentUser;
 
         /// <summary>
-        /// Information on whether the user has private RSA USB key. 
+        /// Information on whether the user has a private RSA USB key. 
         /// </summary>
         public bool UsbKey => currentUser.UsbKey;
 
