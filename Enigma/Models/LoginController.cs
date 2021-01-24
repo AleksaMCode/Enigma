@@ -23,22 +23,7 @@ namespace Enigma.Models
 
             if (user != null && user.IsPasswordValid(password))
             {
-                var userCert = new X509Certificate2(user.PublicCertificate);
 
-                if (userCert == null)
-                {
-                    throw new Exception("Certificate error.");
-                }
-
-                if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
-                {
-                    throw new Exception(errorMsg);
-                }
-
-                if(CertificateValidator.VerifyCertificateRevocationStatus(userCert))
-                {
-                    throw new Exception("Certificate has been revoked.");
-                }
             }
             else
             {
@@ -49,21 +34,47 @@ namespace Enigma.Models
             return new UserInformation(user);
         }
 
-        public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)
+        public void LoginPartTwo(UserInformation user, byte[] certificate)
         {
-            this.privateKeyPath = privateKeyPath;
+            var userCert = new X509Certificate2(certificate);
+            var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
 
-            // decrypt the raw key file and create keyRaw
-            var keyRaw = DecryptTheUserKey(File.ReadAllBytes(this.privateKeyPath), password);
-
-            var privateParameters = new KeyFileParser(keyRaw).GetParameters();
-            var publicKeyProvider = (RSACryptoServiceProvider)user.Certificate.PublicKey.Key;
-
-            if (!RsaAlgorithm.CompareKeys(publicKeyProvider.ExportParameters(false), privateParameters))
+            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, user.PublicKey))
             {
-                throw new Exception("The given private key does not match this user's certificate.");
+                throw new Exception("Wrong certificate used.");
+            }
+
+            if (userCert == null)
+            {
+                throw new Exception("Certificate error.");
+            }
+
+            if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
+            {
+                throw new Exception(errorMsg);
+            }
+
+            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+            {
+                throw new Exception("Certificate has been revoked.");
             }
         }
+
+        //public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)
+        //{
+        //    this.privateKeyPath = privateKeyPath;
+
+        //    // decrypt the raw key file and create keyRaw
+        //    var keyRaw = DecryptTheUserKey(File.ReadAllBytes(this.privateKeyPath), password);
+
+        //    var privateParameters = new KeyFileParser(keyRaw).GetParameters();
+        //    var publicKeyProvider = (RSACryptoServiceProvider)user.Certificate.PublicKey.Key;
+
+        //    if (!RsaAlgorithm.CompareKeys(publicKeyProvider.ExportParameters(false), privateParameters))
+        //    {
+        //        throw new Exception("The given private key does not match this user's certificate.");
+        //    }
+        //}
 
         private bool CheckKeyPassword(byte[] password, byte[] salt, byte[] passwordDigest)
         {
