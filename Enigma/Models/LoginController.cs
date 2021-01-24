@@ -69,7 +69,6 @@ namespace Enigma.Models
         //    {
         //        throw new Exception("The given private key does not match this user's certificate.");
         //    }
-        //}
-    
+        //}    
     }
 }
