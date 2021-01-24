@@ -70,12 +70,25 @@ namespace Enigma.Models
             this.user = user;
         }
 
+        /// <summary>
+        /// Gets users private RSA key.
+        /// </summary>
+        /// <param name="privateKeyPath">Path to the users RSA key haystack.</param>
+        /// <param name="password">Users private RSA key password.</param>
+        /// <returns>Users private RSA key.</returns>
         public RSAParameters GetPrivateKey(string privateKeyPath, string password)
         {
             var keyRaw = DecryptTheUserKey(File.ReadAllBytes(privateKeyPath), password);
             return new KeyFileParser(keyRaw).GetParameters();
         }
 
+        /// <summary>
+        /// Checks if the private RSA key password is correct.
+        /// </summary>
+        /// <param name="password">Users private RSA key password.</param>
+        /// <param name="salt">Salt used to create  entered password hash.</param>
+        /// <param name="passwordDigest">Passwords hash.</param>
+        /// <returns>true if passwords match, otherwise false.</returns>
         private bool CheckKeyPassword(byte[] password, byte[] salt, byte[] passwordDigest)
         {
             var currentPasswordDigest = SHA256.Create().ComputeHash(password.Concat(salt).ToArray());
@@ -83,6 +96,12 @@ namespace Enigma.Models
             return currentPasswordDigest.SequenceEqual(passwordDigest);
         }
 
+        /// <summary>
+        /// Finds and decrypts users private RSA key.
+        /// </summary>
+        /// <param name="keyRawEncrypted">User RSA key haystack.</param>
+        /// <param name="password">Users private RSA key password.</param>
+        /// <returns>Users RSA private key in raw form.</returns>
         private byte[] DecryptTheUserKey(byte[] keyRawEncrypted, string password)
         {
             var passwordBytes = Encoding.ASCII.GetBytes(password);
