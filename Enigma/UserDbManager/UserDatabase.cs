@@ -53,7 +53,7 @@ namespace Enigma.UserDbManager
         /// <param name="username">User username.</param>
         /// <param name="password">User password.</param>
         /// <param name="certificate">Users x509 Public certificate in raw form.</param>
-        /// <param name="usbKey">Flag that allows user to use RSA usb key.</param>
+        /// <param name="usbKey">Flag that allows user to use RSA USN key.</param>
         public void AddUser(string username, string password, byte[] certificate, bool usbKey)
         {
             // check if the username is unique.
