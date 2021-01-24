@@ -61,7 +61,7 @@ namespace Enigma.EFS
         /// Check if the sufficient storage space is available to store a new file.
         /// </summary>
         /// <param name="size">Size of the file that is being uplaoded to EFS.</param>
-        /// <returns></returns>
+        /// <returns>true if file can be stored on EFS, otherwise it returns false.</returns>
         private bool CanItBeStored(long size)
         {
             return size < new DriveInfo(mountLocation).AvailableFreeSpace;
@@ -72,7 +72,7 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="size">Size of the file that is being downloaded to file system.</param>
         /// <param name="driveName">Name of the drive where file will be stored.</param>
-        /// <returns></returns>
+        /// <returns>true if file can be stored on FS, otherwise it returns false.</returns>
         private bool CanItBeStored(long size, string driveName)
         {
             return size < new DriveInfo(driveName).AvailableFreeSpace;
@@ -85,8 +85,10 @@ namespace Enigma.EFS
         /// <param name="pathOnEfs">Path on the encrypted file system where the file will be stored.</param>
         /// <param name="algorithmNameSignature">Name of the algorithm used for file encryption.</param>
         /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
+        /// <param name="privateKeyPath">Path to the users private key.</param>
+        /// <param name="password">Password used to decrypt users private key.</param>
         /// <param name="deleteOriginal">Flag used to remove an original copy of file.</param>
-        public void Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName, bool deleteOriginal = false)
+        public void Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName, string privateKeyPath, string password, bool deleteOriginal = false)
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
@@ -100,8 +102,10 @@ namespace Enigma.EFS
                 var fullFileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
                 var originalFile = new OriginalFile(File.ReadAllBytes(pathOnFs), fullFileName);
 
-                var encryptedFile = new EncryptedFile(fullFileName, (uint)currentUser.user.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, currentUser.PrivateKey);
-                var encryptedFileRaw = encryptedFile.Encrypt(originalFile, currentUser.user.Id, currentUser.PrivateKey);
+                var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
+
+                var encryptedFile = new EncryptedFile(fullFileName, (uint)currentUser.user.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, userPrivateKey);
+                var encryptedFileRaw = encryptedFile.Encrypt(originalFile, currentUser.user.Id, userPrivateKey);
 
                 if (CanItBeStored(encryptedFileRaw.Length))
                 {
@@ -124,15 +128,17 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Downlods selected encrypted file. File is first decrypted after which is stored on the specified path on file system.
+        /// Downloads selected encrypted file. File is first decrypted after which is stored on the specified path on file system.
         /// </summary>
         /// <param name="pathOnEfs">The name of the file to downloaded.</param>
         /// <param name="pathOnFs">Path on the file system where the file will be stored.</param>
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
-        public void Download(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
+        /// <param name="privateKeyPath">Path to the users private key.</param>
+        /// <param name="password">Password used to decrypt users private key.</param>
+        public void Download(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey, string privateKeyPath, string password)
         {
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey);
+            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.GetPrivateKey(privateKeyPath, password), ownerPublicKey);
 
             if (CanItBeStored(originalFile.FileContent.Length, pathOnFs.Substring(0, 2)))
             {
@@ -154,7 +160,9 @@ namespace Enigma.EFS
         /// <param name="pathOnEfs">The name of the file to update.</param>
         /// <param name="pathOnFs">Path on the file system where the update file is stored.</param>
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
-        public void Update(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
+        /// <param name="privateKeyPath">Path to the users private key.</param>
+        /// <param name="password">Password used to decrypt users private key.</param>
+        public void Update(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey, string privateKeyPath, string password)
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
@@ -171,9 +179,10 @@ namespace Enigma.EFS
             var fullFileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
             var updateFile = new OriginalFile(File.ReadAllBytes(pathOnFs), fullFileName);
 
+            var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
 
             var originalFileExt = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0])
-                .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
+                .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, userPrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
 
             // update method restriction
             if (originalFileExt != fullFileName.Split('.')[1])
@@ -182,11 +191,11 @@ namespace Enigma.EFS
             }
 
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var updatedEncryptedFileRaw = encryptedFile.Update(updateFile, File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey);
+            var updatedEncryptedFileRaw = encryptedFile.Update(updateFile, File.ReadAllBytes(pathOnEfs), currentUser.user.Id, userPrivateKey);
 
             // name update is always necessary because files IV has been changed
             encryptedFile.NameEncryption(fullFileName,
-                new AesAlgorithm(((SecurityDescriptor)encryptedFile.Headers[1]).GetKey((int)currentUser.user.Id, currentUser.PrivateKey),
+                new AesAlgorithm(((SecurityDescriptor)encryptedFile.Headers[1]).GetKey((int)currentUser.user.Id, userPrivateKey),
                 ((SecurityDescriptor)encryptedFile.Headers[1]).IV, "OFB"));
 
             // delete the old encrypted file
@@ -208,12 +217,13 @@ namespace Enigma.EFS
         /// <param name="pathOnEfs">The name of the shared file.</param>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
         /// <param name="userId">Unique user identifier from the database.</param>
-        /// <param name="loggedInUserPrivateKey">Private RSA key of the logged-in user.</param>
         /// <param name="userPublicKey">Users public RSA key.</param>
-        public void Share(string pathOnEfs, int loggedInUserId, int userId, RSAParameters loggedInUserPrivateKey, RSAParameters userPublicKey)
+        /// <param name="privateKeyPath">Path to the users private key.</param>
+        /// <param name="password">Password used to decrypt users private key.</param>
+        public void Share(string pathOnEfs, int loggedInUserId, int userId, RSAParameters userPublicKey, string privateKeyPath, string password)
         {
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var updatedEncryptedFileRaw = encryptedFile.Share(File.ReadAllBytes(pathOnEfs), loggedInUserId, userId, loggedInUserPrivateKey, userPublicKey);
+            var updatedEncryptedFileRaw = encryptedFile.Share(File.ReadAllBytes(pathOnEfs), loggedInUserId, userId, currentUser.GetPrivateKey(privateKeyPath, password), userPublicKey);
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
@@ -306,10 +316,12 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="pathOnEfs">The name of the encrypted file including files path and encrypted name with .at extension.</param>
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
-        public void OpenFile(string pathOnEfs, RSAParameters ownerPublicKey)
+        /// <param name="privateKeyPath">Path to the users private key.</param>
+        /// <param name="password">Password used to decrypt users private key.</param>
+        public void OpenFile(string pathOnEfs, RSAParameters ownerPublicKey, string privateKeyPath, string password)
         {
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.PrivateKey, ownerPublicKey);
+            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.GetPrivateKey(privateKeyPath, password), ownerPublicKey);
 
             var tempFilePath = Path.GetTempPath() + "Enigma-" + Guid.NewGuid().ToString() + "." + originalFile.FileExtension;
 
