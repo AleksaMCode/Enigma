@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Enigma.UserDbManager
@@ -49,11 +50,118 @@ namespace Enigma.UserDbManager
         /// <summary>
         /// Adds a new user to users database, while performing password hashing and hardening.
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <param name="certificate"></param>
-        /// <param name="usbKey"></param>
+        /// <param name="username">User username.</param>
+        /// <param name="password">User password.</param>
+        /// <param name="certificate">Users x509 Public certificate in raw form.</param>
+        /// <param name="usbKey">Flag that allows user to use RSA usb key.</param>
         public void AddUser(string username, string password, byte[] certificate, bool usbKey)
+        {
+            // check if the username is unique.
+            if (GetUser(username) != null)
+            {
+                throw new Exception(string.Format("Username '{0}' already exists.", username));
+            }
+
+            var passBytes = Encoding.ASCII.GetBytes(password);
+
+            var salt = new byte[16];
+            new RNGCryptoServiceProvider().GetBytes(salt);
+
+            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
+
+            // from March 2019., NIST recommends 80,000 iterations
+            using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, salt, 80_000, HashAlgorithmName.SHA256);
+            var passHash = pbkdf2Hasher.GetBytes(256 / 8);
+
+            // set last login time to current time
+            var dateTime = DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss");
+
+            var toAdd = new User
+            {
+                Username = username,
+                Salt = salt,
+                PassHash = passHash,
+                PublicKey = new X509Certificate2(certificate).GetPublicKey(),
+                LastLogin = dateTime,
+                LoginAttempt = 0,
+                UsbKey = usbKey ? 1 : 0,
+                Locked = 0
+            };
+
+            context.Users.Add(toAdd);
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Updates users last login time.
+        /// </summary>
+        /// <param name="user">User whos last login time needs to be updated.</param>
+        /// <param name="lastLogin">New login time.</param>
+        public void UpdateLoginTime(User user, string lastLogin)
+        {
+            user.LastLogin = lastLogin;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Locks user account.
+        /// </summary>
+        /// <param name="user">User whos account needs to be locked.</param>
+        public void LockUser(User user)
+        {
+            user.Locked = 1;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Increaments user login attempt after a failed login attempt.
+        /// </summary>
+        /// <param name="user">User whos has failed to login.</param>
+        public void LoginAttemptIncrement(User user)
+        {
+            user.LoginAttempt++;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Increaments user login attempt after a failed login attempt.
+        /// </summary>
+        /// <param name="user">User whos has logged in successfully.</param>
+        public void ResetLoginAttempts(User user)
+        {
+            user.LoginAttempt = 0;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Updates user password.
+        /// </summary>
+        /// <param name="user">User whos password needs to be updated.</param>
+        /// <param name="password">Users new password.</param>
+        public void ChangePassword(User user, string password)
+        {
+            var passBytes = Encoding.ASCII.GetBytes(password);
+
+            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
+
+            // from March 2019., NIST recommends 80,000 iterations
+            using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256);
+            var passHash = pbkdf2Hasher.GetBytes(256 / 8);
+
+            // user are prevented from reusing their old password
+            if (passHash.SequenceEqual(user.PassHash))
+            {
+                throw new Exception("Password reuse isn't allowed.");
+            }
+
+            user.PassHash = passHash;
+        }
+
+        /// <summary>
+        /// Adds a new user to users database, while performing password hashing and hardening.
+        /// </summary>
+        [ObsoleteAttribute("This method is obsolete. Call AddUser instead.", true)]
+        public void AddUserOld(string username, string password, byte[] certificate, bool usbKey)
         {
             // check if the username is unique.
             if (GetUser(username) != null)
@@ -76,7 +184,7 @@ namespace Enigma.UserDbManager
             var toAdd = new User
             {
                 Username = username,
-                PublicCertificate = certificate,
+                //PublicCertificate = certificate,
                 Salt = salt,
                 PassHash = passHash,
                 UsbKey = usbKey ? 1 : 0
@@ -89,7 +197,7 @@ namespace Enigma.UserDbManager
         /// <summary>
         /// Get every user from the database.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All users from database.</returns>
         public IEnumerable<User> GetAllUsers()
         {
             return context.Users.AsEnumerable();
