@@ -25,6 +25,11 @@ namespace Enigma.EFS
         private readonly UserInformation currentUser;
 
         /// <summary>
+        /// Information on whether the user has private RSA USB key. 
+        /// </summary>
+        public bool UsbKey => currentUser.UsbKey;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EnigmaEfs"/> class with the specified user information.
         /// </summary>
         /// <param name="user">Information about the currently logged in user from the database.</param>

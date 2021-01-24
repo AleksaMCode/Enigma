@@ -51,6 +51,11 @@ namespace Enigma.Models
         public string LastLogin => user.LastLogin;
 
         /// <summary>
+        /// Information on whether the user has private RSA USB key. 
+        /// </summary>
+        public bool UsbKey => user.UsbKey == 1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information.
         /// </summary>
         /// <param name="user">Users database information.</param>
