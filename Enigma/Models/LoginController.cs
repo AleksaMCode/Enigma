@@ -18,15 +18,16 @@ namespace Enigma.Models
 
             if (user != null && user.IsPasswordValid(password))
             {
-
+                dataComp.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+                dataComp.ResetLoginAttempts(user);
+                data = dataComp;
+                return new UserInformation(user);
             }
             else
             {
+                dataComp.LoginAttemptIncrement(user);
                 throw new Exception("Invalid username or password.");
             }
-
-            data = dataComp;
-            return new UserInformation(user);
         }
 
         public void LoginPartTwo(UserInformation user, byte[] certificate)
