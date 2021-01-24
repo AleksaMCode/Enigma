@@ -1,7 +1,10 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 
 namespace Enigma.AlgorithmLibrary.Algorithms
@@ -28,6 +31,19 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         public RsaAlgorithm(RSAParameters rsaKeyParams)
         {
             Key = rsaKeyParams;
+        }
+
+        /// <summary>
+        /// Import OpenSSH PEM public RSA key <see cref="string"/> into RSAParameters.
+        /// <param name="publicKeyInPem">User public RSA key in PEM format.</param>
+        /// <returns>Importet RSA public key.</returns>
+        /// </summary>
+        public static RSAParameters ImportPublicKey(string publicKeyInPem)
+        {
+            var pr = new PemReader(new StringReader(publicKeyInPem));
+            var publicKey = (AsymmetricKeyParameter)pr.ReadObject();
+
+            return DotNetUtilities.ToRSAParameters((RsaKeyParameters)publicKey);
         }
 
         /// <summary>

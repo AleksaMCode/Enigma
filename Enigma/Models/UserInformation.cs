@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.UserDbManager;
 
@@ -37,7 +38,7 @@ namespace Enigma.Models
         /// <summary>
         /// Users public RSA key derived from his <see cref="Certificate"/>.
         /// </summary>
-        public RSAParameters PublicKey => RsaAlgorithm.ImportPublicKey(user.PublicKey);
+        public RSAParameters PublicKey => RsaAlgorithm.ImportPublicKey(Encoding.ASCII.GetString(user.PublicKey));
         //public RSAParameters PublicKey => ((RSACryptoServiceProvider)Certificate.PublicKey.Key).ExportParameters(false);
 
         /// <summary>
