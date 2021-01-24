@@ -17,7 +17,7 @@ namespace Enigma.Models
         /// <summary>
         /// Information from the user database about the currently logged in user.
         /// </summary>
-        public readonly User user;
+        private readonly User user;
 
         /// <summary>
         /// Users Id.
