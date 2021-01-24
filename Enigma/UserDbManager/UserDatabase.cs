@@ -61,6 +61,10 @@ namespace Enigma.UserDbManager
             {
                 throw new Exception(string.Format("Username '{0}' already exists.", username));
             }
+            else if(username.Length > 20)
+            {
+                throw new Exception(string.Format("Username '{0}' exceeds 20 character limit.", username));
+            }
 
             var passBytes = Encoding.ASCII.GetBytes(password);
 
