@@ -46,9 +46,9 @@ namespace Enigma.EFS
                     Directory.CreateDirectory(sharedDir);
                 }
 
-                if (!Directory.Exists(rootDir + "\\" + user.Username))
+                if (!Directory.Exists(rootDir + "\\" + user.user.Username))
                 {
-                    Directory.CreateDirectory(rootDir + "\\" + user.Username);
+                    Directory.CreateDirectory(rootDir + "\\" + user.user.Username);
                 }
             }
             else
@@ -104,8 +104,8 @@ namespace Enigma.EFS
 
                 var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
 
-                var encryptedFile = new EncryptedFile(fullFileName, (uint)currentUser.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, userPrivateKey);
-                var encryptedFileRaw = encryptedFile.Encrypt(originalFile, currentUser.Id, userPrivateKey);
+                var encryptedFile = new EncryptedFile(fullFileName, (uint)currentUser.user.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, userPrivateKey);
+                var encryptedFileRaw = encryptedFile.Encrypt(originalFile, currentUser.user.Id, userPrivateKey);
 
                 if (CanItBeStored(encryptedFileRaw.Length))
                 {
@@ -138,7 +138,7 @@ namespace Enigma.EFS
         public void Download(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey, string privateKeyPath, string password)
         {
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.GetPrivateKey(privateKeyPath, password), ownerPublicKey);
+            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.GetPrivateKey(privateKeyPath, password), ownerPublicKey);
 
             if (CanItBeStored(originalFile.FileContent.Length, pathOnFs.Substring(0, 2)))
             {
@@ -182,7 +182,7 @@ namespace Enigma.EFS
             var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
 
             var originalFileExt = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0])
-                .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, userPrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
+                .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, userPrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
 
             // update method restriction
             if (originalFileExt != fullFileName.Split('.')[1])
@@ -191,11 +191,11 @@ namespace Enigma.EFS
             }
 
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var updatedEncryptedFileRaw = encryptedFile.Update(updateFile, File.ReadAllBytes(pathOnEfs), currentUser.Id, userPrivateKey);
+            var updatedEncryptedFileRaw = encryptedFile.Update(updateFile, File.ReadAllBytes(pathOnEfs), currentUser.user.Id, userPrivateKey);
 
             // name update is always necessary because files IV has been changed
             encryptedFile.NameEncryption(fullFileName,
-                new AesAlgorithm(((SecurityDescriptor)encryptedFile.Headers[1]).GetKey((int)currentUser.Id, userPrivateKey),
+                new AesAlgorithm(((SecurityDescriptor)encryptedFile.Headers[1]).GetKey((int)currentUser.user.Id, userPrivateKey),
                 ((SecurityDescriptor)encryptedFile.Headers[1]).IV, "OFB"));
 
             // delete the old encrypted file
@@ -321,7 +321,7 @@ namespace Enigma.EFS
         public void OpenFile(string pathOnEfs, RSAParameters ownerPublicKey, string privateKeyPath, string password)
         {
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.GetPrivateKey(privateKeyPath, password), ownerPublicKey);
+            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.user.Id, currentUser.GetPrivateKey(privateKeyPath, password), ownerPublicKey);
 
             var tempFilePath = Path.GetTempPath() + "Enigma-" + Guid.NewGuid().ToString() + "." + originalFile.FileExtension;
 
