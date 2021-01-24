@@ -68,8 +68,8 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Compares public RSA key extracted from <see cref="System.Security.Cryptography.X509Certificates"/> certificate with a public key extracted from a private RSA key.
-        /// This method is faster than <see cref="AreKeysMatched(RSAParameters, RSAParameters)"/> method.
+        /// Compares two public RSA keys or public with private RSA key.
+        /// When comparing private and public keys, this method is faster than <see cref="AreKeysMatched(RSAParameters, RSAParameters)"/> method.
         /// </summary>
         /// <returns>true if the keys match, otherwise false.</returns>
         public static bool CompareKeys(RSAParameters publicKey, RSAParameters privateKey)
