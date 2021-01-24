@@ -51,17 +51,6 @@ namespace Enigma.Models
         public string LastLogin => user.LastLogin;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information and private RSA key.
-        /// </summary>
-        /// <param name="user">Users database information.</param>
-        /// <param name="privateKey">Users private RSA key.</param>
-        public UserInformation(User user, RSAParameters privateKey)
-        {
-            this.user = user;
-            PrivateKey = privateKey;
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information.
         /// </summary>
         /// <param name="user">Users database information.</param>
