@@ -24,10 +24,10 @@ namespace Enigma.Models
         /// </summary>
         public int Id => user.Id;
 
-        /// <summary>
+        /*/// <summary>
         /// Users private RSA key.
         /// </summary>
-        public RSAParameters PrivateKey { get; set; }
+        public RSAParameters PrivateKey { get; set; }*/
 
         /// <summary>
         /// Users username from the database.
