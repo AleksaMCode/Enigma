@@ -26,6 +26,9 @@
     - [Passphrase](#passphrase)
     - [Password protection and storage](#password-protection-and-storage)
       - [Key streching](#key-streching)
+    - [RSA key encryption and hidding](#rsa-key-encryption-and-hidding)
+      - [<i>Needle in a Haystack</i> Steganography](#ineedle-in-a-haystacki-steganography)
+        - [Haystack structure](#haystack-structure)
   - [Certificate policies](#certificate-policies)
   - [Limitations and restrictions](#limitations-and-restrictions)
   - [Potential problems and known security bugs](#potential-problems-and-known-security-bugs)
@@ -148,6 +151,17 @@ As an additional security random delimiter with random length, that varies betwe
 
 #### Key streching
 <p align="justify">A supplementary approach to frustrating brute-force attacks is to derive the key from the password/passphrase using a deliberately slow hash function. <b>Enigma</b> uses NIST recommended key derivation function <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a>.</p>
+
+### RSA key encryption and hidding
+<p align="justify">When first creating an account, every user is prompted to encrypt his private RSA key using his password. Unlike a user account password, RSA password doesn't need to have a high entropy. The only limitation is that is has to be at least 8 characters long. Every RSA key is encrypted using AES-256-OFB algorithm. Key and Iv are derived from the users password using a SHA-512 hashing algorithm.</p>
+
+#### <i>Needle in a Haystack</i> Steganography
+<p align="justify">After encryption, encrypted RSA key is hidden in a haystack of CSPRNG random data which is than stored on FS or on a user USB. Haystack size is always random and its size is given by the formula:</p>
+<p align="center"><img src="./resources/haystack-size.png" ></p>
+<p align="justify">The idea was to hide a block useful data in a much larger block of random data which will virtually indistinguishable from our hidden data. Given that description, a better name would perhaps be a <i>needle in a stack of needles</i>. Does this actually increase the security of the private key? I'm not really sure, there is good chance this is a good example of <A href="[Security theater](https://en.wikipedia.org/wiki/Security_theater)">security theater</a>. What I do know is that the private RSA key should be secure as long as the users password is strong and kept a secret. If users RSA key is stored on a USB it should have an added security advantage compared to key stored on FS duo to <a href="https://en.wikipedia.org/wiki/Physical_security">physical security</a>.</p>
+
+##### Haystack structure
+Haystack contains, starting from a first bit of data, encrypted RSA key randomly chosen starting location in a haystack stored as an integer, size of the encrypted RSA key stored as an integer, user passwords salt stored in next 16 bytes of data, user password digest stored in next 32 bytes of data and the encrypted RSA key stored at the appropriate location.
 
 ## Certificate policies
 
