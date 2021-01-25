@@ -165,5 +165,6 @@ Algorithm | Variant | Output size<br>(bits)
 ### Github projects
 Some of the projects that **Enigma** uses, either directly or indirectly.
 - [Cryptor](https://github.com/Valyreon/cryptor-wpf-project)
+- [RSA keys](https://gist.github.com/valep27/4a720c25b35fff83fbf872516f847863)
 - [Bouncy Castle](https://github.com/bcgit/bc-csharp)
 - [NTFS simulator](https://github.com/AleksaMCode/ntfs-simulator)
