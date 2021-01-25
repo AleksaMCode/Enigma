@@ -47,17 +47,21 @@
   </tr>    <td>PBKDF2</td>    <td>Password-Based KDF 2</td>  </tr>
   <tr>    <td>MAC</td>    <td>Message Authentication Code</td>  </tr>
   <tr>    <td>HMAC</td>    <td>Keyed-hash Message Authentication Code</td>  </tr>
-  <tr>    <td>PRNG</td>    <td>Pseudorandom number generator</td>  </tr>
-  <tr>    <td>CSPRNG</td>    <td>Cryptographically secure PRNG</td>  </tr>
-  <tr>    <td>ECB</td>    <td>Electronic codebook</td>  </tr>
-  <tr>    <td>CBC</td>    <td>Cipher block chaining</td>  </tr>
-  <tr>    <td>CFB</td>    <td>Cipher feedback</td>  </tr>
-  <tr>    <td>OFB</td>    <td>Output feedback</td>  </tr>
-  <tr>    <td>IV</td>    <td>Initialization vector</td>  </tr>
-  <tr>    <td>PKI</td>    <td>Public key infrastructure</td>  </tr>
-  <tr>    <td>FS</td>    <td>File system</td>  </tr>
+  <tr>    <td>PRNG</td>    <td>Pseudorandom Number Generator</td>  </tr>
+  <tr>    <td>CSPRNG</td>    <td>Cryptographically Secure PRNG</td>  </tr>
+  <tr>    <td>ECB</td>    <td>Electronic Codebook</td>  </tr>
+  <tr>    <td>CBC</td>    <td>Cipher Block Chaining</td>  </tr>
+  <tr>    <td>CFB</td>    <td>Cipher Feedback</td>  </tr>
+  <tr>    <td>OFB</td>    <td>Output Feedback</td>  </tr>
+  <tr>    <td>IV</td>    <td>Initialization Vector</td>  </tr>
+  <tr>    <td>PKI</td>    <td>Public Key Infrastructure</td>  </tr>
+  <tr>    <td>PKIX</td>    <td>Public Key Infrastructure X.509</td>  </tr>
+  <tr>    <td>FS</td>    <td>File System</td>  </tr>
   <tr>    <td>EFS</td>    <td>Encrypted FS</td>  </tr>
-  <tr>    <td>2FA</td>    <td>Two-factor authentication</td>  </tr>
+  <tr>    <td>2FA</td>    <td>Two-factor Authentication</td>  </tr>
+  <tr>    <td>RSA</td>    <td>Rivest-Shamir-Adleman algorithm</td>  </tr>
+  <tr>    <td>AES</td>    <td>Advanced Encryption Standard</td>  </tr>
+  <tr>    <td>3DES</td>    <td>Triple Data Encryption Standard</td>  </tr>
 </table>
 
 ## Name origin
@@ -161,7 +165,7 @@ As an additional security random delimiter with random length, that varies betwe
 <p align="justify">The idea was to hide a block useful data in a much larger block of random data which will virtually indistinguishable from our hidden data. Given that description, a better name would perhaps be a <i>needle in a stack of needles</i>. Does this actually increase the security of the private key? I'm not really sure, there is good chance this is a good example of <A href="[Security theater](https://en.wikipedia.org/wiki/Security_theater)">security theater</a>. What I do know is that the private RSA key should be secure as long as the users password is strong and kept a secret. If users RSA key is stored on a USB it should have an added security advantage compared to key stored on FS duo to <a href="https://en.wikipedia.org/wiki/Physical_security">physical security</a>.</p>
 
 ##### Haystack structure
-Haystack contains, starting from a first bit of data, encrypted RSA key randomly chosen starting location in a haystack stored as an integer, size of the encrypted RSA key stored as an integer, user passwords salt stored in next 16 bytes of data, user password digest stored in next 32 bytes of data and the encrypted RSA key stored at the appropriate location.
+<p align="justify">Haystack contains, starting from a first bit of data, encrypted RSA key randomly chosen starting location in a haystack stored as an integer, size of the encrypted RSA key stored as an integer, user passwords salt stored in next 16 bytes of data, user password digest stored in next 32 bytes of data and the encrypted RSA key stored at the appropriate location.</p>
 
 ## Certificate policies
 
