@@ -121,8 +121,8 @@ Algorithm | Variant | Output size<br>(bits)
 <p align="justify">Guidelines for choosing good passwords are typically designed to make passwords harder to discover by intelligent guessing. All the guidelines are NIST compliant. <p>
 <ol>
     <li><p align="justify">Memorized secrets are at least 8 characters in length not including spaces.</p></li>
-    <li><p align="justify">Password are only required to be changed if there is evidence of compromise.</p></li>
-    <li><p align="justify">New passwords are screened against a list of known compromised passwords.</p></li>
+    <li><p align="justify">Passwords are only required to be changed if there is evidence of compromise.</p></li>
+    <li><p align="justify">New passwords are screened against a <a href="https://github.com/AleksaMCode/Enigma/blob/master/Enigma/10-million-password-list-top-1000000.txt">list</a> of known compromised passwords.</p></li>
     <li><p align="justify">New passwords can't contain username.</p></li>
     <li><p align="justify">Password hints and knowledge-based security questions are not implemented.</p></li>
     <li><p align="justify">Maximum password length is set 200 characters (NIST minimum is 64).</p></li>
