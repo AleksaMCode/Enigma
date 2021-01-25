@@ -23,7 +23,9 @@
   - [Passwords and keys](#passwords-and-keys)
     - [Password guidelines](#password-guidelines)
     - [Password Entropy](#password-entropy)
+    - [Passphrase](#passphrase)
     - [Password protection and storage](#password-protection-and-storage)
+      - [Key streching](#key-streching)
   - [Certificate policies](#certificate-policies)
   - [Limitations and restrictions](#limitations-and-restrictions)
   - [Potential problems and known security bugs](#potential-problems-and-known-security-bugs)
@@ -122,7 +124,15 @@ Algorithm | Variant | Output size<br>(bits)
 
 ### Password Entropy
 
+### Passphrase
+<p align="justify">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domein of [diceware_domain](), that provides anywhere from 78 to 128 bits of entropy.
+Number 7,776 was chosen to allow words to be selected by throwing dice five times. Every dice throw is simulated by CRPRNG. [diceware_7776]()<br><br>
+As an additional security random delimiter with random length, that varies between 3 and 5 charters (ASCII charts between 0x20 and 0x41), is used.</p>
+
 ### Password protection and storage
+
+#### Key streching
+<p align="justify">A supplementary approach to frustrating brute-force attacks is to derive the key from the password/passphrase using a deliberately slow hash function. <b>Enigma</b> uses <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a>.</p>
 
 ## Certificate policies
 
