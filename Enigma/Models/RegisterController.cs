@@ -192,8 +192,8 @@ namespace Enigma.Models
 
             for (var i = 0; i < size; ++i)
             {
-                // ASCII characters: >= SPACE (0x20) and < a (0x61)
-                delimiter[i] = (char)csprng.Next(0x20, 0x61);
+                // ASCII characters: >= SPACE (0x20) and < a (0x41)
+                delimiter[i] = (char)csprng.Next(0x20, 0x41);
             }
 
             return new string(delimiter);
