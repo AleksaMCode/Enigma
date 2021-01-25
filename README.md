@@ -126,7 +126,7 @@ Algorithm | Variant | Output size<br>(bits)
 
 ### Passphrase
 <p align="justify"><img src="./resources/xkcd_password_strength.png" width="350" title="xkcd illustration" align="left" hspace="5" vspace="5">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domain of <img src="./resources/diceware_domain.png" title="diceware domain" width="100">, that provides anywhere from 78 to 128 bits of entropy.
-Number 7,776 (<img src="./resources/diceware_7776.png" width="65" align="top">) was chosen to allow words to be selected by throwing dice five times.  Every dice throw is simulated by CSPRNG.
+Number 7,776 (<img src="./resources/diceware_7776.png" width="65" align="down") was chosen to allow words to be selected by throwing dice five times.  Every dice throw is simulated by CSPRNG.
 As an additional security random delimiter with random length, that varies between 3 and 5 charters (ASCII chars between 0x20 and 0x41), is used.</p>
 
 ### Password protection and storage
