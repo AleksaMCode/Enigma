@@ -71,7 +71,7 @@ namespace Enigma.Wpf.ViewModels
                 {
                     var password = passBox.Password;
                     var register = new RegisterController(new UserDatabase(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db"));
-                    register.Register(username, passBox.Password,/*usercert is missing*/, PrivateKeySignupOption == PrivateKeyOption.USB);
+                    //register.Register(username, passBox.Password,/*usercert is missing*/, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                     /* then create private key of file based on what user chose, something like:
 

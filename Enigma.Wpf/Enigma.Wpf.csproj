@@ -52,6 +52,12 @@
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.IconPacks.FontAwesome.4.8.0\lib\net47\MahApps.Metro.IconPacks.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro.IconPacks.FontAwesome, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.IconPacks.FontAwesome.4.8.0\lib\net47\MahApps.Metro.IconPacks.FontAwesome.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -82,10 +88,13 @@
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
+    <Compile Include="Converters\FileTypeToIconConverter.cs" />
     <Compile Include="Converters\StringToPrivateKeyOptionConverter.cs" />
+    <Compile Include="Enums\FileSystemItemType.cs" />
     <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Interfaces\IFlyoutPanel.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
+    <Compile Include="Observables\FileSystemItem.cs" />
     <Compile Include="ViewModels\InitialFormViewModel.cs" />
     <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -151,12 +160,18 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Dialogs\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Enigma\Enigma.csproj">
       <Project>{7914b5e2-70b6-4455-8e82-05fa2d13ec89}</Project>
       <Name>Enigma</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\FileIcon.png" />
+    <Resource Include="Resources\Images\FolderIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

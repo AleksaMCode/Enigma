@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:Enigma.Wpf.ViewModels"
     x:Name="mainWindow"
-    Title="MainWindow"
+    Title="Enigma"
     Width="800"
     Height="450"
     MinWidth="500"
@@ -35,7 +35,7 @@
             Panel.ZIndex="1000"
             Content="{Binding FlyoutControl}" />
         <ContentControl Content="{Binding CurrentControl}" />
-        <Grid Visibility="{Binding IsBoxVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid Panel.ZIndex="2000" Visibility="{Binding IsBoxVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid.Background>
                 <SolidColorBrush Opacity="0.5" Color="Gray" />
             </Grid.Background>
