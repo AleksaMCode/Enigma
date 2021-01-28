@@ -1,4 +1,4 @@
-<img width="30px" align="left" hspace="5" vspace="2" src="./resources/enigma_efs_logo.png" />
+<img width="50px" align="left" hspace="5" src="./resources/enigma_efs_logo.png" alt_text="[https://www.flaticon.com/free-icon/folder_3500732](https://www.flaticon.com/free-icon/folder_3500732)"/>
 
 # Enigma EFS
 <p align="justify"><i>Cryptography and Computer Protection</i> course project, as taught at the Faculty of Electrical Engineering Banja Luka. <b>Enigma EFS</b> is a WPF application written in C# that simulates an Encrypted File System.
