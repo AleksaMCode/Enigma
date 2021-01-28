@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using Enigma.Enums;
 
 namespace Enigma.Converters
 {
@@ -13,7 +14,7 @@ namespace Enigma.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            return Enum.Parse(typeof(PrivateKeyOption), (string)parameter);
         }
     }
 }

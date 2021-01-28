@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Enigma.Controls;
-using Enigma.Interfaces;
+using Enigma.Wpf.Controls;
 using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -20,12 +19,12 @@ namespace Enigma.Wpf.ViewModels.Windows
         private bool isLoadingBoxShown;
         private bool runAnimation;
         private string progressTextAnimation;
-        private IFlyoutPanel flyoutControl;
+        private IPanel modalControl;
 
         public MainWindowViewModel()
         {
             CurrentControl = new InitialFormViewModel(this);
-            FlyoutControl = new FlyoutPanel();
+            ModalControl = new ModalPanel();
         }
 
         public object CurrentControl
@@ -39,11 +38,10 @@ namespace Enigma.Wpf.ViewModels.Windows
             }
         }
 
-        public IFlyoutPanel FlyoutControl
+        public IPanel ModalControl
         {
-            get => flyoutControl;
-
-            private set => Set(() => FlyoutControl, ref flyoutControl, value);
+            get => modalControl;
+            private set => Set(() => ModalControl, ref modalControl, value);
         }
 
         public bool IsBoxVisible
@@ -113,15 +111,14 @@ namespace Enigma.Wpf.ViewModels.Windows
 
         public void OpenFlyoutPanel(object content)
         {
-            flyoutControl.ContentControl = content;
-            flyoutControl.IsOpen = true;
-
+            modalControl.ContentControl = content;
+            modalControl.IsOpen = true;
         }
 
         public void CloseFlyoutPanel()
         {
-            flyoutControl.IsOpen = false;
-            flyoutControl.ContentControl = null;
+            modalControl.IsOpen = false;
+            modalControl.ContentControl = null;
         }
 
         public void ShowMessage(string title, string message)

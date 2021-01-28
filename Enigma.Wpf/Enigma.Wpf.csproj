@@ -11,8 +11,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FB882450-20D1-4561-856F-E7013A9305A3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Enigma</RootNamespace>
-    <AssemblyName>Enigma</AssemblyName>
+    <RootNamespace>Enigma.Wpf</RootNamespace>
+    <AssemblyName>Enigma.Wpf</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -87,9 +87,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AttachedProperties\UI.cs" />
     <Compile Include="Attributes\Validation\FileExists.cs" />
     <Compile Include="Controls\FlyoutPanel.xaml.cs">
       <DependentUpon>FlyoutPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ModalPanel.xaml.cs">
+      <DependentUpon>ModalPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
@@ -98,8 +102,8 @@
     <Compile Include="Enums\FileSystemItemType.cs" />
     <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Forms\Data\ImportFormData.cs" />
-    <Compile Include="Interfaces\IFlyoutPanel.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
+    <Compile Include="Interfaces\IPanel.cs" />
     <Compile Include="Observables\FileSystemItem.cs" />
     <Compile Include="ViewModels\Forms\ImportFormViewModel.cs" />
     <Compile Include="ViewModels\InitialFormViewModel.cs" />
@@ -119,6 +123,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\FlyoutPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ModalPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

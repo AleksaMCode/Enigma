@@ -1,6 +1,6 @@
-namespace Enigma.Interfaces
+namespace Enigma.Wpf.Interfaces
 {
-    public interface IFlyoutPanel
+    public interface IPanel
     {
         public object ContentControl { get; set; }
         public bool IsOpen { get; set; }
