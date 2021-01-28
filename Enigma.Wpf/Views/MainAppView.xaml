@@ -112,6 +112,14 @@
                                     CommandParameter="{Binding}"
                                     Header="Open" />
                                 <MenuItem
+                                    Command="{Binding PlacementTarget.Tag.ExportItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    CommandParameter="{Binding}"
+                                    Header="Export">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconFontAwesome Kind="FileExportSolid" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem
                                     Command="{Binding PlacementTarget.Tag.ShareItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Share">

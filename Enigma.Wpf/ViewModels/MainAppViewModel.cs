@@ -97,6 +97,13 @@ namespace Enigma.Wpf.ViewModels
             navigator.ShowMessage("Test", "Pressed share item menu item.");
         }
 
+        public ICommand ExportItemCommand => new RelayCommand<FileSystemItem>(HandleExportItem);
+
+        private void HandleExportItem(FileSystemItem obj)
+        {
+            navigator.ShowMessage("Test", "Pressed export item menu item.");
+        }
+
         private void HandleDefaultAction(FileSystemItem obj)
         {
             if (obj.Name == "ImportantDocuments")
