@@ -11,6 +11,7 @@ namespace Enigma.Wpf.ViewModels
     {
         private readonly INavigator navigator;
         private ObservableCollection<FileSystemItem> currentItems;
+        private string addressBarText;
 
         public MainAppViewModel(INavigator mainWindow)
         {
@@ -18,9 +19,18 @@ namespace Enigma.Wpf.ViewModels
             CurrentItems = new ObservableCollection<FileSystemItem>
             {
                 new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
+                new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
                 new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" }
+                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" },
+                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "passwords.txt" },
             };
+            AddressBarText = "/";
+        }
+
+        public string AddressBarText
+        {
+            get => addressBarText;
+            set => Set(() => AddressBarText, ref addressBarText, value);
         }
 
         public ObservableCollection<FileSystemItem> CurrentItems
@@ -96,6 +106,7 @@ namespace Enigma.Wpf.ViewModels
                     new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "document1.doc" },
                     new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "sheet.xls" }
                 };
+                AddressBarText += obj.Name;
             }
             else
             {

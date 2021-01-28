@@ -25,29 +25,39 @@
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Command="{Binding BackCommand}">
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="ChevronLeftSolid" />
+                    Kind="ArrowLeftSolid" />
             </Button>
             <Button Grid.Column="2" Command="{Binding ForwardCommand}">
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="ChevronRightSolid" />
+                    Kind="ArrowRightSolid" />
             </Button>
             <Button Grid.Column="4" Command="{Binding UpCommand}">
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="ChevronUpSolid" />
+                    Kind="ArrowUpSolid" />
             </Button>
-            <Button
+
+            <TextBox
                 Grid.Column="6"
+                Padding="3,0"
+                VerticalContentAlignment="Center"
+                FontSize="13"
+                Text="{Binding AddressBarText}" />
+
+            <Button
+                Grid.Column="8"
                 Padding="10,0"
                 Command="{Binding LogOutCommand}">
                 Log Out
@@ -78,16 +88,21 @@
                     <Grid
                         Width="120"
                         Height="80"
-                        Margin="5"
+                        Background="Transparent"
                         Tag="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType=ListBox, Mode=FindAncestor}}">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
                             <RowDefinition Height="48" />
                             <RowDefinition Height="4" />
-                            <RowDefinition Height="20" />
+                            <RowDefinition Height="16" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Image Width="48" Source="{Binding Type, Converter={StaticResource TypeToImageConverter}}" />
+                        <Image
+                            Grid.Row="1"
+                            Width="48"
+                            Source="{Binding Type, Converter={StaticResource TypeToImageConverter}}" />
                         <TextBlock
-                            Grid.Row="2"
+                            Grid.Row="3"
                             HorizontalAlignment="Center"
                             Text="{Binding Name}" />
                         <Grid.ContextMenu>
@@ -123,18 +138,19 @@
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Margin" Value="2" />
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.Template>
                 <ControlTemplate>
                     <Border
+                        Padding="2"
                         Background="#f1f1f1"
                         BorderBrush="CornflowerBlue"
                         BorderThickness="1">
-                        <ScrollViewer
-                            FocusVisualStyle="{x:Null}"
-                            Focusable="False"
-                            VerticalScrollBarVisibility="Auto">
-                            <ItemsPresenter />
-                        </ScrollViewer>
+                        <ItemsPresenter />
                     </Border>
                 </ControlTemplate>
             </ListBox.Template>

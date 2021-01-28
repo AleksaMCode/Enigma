@@ -99,6 +99,9 @@
     <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBaseWithValidation.cs" />
+    <Compile Include="Views\Dialogs\ImportFormView.xaml.cs">
+      <DependentUpon>ImportFormView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InitialForm.xaml.cs">
       <DependentUpon>InitialForm.xaml</DependentUpon>
     </Compile>
@@ -113,6 +116,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\ImportFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -160,9 +167,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Dialogs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Enigma\Enigma.csproj">
       <Project>{7914b5e2-70b6-4455-8e82-05fa2d13ec89}</Project>

@@ -13,6 +13,7 @@
     MinWidth="500"
     MinHeight="400"
     d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+    FontFamily="Segoe UI Semibold"
     TextOptions.TextFormattingMode="Ideal"
     TextOptions.TextHintingMode="Auto"
     TextOptions.TextRenderingMode="ClearType"
