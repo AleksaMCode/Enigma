@@ -46,8 +46,9 @@ namespace Enigma.Wpf.ViewModels
                 if (IsValid())
                 {
                     var password = passBox.Password;
-
                     navigator.GoToControl(new MainAppViewModel(navigator)); // on successful login
+
+                    Username = "";
                 }
                 else
                 {

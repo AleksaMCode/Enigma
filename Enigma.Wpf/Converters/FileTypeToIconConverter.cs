@@ -10,11 +10,13 @@ namespace Enigma.Converters
     {
         private static readonly BitmapImage fileIcon;
         private static readonly BitmapImage folderIcon;
+        private static readonly BitmapImage sharedFolderIcon;
 
         static FileTypeToIconConverter()
         {
             fileIcon = InitImage("/Resources/Images/FileIcon.png");
             folderIcon = InitImage("/Resources/Images/FolderIcon.png");
+            sharedFolderIcon = InitImage("/Resources/Images/SharedFolderIcon.png");
         }
 
         private static BitmapImage InitImage(string uriPath)
@@ -37,6 +39,7 @@ namespace Enigma.Converters
             {
                 FileSystemItemType.Folder => folderIcon,
                 FileSystemItemType.File => fileIcon,
+                FileSystemItemType.SharedFolder => sharedFolderIcon,
                 _ => throw new Exception("Will never happen.")
             };
         }

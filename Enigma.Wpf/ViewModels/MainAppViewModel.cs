@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Enigma.Observables;
+using Enigma.Wpf.Forms.Data;
 using Enigma.Wpf.Interfaces;
 using Enigma.Wpf.ViewModels.Forms;
 using GalaSoft.MvvmLight;
@@ -13,12 +14,15 @@ namespace Enigma.Wpf.ViewModels
         private readonly INavigator navigator;
         private ObservableCollection<FileSystemItem> currentItems;
         private string addressBarText;
+        private readonly FileSystemItem shared;
 
         public MainAppViewModel(INavigator mainWindow)
         {
             navigator = mainWindow;
+            shared = new FileSystemItem { Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };
             CurrentItems = new ObservableCollection<FileSystemItem>
             {
+                shared,
                 new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
                 new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
                 new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
@@ -67,7 +71,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleLogOut()
         {
-            navigator.ShowMessage("Test", "Pressed log out button.");
+            navigator.GoToPreviousControl();
         }
 
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);
@@ -75,7 +79,15 @@ namespace Enigma.Wpf.ViewModels
         private void HandleImportFile()
         {
             //navigator.ShowMessage("Test", "Pressed import file menu item.");
-            navigator.OpenFlyoutPanel(new ImportFormViewModel(navigator));
+
+            var form = new ImportFormViewModel(navigator);
+
+            form.OnSubmit += (ImportFormData data) =>
+            {
+                CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
+            };
+
+            navigator.OpenFlyoutPanel(form);
         }
 
         public ICommand CreateFolderCommand => new RelayCommand(HandleCreateFolder);
@@ -106,6 +118,13 @@ namespace Enigma.Wpf.ViewModels
             navigator.ShowMessage("Test", "Pressed export item menu item.");
         }
 
+        public ICommand InitCommand => new RelayCommand(HandleInit);
+
+        private void HandleInit()
+        {
+            navigator.ShowMessage("Init", "Hello world!");
+        }
+
         private void HandleDefaultAction(FileSystemItem obj)
         {
             if (obj.Name == "ImportantDocuments")
@@ -116,6 +135,9 @@ namespace Enigma.Wpf.ViewModels
                     new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "sheet.xls" }
                 };
                 AddressBarText += obj.Name;
+            }
+            else if (obj == shared)
+            {
             }
             else
             {
