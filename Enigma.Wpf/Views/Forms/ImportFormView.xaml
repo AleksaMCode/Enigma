@@ -71,16 +71,29 @@
                 Grid.Column="0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center">
-                Action:
+                Algorithm:
             </Label>
             <ComboBox
                 Grid.Row="0"
                 Grid.Column="2"
                 MinWidth="100"
-                VerticalContentAlignment="Center" />
+                VerticalContentAlignment="Center"
+                SelectedValue="{Binding AlgorithmValue, Mode=OneWayToSource}"
+                SelectedValuePath="Content">
+                <ComboBoxItem IsSelected="True">AES-128</ComboBoxItem>
+                <ComboBoxItem>AES-192</ComboBoxItem>
+                <ComboBoxItem>AES-256</ComboBoxItem>
+                <ComboBoxItem>CAMLL-128</ComboBoxItem>
+                <ComboBoxItem>CAMLL-192</ComboBoxItem>
+                <ComboBoxItem>CAMLL-256</ComboBoxItem>
+                <ComboBoxItem>2FISH-128</ComboBoxItem>
+                <ComboBoxItem>2FISH-192</ComboBoxItem>
+                <ComboBoxItem>2FISH-256</ComboBoxItem>
+                <ComboBoxItem>3DES-192</ComboBoxItem>
+            </ComboBox>
 
             <Grid
-                Grid.Row="0"
+                Grid.Row="3"
                 Grid.Column="4"
                 Grid.ColumnSpan="3">
                 <Border BorderBrush="#aaa" BorderThickness="1">
@@ -93,6 +106,7 @@
                         </Grid.ColumnDefinitions>
 
                         <CheckBox
+                            x:Name="checkbox"
                             Grid.Column="1"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
@@ -108,25 +122,33 @@
             </Grid>
 
             <Label
-                Grid.Row="3"
+                Grid.Row="0"
                 Grid.Column="4"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center">
                 Hash:
             </Label>
             <ComboBox
-                Grid.Row="3"
+                Grid.Row="0"
                 Grid.Column="6"
                 MinWidth="100"
                 HorizontalAlignment="Left"
-                VerticalContentAlignment="Center" />
+                VerticalContentAlignment="Center"
+                SelectedValue="{Binding HashValue, Mode=OneWayToSource}"
+                SelectedValuePath="Content">
+                <ComboBoxItem IsSelected="True">MD5</ComboBoxItem>
+                <ComboBoxItem>SHA1</ComboBoxItem>
+                <ComboBoxItem>SHA256</ComboBoxItem>
+                <ComboBoxItem>SHA384</ComboBoxItem>
+                <ComboBoxItem>SHA512</ComboBoxItem>
+            </ComboBox>
 
             <Label
                 Grid.Row="3"
                 Grid.Column="0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Content="Algorithm:"
+                Content="Mode:"
                 IsEnabled="True" />
             <ComboBox
                 Grid.Row="3"
@@ -134,7 +156,14 @@
                 MinWidth="100"
                 HorizontalAlignment="Left"
                 VerticalContentAlignment="Center"
-                IsEnabled="True" />
+                IsEnabled="True"
+                SelectedValue="{Binding ModeValue, Mode=OneWayToSource}"
+                SelectedValuePath="Content">
+                <ComboBoxItem IsSelected="True">ECB</ComboBoxItem>
+                <ComboBoxItem>CBC</ComboBoxItem>
+                <ComboBoxItem>CFB</ComboBoxItem>
+                <ComboBoxItem>OFB</ComboBoxItem>
+            </ComboBox>
         </Grid>
 
         <Button

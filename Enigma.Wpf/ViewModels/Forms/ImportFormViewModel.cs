@@ -14,6 +14,9 @@ namespace Enigma.Wpf.ViewModels.Forms
     {
         private string inputFilePathText;
         private bool isDeleteOriginalChecked = true;
+        private string algorithmValue;
+        private string hashValue;
+        private string modeValue;
         private readonly INavigator navigator;
 
         public event Action<ImportFormData> OnSubmit;
@@ -31,6 +34,24 @@ namespace Enigma.Wpf.ViewModels.Forms
             set => Set(() => InputFilePathText, ref inputFilePathText, value);
         }
 
+        public string AlgorithmValue
+        {
+            get => algorithmValue;
+            set => Set(() => AlgorithmValue, ref algorithmValue, value);
+        }
+
+        public string HashValue
+        {
+            get => hashValue;
+            set => Set(() => HashValue, ref hashValue, value);
+        }
+
+        public string ModeValue
+        {
+            get => modeValue;
+            set => Set(() => ModeValue, ref modeValue, value);
+        }
+
         public bool IsDeleteOriginalChecked
         {
             get => isDeleteOriginalChecked;
@@ -46,11 +67,13 @@ namespace Enigma.Wpf.ViewModels.Forms
                 var formData = new ImportFormData
                 {
                     InputFilePath = InputFilePathText,
-                    DeleteOriginal = IsDeleteOriginalChecked
+                    DeleteOriginal = IsDeleteOriginalChecked,
+                    AlgorithmIdentifier = AlgorithmValue + "-" + ModeValue,
+                    HashIdentifier = HashValue
                 };
 
-                OnSubmit?.Invoke(formData);
                 navigator.CloseFlyoutPanel();
+                OnSubmit?.Invoke(formData);
             }
             else
             {
