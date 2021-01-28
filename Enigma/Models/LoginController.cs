@@ -20,8 +20,13 @@ namespace Enigma.Models
             if (user != null && user.LoginAttempt == 3)
             {
                 // delete all users files
-                Directory.Delete(@"D:\EnigmaEFS\" + username, true);
-                dataComp.LockUser(user);
+                // problem deleting shared file ? 
+                if (Directory.Exists(@"D:\EnigmaEFS\" + username))
+                {
+                    Directory.Delete(@"D:\EnigmaEFS\" + username, true);
+                    dataComp.LockUser(user);
+                }
+                throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
             if (user != null && user.IsPasswordValid(password))
@@ -34,7 +39,7 @@ namespace Enigma.Models
             else
             {
                 dataComp.LoginAttemptIncrement(user);
-                throw new Exception("Invalid username or password.");
+                throw new Exception(string.Format("Invalid username or password. {0} attempt(s) left", 3 - user.LoginAttempt));
             }
         }
 
