@@ -33,6 +33,7 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => Username, ref username, value);
         }
 
+        // Luka please remove this.
         public PrivateKeyOption PrivateKeySignupOption
         {
             get => privateKeySignupOption;
@@ -46,9 +47,10 @@ namespace Enigma.Wpf.ViewModels
                 if (IsValid())
                 {
                     var password = passBox.Password;
-                    navigator.GoToControl(new MainAppViewModel(navigator)); // on successful login
-
-                    Username = "";
+                    var login2fa = new LoginController();
+                    var user = login2fa.LoginPartOne(Username, password, out var db);
+                    //login2fa.LoginPartTwo(user,/*raw certificate*/);
+                    navigator.GoToControl(new MainAppViewModel(navigator, user, db)); // on successful login
                 }
                 else
                 {
@@ -89,7 +91,11 @@ namespace Enigma.Wpf.ViewModels
                     }
                     */
 
-                    navigator.GoToControl(new MainAppViewModel(navigator)); // on successful login
+                    // maybe after successful registration just show a message ?
+                    navigator.ShowMessage("Successful registration", "You have successfully registered. Please login to use Enigma EFS.");
+                    passBox.Clear();
+                    Username = "";
+                    //navigator.GoToControl(new MainAppViewModel(navigator)); <- remove this!?
                 }
                 else
                 {

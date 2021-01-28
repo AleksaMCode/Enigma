@@ -1,6 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Enigma.EFS;
+using Enigma.Models;
 using Enigma.Observables;
+using Enigma.UserDbManager;
 using Enigma.Wpf.Forms.Data;
 using Enigma.Wpf.Interfaces;
 using Enigma.Wpf.ViewModels.Forms;
@@ -15,10 +18,16 @@ namespace Enigma.Wpf.ViewModels
         private ObservableCollection<FileSystemItem> currentItems;
         private string addressBarText;
         private readonly FileSystemItem shared;
+        private readonly UserInformation currentUser;
+        private readonly UserDatabase usersDb;
+        private readonly EnigmaEfs enigmaEfs;
 
-        public MainAppViewModel(INavigator mainWindow)
+        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db)
         {
             navigator = mainWindow;
+            currentUser = user;
+            usersDb = db;
+            enigmaEfs = new EnigmaEfs(currentUser);
             shared = new FileSystemItem { Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };
             CurrentItems = new ObservableCollection<FileSystemItem>
             {
@@ -122,7 +131,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleInit()
         {
-            navigator.ShowMessage("Init", "Hello world!");
+            navigator.ShowMessage(string.Format("Welcome {0}", currentUser.Username), "Your last login time was: " + currentUser.LastLogin + "\nIf you dont remember using your account then, please change your password.");
         }
 
         private void HandleDefaultAction(FileSystemItem obj)
