@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Enigma.Observables;
 using Enigma.Wpf.Interfaces;
+using Enigma.Wpf.ViewModels.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -73,7 +74,8 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleImportFile()
         {
-            navigator.ShowMessage("Test", "Pressed import file menu item.");
+            //navigator.ShowMessage("Test", "Pressed import file menu item.");
+            navigator.OpenFlyoutPanel(new ImportFormViewModel(navigator));
         }
 
         public ICommand CreateFolderCommand => new RelayCommand(HandleCreateFolder);

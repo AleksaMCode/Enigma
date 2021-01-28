@@ -12,6 +12,8 @@ namespace Enigma.Wpf.Interfaces
 
         void OpenFlyoutPanel(object content);
 
+        void CloseFlyoutPanel();
+
         void HideProgressBox();
     }
 }

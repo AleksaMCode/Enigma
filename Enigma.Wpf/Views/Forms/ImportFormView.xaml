@@ -1,0 +1,149 @@
+<UserControl
+    x:Class="Enigma.Wpf.Views.Forms.ImportFormView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3*" MaxWidth="700" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Label Content="File: " />
+            <TextBox
+                Grid.Column="2"
+                Padding="5,0"
+                VerticalContentAlignment="Center"
+                FontSize="12"
+                IsReadOnly="True"
+                Text="{Binding InputFilePathText}" />
+            <Button
+                Grid.Column="4"
+                Padding="25,0"
+                Command="{Binding ChooseInputFileCommand}">
+                Choose
+            </Button>
+        </Grid>
+
+        <Grid
+            Grid.Row="3"
+            Grid.Column="1"
+            HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                Action:
+            </Label>
+            <ComboBox
+                Grid.Row="0"
+                Grid.Column="2"
+                MinWidth="100"
+                VerticalContentAlignment="Center" />
+
+            <Grid
+                Grid.Row="0"
+                Grid.Column="4"
+                Grid.ColumnSpan="3">
+                <Border BorderBrush="#aaa" BorderThickness="1">
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <CheckBox
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            IsChecked="{Binding IsDeleteOriginalChecked}" />
+                        <Label
+                            Grid.Column="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                            Delete original file
+                        </Label>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Label
+                Grid.Row="3"
+                Grid.Column="4"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                Hash:
+            </Label>
+            <ComboBox
+                Grid.Row="3"
+                Grid.Column="6"
+                MinWidth="100"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center" />
+
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Algorithm:"
+                IsEnabled="True" />
+            <ComboBox
+                Grid.Row="3"
+                Grid.Column="2"
+                MinWidth="100"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                IsEnabled="True" />
+        </Grid>
+
+        <Button
+            Grid.Row="5"
+            Grid.Column="1"
+            Padding="30,0"
+            HorizontalAlignment="Right"
+            Command="{Binding SubmitCommand}"
+            Content="Import"
+            IsDefault="True" />
+    </Grid>
+</UserControl>

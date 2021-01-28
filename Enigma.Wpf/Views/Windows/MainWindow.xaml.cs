@@ -1,7 +1,7 @@
 using System.Windows;
-using Enigma.Wpf.ViewModels;
+using Enigma.Wpf.ViewModels.Windows;
 
-namespace Enigma.Wpf.Views
+namespace Enigma.Wpf.Views.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

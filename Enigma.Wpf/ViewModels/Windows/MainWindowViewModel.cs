@@ -7,7 +7,7 @@ using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace Enigma.Wpf.ViewModels
+namespace Enigma.Wpf.ViewModels.Windows
 {
     public class MainWindowViewModel : ViewModelBase, INavigator
     {
