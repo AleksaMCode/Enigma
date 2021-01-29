@@ -24,7 +24,7 @@ namespace Enigma.EFS
         /// </summary>
         public readonly UserInformation currentUser;
 
-        private readonly RSAParameters userPrivateKey;
+        public readonly RSAParameters userPrivateKey;
 
         /// <summary>
         /// Information on whether the user has a private RSA USB key. 
@@ -98,9 +98,11 @@ namespace Enigma.EFS
         /// <param name="algorithmNameSignature">Name of the algorithm used for file encryption.</param>
         /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
         /// <param name="deleteOriginal">Flag used to remove an original copy of file.</param>
-        public void Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName, bool deleteOriginal = false)
+        /// <returns>Encrypted name of the file.</returns>
+        public string Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName, bool deleteOriginal = false)
         {
             var fileSize = new FileInfo(pathOnFs).Length;
+            string encryptedName;
 
             if (fileSize > 2_000_000_000)
             {
@@ -116,6 +118,7 @@ namespace Enigma.EFS
 
                 var encryptedFile = new EncryptedFile(fullFileName, (uint)currentUser.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, userPrivateKey);
                 var encryptedFileRaw = encryptedFile.Encrypt(originalFile, currentUser.Id, userPrivateKey);
+                encryptedName = encryptedFile.EncryptedName;
 
                 if (CanItBeStored(encryptedFileRaw.Length))
                 {
@@ -135,6 +138,8 @@ namespace Enigma.EFS
             {
                 DeleteFile(pathOnFs);
             }
+
+            return encryptedName;
         }
 
         /// <summary>
