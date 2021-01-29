@@ -336,7 +336,11 @@ namespace Enigma.EFS
                 CreateFile(originalFile.FileContent, tempFilePath);
 
                 // override existing encrypted file
-                CreateFile(encryptedFile.Flush(), pathOnEfs);
+                var encryptedFileUpdated = encryptedFile.Flush();
+                if (CanItBeStored(encryptedFileUpdated.Length, pathOnEfs.Substring(0, 2)))
+                {
+                    CreateFile(encryptedFileUpdated, pathOnEfs);
+                }
 
                 var startInfo = new ProcessStartInfo(tempFilePath);
                 Process.Start(startInfo);
