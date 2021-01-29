@@ -64,6 +64,11 @@ namespace Enigma.UserDbManager
         public int Locked { get; set; }
 
         /// <summary>
+        /// Users certificate expiration date.
+        /// </summary>
+        public string CertificateExpirationDate { get; set; }
+
+        /// <summary>
         /// Checks if the entered user password matches the hash stored in the database.
         /// </summary>
         /// <param name="password">Entered user password.</param>

@@ -80,16 +80,19 @@ namespace Enigma.UserDbManager
             // set last login time to current time
             var dateTime = DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss");
 
+            var userCert = new X509Certificate2(certificate);
+
             var toAdd = new User
             {
                 Username = username,
                 Salt = salt,
                 PassHash = passHash,
-                PublicKey = new X509Certificate2(certificate).GetPublicKey(),
+                PublicKey = userCert.GetPublicKey(),
                 LastLogin = dateTime,
                 LoginAttempt = 0,
                 UsbKey = usbKey ? 1 : 0,
-                Locked = 0
+                Locked = 0,
+                CertificateExpirationDate = userCert.GetExpirationDateString()
             };
 
             context.Users.Add(toAdd);
