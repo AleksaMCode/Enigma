@@ -16,12 +16,12 @@ namespace Enigma.Models
         /// <summary>
         /// Unencrypted name of the file.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = null;
 
         /// <summary>
         /// Encrypted name of the file.
         /// </summary>
-        public string EncryptedName { get; set; }
+        public string EncryptedName { get; set; } = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EfsFile"/> class using specified parameters.
@@ -56,7 +56,7 @@ namespace Enigma.Models
             // When reading files in Shared folder, users who don't have approved access will be able to see files in folder but won't be able to read them or see their real names.
             catch (Exception)
             {
-                Name = EncryptedName;
+                //Name = EncryptedName;
             }
         }
     }

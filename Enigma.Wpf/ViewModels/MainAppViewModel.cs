@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 using System.Windows.Input;
 using Enigma.EFS;
 using Enigma.Models;
@@ -22,23 +23,31 @@ namespace Enigma.Wpf.ViewModels
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
 
-        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db)
+        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey)
         {
             navigator = mainWindow;
             currentUser = user;
             usersDb = db;
             enigmaEfs = new EnigmaEfs(currentUser);
-            shared = new FileSystemItem { Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };
-            CurrentItems = new ObservableCollection<FileSystemItem>
+            shared = new FileSystemItem(new EfsDirectory(@"D:\EnigmaEFS\Shared", currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
+            CurrentItems.Add(shared);
+
+            var userDir = new EfsDirectory(@"D:\EnigmaEFS\" + currentUser.Username, currentUser.Id, userPrivateKey);
+            foreach(var efsObject in userDir.objects)
             {
-                shared,
-                new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "passwords.txt" },
-            };
-            AddressBarText = "/";
+                CurrentItems.Add(new FileSystemItem(efsObject));
+            }
+
+            //CurrentItems = new ObservableCollection<FileSystemItem>
+            //{
+            //    shared,
+            //    new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
+            //    new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
+            //    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
+            //    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" },
+            //    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "passwords.txt" },
+            //};
+            AddressBarText = "\\";
         }
 
         public string AddressBarText
