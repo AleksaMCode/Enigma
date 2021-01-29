@@ -135,9 +135,19 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleDeleteItem(FileSystemItem obj)
         {
+            // display warning message "You are about to perform action that will result in a permanent change to Enigma EFS. Are you sure that you want to proceed?"
+            // Yes | No
             if (obj.Type == FileSystemItemType.File)
             {
-                enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
+                // check if user is a file owner
+                if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
+                {
+                    navigator.ShowMessage("Error", "You can't delete file.");
+                }
+                else
+                {
+                    enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
+                }
             }
             else if (obj.Type == FileSystemItemType.Folder)
             {

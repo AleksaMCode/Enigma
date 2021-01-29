@@ -23,6 +23,8 @@ namespace Enigma.Models
         /// </summary>
         public string EncryptedName { get; set; } = null;
 
+        public int OwnerId { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EfsFile"/> class using specified parameters.
         /// </summary>
@@ -47,6 +49,7 @@ namespace Enigma.Models
             var offset = 44; // we are skipping StandardInformation header
             var securityDescriptorHeader = new SecurityDescriptor();
             securityDescriptorHeader.ParseSecurityDescriptor(file, ref offset);
+            OwnerId = securityDescriptorHeader.OwnerId;
 
             try
             {

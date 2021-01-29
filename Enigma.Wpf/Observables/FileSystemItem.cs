@@ -52,5 +52,10 @@ namespace Enigma.Observables
         {
             return ((EfsFile)efsObject).EncryptedName;
         }
+
+        public int GetFileOwnerId()
+        {
+            return ((EfsFile)efsObject).OwnerId;
+        }
     }
 }
