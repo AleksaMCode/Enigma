@@ -133,18 +133,25 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleExportItem(FileSystemItem obj)
         {
-            //if (obj.Type == FileSystemItemType.Folder || obj.Type == FileSystemItemType.SharedFolder)
-            //{
-            //    navigator.ShowMessage("Error", "Folders can't be expored. Batch exporting is not supprted.");
-            //}
-            //if(obj.IsAccessGranted())
-            //{
+            if (obj.Type == FileSystemItemType.Folder || obj.Type == FileSystemItemType.SharedFolder)
+            {
+                navigator.ShowMessage("Error", "Folders can't be exported. Batch exporting is not supported.");
+            }
+            else if (obj.IsAccessGranted())
+            {
+                var form = new ImportFormViewModel(navigator);
 
-            //}
-            //else
-            //{
-            //    navigator.ShowMessage("Error", "You don't have access to this file.");
-            //}
+                form.OnSubmit += (ExportFormData data) =>
+                {
+                    enigmaEfs.Download(, data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
+                };
+
+                navigator.OpenFlyoutPanel(form);
+            }
+            else
+            {
+                navigator.ShowMessage("Error", "You don't have access to this file.");
+            }
 
             navigator.ShowMessage("Test", "Pressed export item menu item.");
         }
