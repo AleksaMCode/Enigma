@@ -2,10 +2,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Enigma.EFS;
 using Enigma.Models;
-using Enigma.Observables;
 using Enigma.UserDbManager;
-using Enigma.Wpf.Forms.Data;
 using Enigma.Wpf.Interfaces;
+using Enigma.Wpf.Observables;
 using Enigma.Wpf.ViewModels.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -32,11 +31,11 @@ namespace Enigma.Wpf.ViewModels
             CurrentItems = new ObservableCollection<FileSystemItem>
             {
                 shared,
-                new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" },
-                new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "passwords.txt" },
+                new() { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
+                new() { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
+                new() { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
+                new() { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" },
+                new() { Type = Enums.FileSystemItemType.File, Name = "passwords.txt" },
             };
             AddressBarText = "/";
         }
@@ -91,7 +90,7 @@ namespace Enigma.Wpf.ViewModels
 
             var form = new ImportFormViewModel(navigator);
 
-            form.OnSubmit += (ImportFormData data) =>
+            form.OnSubmit += data =>
             {
                 CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
             };
@@ -131,7 +130,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleInit()
         {
-            navigator.ShowMessage(string.Format("Welcome {0}", currentUser.Username), "Your last login time was: " + currentUser.LastLogin + "\nIf you dont remember using your account then, please change your password.");
+            navigator.ShowMessage($"Welcome {currentUser.Username}", "Your last login time was: " + currentUser.LastLogin + "\nIf you dont remember using your account then, please change your password.");
         }
 
         private void HandleDefaultAction(FileSystemItem obj)
@@ -140,8 +139,8 @@ namespace Enigma.Wpf.ViewModels
             {
                 CurrentItems = new ObservableCollection<FileSystemItem>
                 {
-                    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "document1.doc" },
-                    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "sheet.xls" }
+                    new() { Type = Enums.FileSystemItemType.File, Name = "document1.doc" },
+                    new() { Type = Enums.FileSystemItemType.File, Name = "sheet.xls" }
                 };
                 AddressBarText += obj.Name;
             }

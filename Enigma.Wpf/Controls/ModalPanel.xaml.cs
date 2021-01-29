@@ -1,6 +1,5 @@
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using Enigma.Wpf.Interfaces;
 
@@ -9,22 +8,20 @@ namespace Enigma.Wpf.Controls
     /// <summary>
     /// Interaction logic for ModalPanel.xaml
     /// </summary>
-    public partial class ModalPanel : UserControl, IPanel
+    public partial class ModalPanel : IPanel
     {
-        public static DependencyProperty IsOpenProperty;
-        public static DependencyProperty ContentControlProperty;
-        private Window window;
-        private static Duration animationDuration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
+        public static readonly DependencyProperty IsOpenProperty;
+        public static readonly DependencyProperty ContentControlProperty;
+        private static readonly Duration animationDuration = new Duration(new TimeSpan(0, 0, 0, 0, 200));
 
         public ModalPanel()
         {
             InitializeComponent();
-            Loaded += new RoutedEventHandler((a, i) =>
+            Loaded += (_, _) =>
             {
-                window = Window.GetWindow(this);
-                theGrid.Visibility = Visibility.Collapsed;
+                TheGrid.Visibility = Visibility.Collapsed;
                 IsOpen = false;
-            });
+            };
         }
 
         static ModalPanel()
@@ -62,16 +59,16 @@ namespace Enigma.Wpf.Controls
         private void Close()
         {
             var opacityAnimation = new DoubleAnimation(1, 0, animationDuration);
-            opacityAnimation.Completed += (a, i) => theGrid.Visibility = Visibility.Collapsed;
-            theGrid.BeginAnimation(OpacityProperty, opacityAnimation);
+            opacityAnimation.Completed += (_, _) => TheGrid.Visibility = Visibility.Collapsed;
+            TheGrid.BeginAnimation(OpacityProperty, opacityAnimation);
         }
 
         private void Open()
         {
             var opacityAnimation = new DoubleAnimation(0, 1, animationDuration);
-            theGrid.Visibility = Visibility.Visible;
-            opacityAnimation.Completed += (a, i) => theGrid.Opacity = 1;
-            theGrid.BeginAnimation(OpacityProperty, opacityAnimation);
+            TheGrid.Visibility = Visibility.Visible;
+            opacityAnimation.Completed += (_, _) => TheGrid.Opacity = 1;
+            TheGrid.BeginAnimation(OpacityProperty, opacityAnimation);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

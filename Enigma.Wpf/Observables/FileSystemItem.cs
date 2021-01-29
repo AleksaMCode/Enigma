@@ -1,7 +1,7 @@
-using Enigma.Enums;
+using Enigma.Wpf.Enums;
 using GalaSoft.MvvmLight;
 
-namespace Enigma.Observables
+namespace Enigma.Wpf.Observables
 {
     public class FileSystemItem : ObservableObject
     {

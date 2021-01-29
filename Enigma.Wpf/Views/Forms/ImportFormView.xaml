@@ -4,12 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:formViewModels="clr-namespace:Enigma.Wpf.ViewModels.Forms"
     Width="475"
     MinWidth="350"
     MaxWidth="700"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d">
+    mc:Ignorable="d" d:DataContext="{d:DesignInstance formViewModels:ImportFormViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -47,7 +48,6 @@
 
         <Grid
             Grid.Row="3"
-            Grid.Column="1"
             HorizontalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
@@ -91,7 +91,7 @@
             </ComboBox>
 
             <Grid
-                Grid.Row="3"
+                Grid.Row="2"
                 Grid.Column="4"
                 Grid.ColumnSpan="3">
                 <Border BorderBrush="#aaa" BorderThickness="1">
@@ -142,14 +142,14 @@
             </ComboBox>
 
             <Label
-                Grid.Row="3"
+                Grid.Row="2"
                 Grid.Column="0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Content="Mode:"
                 IsEnabled="True" />
             <ComboBox
-                Grid.Row="3"
+                Grid.Row="2"
                 Grid.Column="2"
                 MinWidth="100"
                 HorizontalAlignment="Left"
@@ -166,7 +166,6 @@
 
         <Button
             Grid.Row="5"
-            Grid.Column="1"
             Padding="30,0"
             HorizontalAlignment="Center"
             Command="{Binding SubmitCommand}"

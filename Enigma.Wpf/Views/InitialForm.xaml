@@ -2,14 +2,15 @@
     x:Class="Enigma.Wpf.Views.InitialForm"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Converters="clr-namespace:Enigma.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:Enigma.Wpf.Converters"
+    xmlns:viewModels="clr-namespace:Enigma.Wpf.ViewModels"
     d:DesignHeight="250"
     d:DesignWidth="800"
-    mc:Ignorable="d">
+    mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:InitialFormViewModel}">
     <UserControl.Resources>
-        <Converters:StringToPrivateKeyOptionConverter x:Key="StringToPrivateKeyOptionConverter" />
+        <converters:StringToPrivateKeyOptionConverter x:Key="StringToPrivateKeyOptionConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid Background="LightGray">

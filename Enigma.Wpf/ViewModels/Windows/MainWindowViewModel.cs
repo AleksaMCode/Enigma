@@ -10,7 +10,7 @@ namespace Enigma.Wpf.ViewModels.Windows
 {
     public class MainWindowViewModel : ViewModelBase, INavigator
     {
-        private object previousControl = null;
+        private object previousControl;
         private object currentControl;
         private bool isBoxVisible;
         private string messageTitle;
@@ -136,7 +136,7 @@ namespace Enigma.Wpf.ViewModels.Windows
             runAnimation = true;
 
             const int pauseTime = 500;
-            var phases = new string[] { "..", "...", "....", ".....", "....", "...", "..", "." };
+            var phases = new[] { "..", "...", "....", ".....", "....", "...", "..", "." };
 
             ProgressTextAnimation = phases[phases.Length - 1];
             Task.Run(async () =>
@@ -154,6 +154,7 @@ namespace Enigma.Wpf.ViewModels.Windows
                 }
                 catch
                 {
+                    // ignored
                 }
             });
 

@@ -2,25 +2,26 @@
     x:Class="Enigma.Wpf.Views.MainAppView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Behaviors="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:conv="clr-namespace:Enigma.Converters"
+    xmlns:behaviors="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d">
+    xmlns:converters="clr-namespace:Enigma.Wpf.Converters"
+    xmlns:viewModels="clr-namespace:Enigma.Wpf.ViewModels"
+    d:DesignHeight="500"
+    d:DesignWidth="500"
+    mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainAppViewModel}">
 
-    <Behaviors:Interaction.Triggers>
-        <Behaviors:EventTrigger EventName="Loaded">
-            <Behaviors:InvokeCommandAction Command="{Binding InitCommand}" />
-        </Behaviors:EventTrigger>
-    </Behaviors:Interaction.Triggers>
+    <behaviors:Interaction.Triggers>
+        <behaviors:EventTrigger EventName="Loaded">
+            <behaviors:InvokeCommandAction Command="{Binding InitCommand}" />
+        </behaviors:EventTrigger>
+    </behaviors:Interaction.Triggers>
 
     <UserControl.Resources>
-        <conv:FileTypeToIconConverter x:Key="TypeToImageConverter" />
+        <converters:FileTypeToIconConverter x:Key="TypeToImageConverter" />
     </UserControl.Resources>
-    <Grid x:Name="parentGrid" Margin="5">
+    <Grid x:Name="ParentGrid" Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="5" />
@@ -57,12 +58,7 @@
                     Kind="ArrowUpSolid" />
             </Button>
 
-            <TextBox
-                Grid.Column="6"
-                Padding="3,0"
-                VerticalContentAlignment="Center"
-                FontSize="13"
-                Text="{Binding AddressBarText}" />
+            <TextBox Grid.Column="6" Padding="3,0" VerticalContentAlignment="Center" FontSize="13" Text="{Binding AddressBarText}" />
 
             <Button
                 Grid.Column="8"
@@ -116,11 +112,11 @@
                         <Grid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.Tag.ItemDefaultCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.ItemDefaultCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Open" />
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.Tag.ExportItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.ExportItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Export">
                                     <MenuItem.Icon>
@@ -128,7 +124,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.Tag.ShareItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.ShareItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Share">
                                     <MenuItem.Icon>
@@ -136,7 +132,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.Tag.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.DeleteItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Delete">
                                     <MenuItem.Icon>

@@ -2,12 +2,11 @@
     x:Class="Enigma.Wpf.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:AttachedProperties="clr-namespace:Enigma.Wpf.AttachedProperties"
-    xmlns:controls="clr-namespace:Enigma.Controls"
+    xmlns:attachedProperties="clr-namespace:Enigma.Wpf.AttachedProperties"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodels="clr-namespace:Enigma.Wpf.ViewModels"
-    x:Name="mainWindow"
+    xmlns:windows="clr-namespace:Enigma.Wpf.ViewModels.Windows"
+    x:Name="MasterWindow"
     Title="Enigma"
     Width="800"
     Height="450"
@@ -19,7 +18,7 @@
     TextOptions.TextRenderingMode="ClearType"
     Topmost="True"
     UseLayoutRounding="True"
-    mc:Ignorable="d">
+    mc:Ignorable="d" d:DataContext="{d:DesignInstance windows:MainWindowViewModel}">
     <Window.BorderBrush>
         <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
             <GradientStop Offset="0" Color="Black" />
@@ -55,7 +54,7 @@
                 Grid.Column="1"
                 MinWidth="200"
                 MinHeight="100"
-                AttachedProperties:UI.Elevation="4"
+                attachedProperties:UI.Elevation="4"
                 Background="GhostWhite"
                 BorderBrush="DarkGray"
                 BorderThickness="1"
@@ -114,7 +113,6 @@
                             TextWrapping="Wrap" />
                         <Button
                             Grid.Row="3"
-                            Grid.Column="1"
                             Width="60"
                             Height="24"
                             HorizontalAlignment="Center"

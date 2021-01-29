@@ -8,7 +8,7 @@ namespace Enigma.Wpf.Attributes.Validation
     /// </summary>
     public class FileExists : ValidationAttribute
     {
-        private readonly bool invert = false;
+        private readonly bool invert;
 
         public FileExists()
         {

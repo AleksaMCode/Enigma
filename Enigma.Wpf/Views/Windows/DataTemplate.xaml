@@ -6,8 +6,7 @@
     xmlns:ViewModels="clr-namespace:Enigma.Wpf.ViewModels"
     xmlns:Views="clr-namespace:Enigma.Wpf.Views"
     xmlns:WindowViewModels="clr-namespace:Enigma.Wpf.ViewModels.Windows"
-    xmlns:WindowViews="clr-namespace:Enigma.Wpf.Views.Windows"
-    xmlns:conv="clr-namespace:Enigma.Converters">
+    xmlns:WindowViews="clr-namespace:Enigma.Wpf.Views.Windows">
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
     <DataTemplate DataType="{x:Type WindowViewModels:MainWindowViewModel}">

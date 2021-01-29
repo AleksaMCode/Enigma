@@ -32,31 +32,11 @@ namespace Enigma.Wpf.AttachedProperties
 
             DropShadowEffect[] shadows =
             {
-                new DropShadowEffect
-                {
-                    BlurRadius = 5,
-                    ShadowDepth = 1
-                },
-                new DropShadowEffect
-                {
-                    BlurRadius = 8,
-                    ShadowDepth = 1.5
-                },
-                new DropShadowEffect
-                {
-                    BlurRadius = 14,
-                    ShadowDepth = 4.5
-                },
-                new DropShadowEffect
-                {
-                    BlurRadius = 25,
-                    ShadowDepth = 8
-                },
-                new DropShadowEffect
-                {
-                    BlurRadius = 35,
-                    ShadowDepth = 13
-                }
+                new() { BlurRadius = 5, ShadowDepth = 1 },
+                new() { BlurRadius = 8, ShadowDepth = 1.5 },
+                new() { BlurRadius = 14, ShadowDepth = 4.5 },
+                new() { BlurRadius = 25, ShadowDepth = 8 },
+                new() { BlurRadius = 35, ShadowDepth = 13 }
             };
             elevation = Math.Max(0, (elevation / 12 * shadows.Length) - 1);
             int prevIndex = (int)Math.Floor(elevation),
@@ -87,19 +67,21 @@ namespace Enigma.Wpf.AttachedProperties
 
         private static object OnElevationChanged(DependencyObject d, object value)
         {
-            if (d is UIElement element && value is double elevation)
+            if (d is not UIElement element || value is not double elevation)
             {
-                if (elevation == 0)
+                return value;
+            }
+
+            if (elevation == 0)
+            {
+                element.Effect = null;
+            }
+            else
+            {
+                var e = CreateElevation(elevation, element.Effect);
+                if (e != null)
                 {
-                    element.Effect = null;
-                }
-                else
-                {
-                    var e = CreateElevation(elevation, element.Effect);
-                    if (e != null)
-                    {
-                        element.Effect = e;
-                    }
+                    element.Effect = e;
                 }
             }
 

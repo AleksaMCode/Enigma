@@ -1,4 +1,4 @@
-namespace Enigma.Enums
+namespace Enigma.Wpf.Enums
 {
     public enum FileSystemItemType
     {

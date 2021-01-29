@@ -1,9 +1,9 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using Enigma.Enums;
+using Enigma.Wpf.Enums;
 
-namespace Enigma.Converters
+namespace Enigma.Wpf.Converters
 {
     public class StringToPrivateKeyOptionConverter : IValueConverter
     {

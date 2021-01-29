@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Enigma.Enums;
 using Enigma.Models;
 using Enigma.UserDbManager;
+using Enigma.Wpf.Enums;
 using Enigma.Wpf.Interfaces;
 using GalaSoft.MvvmLight.Command;
 
@@ -61,9 +61,6 @@ namespace Enigma.Wpf.ViewModels
             {
                 navigator.ShowMessage("Error", ex.Message);
             }
-            finally
-            {
-            }
         }
 
         private void HandleRegister(PasswordBox passBox)
@@ -105,9 +102,6 @@ namespace Enigma.Wpf.ViewModels
             catch (Exception ex)
             {
                 navigator.ShowMessage("Error", ex.Message);
-            }
-            finally
-            {
             }
         }
     }
