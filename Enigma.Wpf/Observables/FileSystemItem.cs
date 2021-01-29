@@ -47,5 +47,10 @@ namespace Enigma.Observables
         {
             return efsObject.Name == null ? false : true;
         }
+
+        public string GetEncryptedFileName()
+        {
+            return ((EfsFile)efsObject).EncryptedName;
+        }
     }
 }

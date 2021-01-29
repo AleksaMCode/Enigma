@@ -147,7 +147,7 @@ namespace Enigma.Wpf.ViewModels
 
                 form.OnSubmit += (ExportFormData data) =>
                 {
-                    enigmaEfs.Download(, data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
+                    enigmaEfs.Download(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
                 };
 
                 navigator.OpenFlyoutPanel(form);
