@@ -21,14 +21,14 @@ namespace Enigma.Models
             data = db;
         }
 
-        public void Register(string username, string password, string certificateFilePath, bool usbKey)
+        public void Register(string username, string password, string certificateFilePath, bool usbKey, string commonPasswordsPath)
         {
             if (password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
             }
 
-            if (!PasswordAdvisor.CommonPasswordCheck(password))
+            if (!PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
@@ -203,7 +203,7 @@ namespace Enigma.Models
         /// Generates a random passphrase that contains between 6 and 10 words using a <em>Diceware</em> method (<see href="https://www.eff.org/dice">EFF Dice-Generated Passphrases</see>).
         /// </summary>
         /// <returns>Random ASCII password createad using a <em>Diceware</em> method.</returns>
-        public string GeneratePassphrase()
+        public string GeneratePassphrase(string dicewareWordsPath)
         {
             var diceRollResult = 0;
             string passphrase;
@@ -237,7 +237,7 @@ namespace Enigma.Models
                         diceRollResult = 0;
 
                         // TODO: can this be optimized?
-                        using (var file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
+                        using (var file = new StreamReader(dicewareWordsPath))
                         {
                             while ((line = file.ReadLine()) != null)
                             {

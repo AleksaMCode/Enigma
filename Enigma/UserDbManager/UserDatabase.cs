@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -15,16 +16,17 @@ namespace Enigma.UserDbManager
         /// Cprng value used for password hashing.
         /// NIST require a pepper to be at least 112 b (14 B) long. This recommendation is valid up until 2030.
         /// </summary>
-        public static byte[] Pepper { get; } = new byte[16];
+        private byte[] Pepper { get; } = new byte[16];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserDatabase"/> class with a databese and stores a pepper value from the filesystem.
         /// </summary>
         /// <param name="pathToDatabase">Path to the Users.db on the filesystem.</param>
-        public UserDatabase(string pathToDatabase)
+        public UserDatabase(string pathToDatabase, string pathToPepper)
         {
             context = new UsersContext(pathToDatabase);
-            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: store pepper somewhere on computer. Where?
+            Pepper = Encoding.ASCII.GetBytes(File.ReadAllLines(pathToPepper)[0]);
+            //new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: store pepper somewhere on computer. Where?
         }
 
         /// <summary>

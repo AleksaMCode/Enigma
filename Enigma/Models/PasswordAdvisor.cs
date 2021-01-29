@@ -31,10 +31,10 @@ namespace Enigma.Models
             EFFWordList = 7776
         }
 
-        public static bool CommonPasswordCheck(string password)
+        public static bool CommonPasswordCheck(string password, string commonPasswordsPath)
         {
             string commonPassword;
-            var file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\10-million-password-list-top-1000000.txt");
+            var file = new StreamReader(commonPasswordsPath);
 
             while ((commonPassword = file.ReadLine()) != null)
             {

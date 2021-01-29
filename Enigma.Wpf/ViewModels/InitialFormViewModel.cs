@@ -19,15 +19,50 @@ namespace Enigma.Wpf.ViewModels
         private string username;
         private PrivateKeyOption privateKeySignupOption;
         private string userCertificateFilePath;
+
         /// <summary>
-        /// This a path on FS of the database that contains user account.
+        /// This a root path on FS where all the important program files are stored.
         /// </summary>
-        private readonly string userDatabasePath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db";
+        private readonly string rootFilesPath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\";
+
+        /// <summary>
+        /// Root location of Enigma EFS.
+        /// </summary>
+        private readonly string enigmaEfsRoot;
+
+        /// <summary>
+        /// Pepper file path on FS.
+        /// </summary>
+        private readonly string pepperPath;
+
+        /// <summary>
+        /// User account database path on FS.
+        /// </summary>
+        private readonly string userDatabasePath;
+
+        /// <summary>
+        /// Common passwords list path on FS.
+        /// </summary>
+        private readonly string commonPasswordsPath;
+
+        /// <summary>
+        /// Diceware word list path on FS.
+        /// </summary>
+        private readonly string dicewareWordsPath;
+
 
 
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
             navigator = mainWindowViewModel;
+
+            // parse config file
+            var configInfo = File.ReadAllLines(rootFilesPath + "Enigma.config");
+            enigmaEfsRoot = configInfo[0].Split('\t')[1];
+            pepperPath = rootFilesPath + configInfo[1].Split('\t')[1];
+            userDatabasePath = rootFilesPath + configInfo[2].Split('\t')[1];
+            commonPasswordsPath = rootFilesPath + configInfo[3].Split('\t')[1];
+            dicewareWordsPath = rootFilesPath + configInfo[4].Split('\t')[1];
         }
 
         public ICommand LoginCommand => new RelayCommand<PasswordBox>(HandleLogin);
@@ -64,7 +99,7 @@ namespace Enigma.Wpf.ViewModels
                     var user = login2fa.LoginPartOne(Username, password, userDatabasePath, out var db);
                     login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath));
                     // new view prompting for users private rsa key. this is the only time app asks for private rsa key.
-                    navigator.GoToControl(new RsaKeyViewModel(navigator, user, db));
+                    navigator.GoToControl(new RsaKeyViewModel(navigator, user, db, enigmaEfsRoot));
                     //navigator.GoToControl(new MainAppViewModel(navigator, user, db)); // on successful login
                 }
                 else
@@ -87,37 +122,36 @@ namespace Enigma.Wpf.ViewModels
             {
                 if (IsValid())
                 {
-                    var password = passBox.Password;
-                    if (PasswordAdvisor.CommonPasswordCheck(password))
+                    try
                     {
-                        throw new Exception(string.Format("Password {0} isn't permitted.", password));
+                        var password = passBox.Password;
+                        var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath));
+                        register.Register(username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB, commonPasswordsPath);
+
+                        /* then create private key of file based on what user chose, something like:
+
+                        if(PrivateKeySignupOption == PrivateKeyOption.USB) {
+                            navigator.ShowProgressBox("Waiting for USB...");
+                            var usbTimeout = new TimeSpan(0, 0, 20);
+                            await EnigmaLibrary.RegisterWithUsbAsync(username, password, usbTimeout);
+                            navigator.HideProgressBox();
+                        } else {
+                            navigator.ShowProgressBox("Registering...");
+                            // make user choose file
+                            await EnigmaLibrary.RegisterWithKeyAsync(username, password, file);
+                            navigator.HideProgressBox();
+                        }
+                        */
+
+                        // maybe after successful registration just show a message ?
+                        navigator.ShowMessage("Successful registration", "You have successfully registered. Please login to use Enigma EFS.");
+                        passBox.Clear();
+                        Username = "";
                     }
-                    else if (!PasswordAdvisor.IsPasswordStrong(password, out string passwordStrength))
+                    catch(Exception e)
                     {
-                        throw new Exception("Password isn't strong enough. It's deemed " + passwordStrength);
+                        navigator.ShowMessage("Error", e.Message);
                     }
-                    var register = new RegisterController(new UserDatabase(userDatabasePath));
-                    register.Register(username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
-
-                    /* then create private key of file based on what user chose, something like:
-
-                    if(PrivateKeySignupOption == PrivateKeyOption.USB) {
-                        navigator.ShowProgressBox("Waiting for USB...");
-                        var usbTimeout = new TimeSpan(0, 0, 20);
-                        await EnigmaLibrary.RegisterWithUsbAsync(username, password, usbTimeout);
-                        navigator.HideProgressBox();
-                    } else {
-                        navigator.ShowProgressBox("Registering...");
-                        // make user choose file
-                        await EnigmaLibrary.RegisterWithKeyAsync(username, password, file);
-                        navigator.HideProgressBox();
-                    }
-                    */
-
-                    // maybe after successful registration just show a message ?
-                    navigator.ShowMessage("Successful registration", "You have successfully registered. Please login to use Enigma EFS.");
-                    passBox.Clear();
-                    Username = "";
                     //navigator.GoToControl(new MainAppViewModel(navigator)); <- remove this!?
                 }
                 else
