@@ -40,11 +40,11 @@ namespace Enigma.Models
             {
                 if (commonPassword.Equals(password))
                 {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }
 
         public static bool IsPasswordStrong(string password, out string passwordStrength, bool wordListGenerated = false, int numberOfWordsGenerated = 0)
