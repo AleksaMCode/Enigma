@@ -22,16 +22,20 @@ namespace Enigma.Wpf.ViewModels
         private readonly FileSystemItem shared;
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
+        /// <summary>
+        /// Root directory of Enigma EFS that contains Shared and users directories.
+        /// </summary>
+        private readonly string rootDir = @"D:\EnigmaEFS";
 
         public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey)
         {
             navigator = mainWindow;
             usersDb = db;
-            enigmaEfs = new EnigmaEfs(user);
-            shared = new FileSystemItem(new EfsDirectory(@"D:\EnigmaEFS\Shared", enigmaEfs.currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
+            enigmaEfs = new EnigmaEfs(user, rootDir);
+            shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
             CurrentItems.Add(shared);
 
-            var userDir = new EfsDirectory(@"D:\EnigmaEFS\" + enigmaEfs.currentUser.Username, enigmaEfs.currentUser.Id, userPrivateKey);
+            var userDir = new EfsDirectory(rootDir + "\\" + enigmaEfs.currentUser.Username, enigmaEfs.currentUser.Id, userPrivateKey);
             foreach (var efsObject in userDir.objects)
             {
                 CurrentItems.Add(new FileSystemItem(efsObject));
@@ -102,7 +106,7 @@ namespace Enigma.Wpf.ViewModels
             form.OnSubmit += (ImportFormData data) =>
             {
                 //CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
-                enigmaEfs.Upload(data.InputFilePath, @"D:\EnigmEFS" + addressBarText,enigmaEfs.currentUser.PublicKey,,,data.DeleteOriginal);
+                enigmaEfs.Upload(data.InputFilePath, @"D:\EnigmEFS" + addressBarText, enigmaEfs.currentUser.PublicKey,,, data.DeleteOriginal);
             };
 
             navigator.OpenFlyoutPanel(form);

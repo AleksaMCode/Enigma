@@ -19,6 +19,11 @@ namespace Enigma.Wpf.ViewModels
         private string username;
         private PrivateKeyOption privateKeySignupOption;
         private string userCertificateFilePath;
+        /// <summary>
+        /// This a path on FS of the database that contains user account.
+        /// </summary>
+        private readonly string userDatabasePath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db";
+
 
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
@@ -56,7 +61,7 @@ namespace Enigma.Wpf.ViewModels
                 {
                     var password = passBox.Password;
                     var login2fa = new LoginController();
-                    var user = login2fa.LoginPartOne(Username, password, out var db);
+                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, out var db);
                     login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath));
                     // new view prompting for users private rsa key. this is the only time app asks for private rsa key.
                     navigator.GoToControl(new RsaKeyViewModel(navigator, user, db));
@@ -91,7 +96,7 @@ namespace Enigma.Wpf.ViewModels
                     {
                         throw new Exception("Password isn't strong enough. It's deemed " + passwordStrength);
                     }
-                    var register = new RegisterController(new UserDatabase(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db"));
+                    var register = new RegisterController(new UserDatabase(userDatabasePath));
                     register.Register(username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                     /* then create private key of file based on what user chose, something like:

@@ -15,9 +15,9 @@ namespace Enigma.EFS
     /// </summary>
     public class EnigmaEfs
     {
-        private readonly string mountLocation = @"D:";
-        private readonly string rootDir = @"D:\EnigmaEFS";
-        private readonly string sharedDir = @"D:\EnigmaEFS\Shared";
+        private readonly string mountLocation;
+        private readonly string rootDir;
+        public readonly string sharedDir;
 
         /// <summary>
         /// Information about the currently logged in user.
@@ -33,8 +33,12 @@ namespace Enigma.EFS
         /// Initializes a new instance of the <see cref="EnigmaEfs"/> class with the specified user information.
         /// </summary>
         /// <param name="user">Information about the currently logged in user from the database.</param>
-        public EnigmaEfs(UserInformation user)
+        public EnigmaEfs(UserInformation user, string rootDir)
         {
+            mountLocation = rootDir.Substring(0, 2);
+            this.rootDir = rootDir;
+            sharedDir = rootDir + "\\Shared";
+
             currentUser = user;
 
             // EFS "mount"

@@ -9,9 +9,7 @@ namespace Enigma.Models
 {
     public class LoginController
     {
-        private readonly string userDatabasePath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db";
-
-        public UserInformation LoginPartOne(string username, string password, out UserDatabase data)
+        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, out UserDatabase data)
         {
             var dataComp = new UserDatabase(userDatabasePath);
 
