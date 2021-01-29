@@ -113,6 +113,9 @@
     <Compile Include="Views\Forms\ImportFormView.xaml.cs">
       <DependentUpon>ImportFormView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Forms\ShareFormView.xaml.cs">
+      <DependentUpon>ShareFormView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\InitialForm.xaml.cs">
       <DependentUpon>InitialForm.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ModalPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Forms\ShareFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

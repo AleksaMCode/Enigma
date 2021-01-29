@@ -2,6 +2,7 @@
     x:Class="Enigma.Wpf.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:AttachedProperties="clr-namespace:Enigma.Wpf.AttachedProperties"
     xmlns:controls="clr-namespace:Enigma.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -54,6 +55,7 @@
                 Grid.Column="1"
                 MinWidth="200"
                 MinHeight="100"
+                AttachedProperties:UI.Elevation="4"
                 Background="GhostWhite"
                 BorderBrush="DarkGray"
                 BorderThickness="1"
@@ -89,7 +91,7 @@
                     <Grid Margin="20" Visibility="{Binding IsMessageBoxShown, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30" />
-                            <RowDefinition Height="30" />
+                            <RowDefinition Height="auto" />
                             <RowDefinition Height="8" />
                             <RowDefinition Height="30" />
                         </Grid.RowDefinitions>
@@ -106,8 +108,10 @@
                         <TextBlock
                             x:Name="message"
                             Grid.Row="1"
+                            MaxWidth="500"
                             VerticalAlignment="Center"
-                            Text="{Binding MessageText}" />
+                            Text="{Binding MessageText}"
+                            TextWrapping="Wrap" />
                         <Button
                             Grid.Row="3"
                             Grid.Column="1"
