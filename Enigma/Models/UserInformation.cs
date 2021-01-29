@@ -56,6 +56,17 @@ namespace Enigma.Models
         public bool UsbKey => user.UsbKey == 1;
 
         /// <summary>
+        /// Value used to lock user account. Set to false (0) by default or to true (1) is user account has been locked.
+        /// User can't login if the values is set to true.
+        /// </summary>
+        public int Locked => user.Locked;
+
+        /// <summary>
+        /// Users certificate expiration date.
+        /// </summary>
+        public string CertificateExpirationDate => user.CertificateExpirationDate;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information.
         /// </summary>
         /// <param name="user">Users database information.</param>

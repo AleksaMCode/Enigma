@@ -59,7 +59,7 @@ namespace Enigma.UserDbManager
 
         /// <summary>
         /// Value used to lock user account. Set to false (0) by default or to true (1) is user account has been locked.
-        /// When user cant login if the values is set to true.
+        /// User can't login if the values is set to true.
         /// </summary>
         public int Locked { get; set; }
 

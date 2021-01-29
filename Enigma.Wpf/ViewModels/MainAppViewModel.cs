@@ -24,13 +24,14 @@ namespace Enigma.Wpf.ViewModels
         private readonly FileSystemItem shared;
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
+        private readonly bool userCertificateExpired;
 
         /// <summary>
         /// Root directory of Enigma EFS that contains Shared and users directories.
         /// </summary>
         private readonly string rootDir;
 
-        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir)
+        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir, bool certExpired)
         {
             navigator = mainWindow;
             usersDb = db;
@@ -38,6 +39,7 @@ namespace Enigma.Wpf.ViewModels
             shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
             CurrentItems.Add(shared);
             this.rootDir = rootDir;
+            userCertificateExpired = certExpired;
 
             var userDir = new EfsDirectory(rootDir + "\\" + enigmaEfs.currentUser.Username, enigmaEfs.currentUser.Id, userPrivateKey);
             foreach (var efsObject in userDir.objects)
@@ -207,14 +209,19 @@ namespace Enigma.Wpf.ViewModels
                 navigator.ShowMessage("Error", "You don't have access to this file.");
             }
 
-            navigator.ShowMessage("Test", "Pressed export item menu item.");
+            //navigator.ShowMessage("Test", "Pressed export item menu item.");
         }
 
         public ICommand InitCommand => new RelayCommand(HandleInit);
 
         private void HandleInit()
         {
-            navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + "\nIf you dont remember using your account then, please change your password.");
+            var welcomeMessage = "\nIf you dont remember using your account then, please change your password.";
+            if (userCertificateExpired)
+            {
+                welcomeMessage += "\nYou certificate has expired. You can still use Enigma EFS, but you can't import or edit any files.";
+            }
+            navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + welcomeMessage);
         }
 
         private void HandleDefaultAction(FileSystemItem obj)

@@ -9,9 +9,9 @@ namespace Enigma.Models
 {
     public class LoginController
     {
-        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, out UserDatabase data)
+        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, string pepperPath, out UserDatabase data)
         {
-            var dataComp = new UserDatabase(userDatabasePath);
+            var dataComp = new UserDatabase(userDatabasePath, pepperPath);
 
             var user = dataComp.GetUser(username);
 
@@ -56,10 +56,10 @@ namespace Enigma.Models
                 throw new Exception("Certificate error.");
             }
 
-            if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
-            {
-                throw new Exception(errorMsg);
-            }
+            //if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
+            //{
+            //    throw new Exception(errorMsg);
+            //}
 
             if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
             {

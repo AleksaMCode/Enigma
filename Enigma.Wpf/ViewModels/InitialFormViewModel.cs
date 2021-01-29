@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Enigma.Enums;
@@ -18,15 +17,19 @@ namespace Enigma.Wpf.ViewModels
         private readonly INavigator navigator;
         private string username;
         private PrivateKeyOption privateKeySignupOption;
+
+        /// <summary>
+        /// Path to users certificate on FS;
+        /// </summary>
         private string userCertificateFilePath;
 
         /// <summary>
-        /// This a root path on FS where all the important program files are stored.
+        /// Root path on FS where all the important program files are stored.
         /// </summary>
         private readonly string rootFilesPath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\";
 
         /// <summary>
-        /// Root location of Enigma EFS.
+        /// Root path of Enigma EFS.
         /// </summary>
         private readonly string enigmaEfsRoot;
 
@@ -49,8 +52,6 @@ namespace Enigma.Wpf.ViewModels
         /// Diceware word list path on FS.
         /// </summary>
         private readonly string dicewareWordsPath;
-
-
 
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
@@ -82,6 +83,7 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => PrivateKeySignupOption, ref privateKeySignupOption, value);
         }
 
+        [Required(ErrorMessage = "User Certificate is required for login.")]
         public string UserCertificateFilePath
         {
             get => userCertificateFilePath;
@@ -96,11 +98,11 @@ namespace Enigma.Wpf.ViewModels
                 {
                     var password = passBox.Password;
                     var login2fa = new LoginController();
-                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, out var db);
+                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, pepperPath, out var db);
                     login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath));
                     // new view prompting for users private rsa key. this is the only time app asks for private rsa key.
                     navigator.GoToControl(new RsaKeyViewModel(navigator, user, db, enigmaEfsRoot));
-                    //navigator.GoToControl(new MainAppViewModel(navigator, user, db)); // on successful login
+                    //navigator.GoToControl(new MainAppViewModel(navigator, user, db, privateKey, enigmaEfsRoot, Convert.ToDateTime(user.CertificateExpirationDate) < DateTime.Now)); // on successful login
                 }
                 else
                 {
@@ -148,7 +150,7 @@ namespace Enigma.Wpf.ViewModels
                         passBox.Clear();
                         Username = "";
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         navigator.ShowMessage("Error", e.Message);
                     }

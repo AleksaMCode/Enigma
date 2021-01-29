@@ -101,6 +101,11 @@ namespace Enigma.EFS
         /// <returns>Encrypted name of the file.</returns>
         public string Upload(string pathOnFs, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName, bool deleteOriginal = false)
         {
+            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
+            {
+                throw new Exception("Your certificate has expired. You cannot import any new files.");
+            }
+
             var fileSize = new FileInfo(pathOnFs).Length;
             string encryptedName;
 
@@ -175,6 +180,11 @@ namespace Enigma.EFS
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
         public void Update(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
         {
+            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
+            {
+                throw new Exception("Your certificate has expired. You cannot update files.");
+            }
+
             var fileSize = new FileInfo(pathOnFs).Length;
 
             if (fileSize > 2_000_000_000)
