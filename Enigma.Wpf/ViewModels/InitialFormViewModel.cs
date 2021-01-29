@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Enigma.Enums;
@@ -16,6 +18,7 @@ namespace Enigma.Wpf.ViewModels
         private readonly INavigator navigator;
         private string username;
         private PrivateKeyOption privateKeySignupOption;
+        private string userCertificateFilePath;
 
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
@@ -33,11 +36,16 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => Username, ref username, value);
         }
 
-        // Luka please remove this.
         public PrivateKeyOption PrivateKeySignupOption
         {
             get => privateKeySignupOption;
             set => Set(() => PrivateKeySignupOption, ref privateKeySignupOption, value);
+        }
+
+        public string UserCertificateFilePath
+        {
+            get => userCertificateFilePath;
+            set => Set(() => UserCertificateFilePath, ref userCertificateFilePath, value/*path*/);
         }
 
         private void HandleLogin(PasswordBox passBox)
@@ -49,8 +57,10 @@ namespace Enigma.Wpf.ViewModels
                     var password = passBox.Password;
                     var login2fa = new LoginController();
                     var user = login2fa.LoginPartOne(Username, password, out var db);
-                    //login2fa.LoginPartTwo(user,/*raw certificate*/);
-                    navigator.GoToControl(new MainAppViewModel(navigator, user, db)); // on successful login
+                    login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath));
+                    // new view prompting for users private rsa key. this is the only time app asks for private rsa key.
+                    navigator.GoToControl(new RsaKeyViewModel(navigator, user, db));
+                    //navigator.GoToControl(new MainAppViewModel(navigator, user, db)); // on successful login
                 }
                 else
                 {
@@ -74,7 +84,7 @@ namespace Enigma.Wpf.ViewModels
                 {
                     var password = passBox.Password;
                     var register = new RegisterController(new UserDatabase(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db"));
-                    //register.Register(username, passBox.Password,/*usercert is missing*/, PrivateKeySignupOption == PrivateKeyOption.USB);
+                    register.Register(username, passBox.Password,UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                     /* then create private key of file based on what user chose, something like:
 
