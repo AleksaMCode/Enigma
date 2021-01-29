@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Security.Cryptography;
@@ -106,11 +107,17 @@ namespace Enigma.Wpf.ViewModels
 
             form.OnSubmit += (ImportFormData data) =>
             {
-                //CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
-                var encrypedName = enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
-                currentItems.Add(new FileSystemItem(
-                    new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
-                    File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
+                try
+                {
+                    var encrypedName = enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
+                    currentItems.Add(new FileSystemItem(
+                        new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
+                        File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
+                }
+                catch(Exception e)
+                {
+                    navigator.ShowMessage("Error", e.Message);
+                }
             };
 
             navigator.OpenFlyoutPanel(form);
@@ -181,7 +188,14 @@ namespace Enigma.Wpf.ViewModels
 
                 form.OnSubmit += (ExportFormData data) =>
                 {
-                    enigmaEfs.Download(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
+                    try
+                    {
+                        enigmaEfs.Download(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
+                    }
+                    catch(Exception e)
+                    {
+                        navigator.ShowMessage("Error", e.Message);
+                    }
                 };
 
                 navigator.OpenFlyoutPanel(form);
