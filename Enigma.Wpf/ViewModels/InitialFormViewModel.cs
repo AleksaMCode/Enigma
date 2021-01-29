@@ -83,8 +83,16 @@ namespace Enigma.Wpf.ViewModels
                 if (IsValid())
                 {
                     var password = passBox.Password;
+                    if (PasswordAdvisor.CommonPasswordCheck(password))
+                    {
+                        throw new Exception(string.Format("Password {0} isn't permitted.", password));
+                    }
+                    else if (!PasswordAdvisor.IsPasswordStrong(password, out string passwordStrength))
+                    {
+                        throw new Exception("Password isn't strong enough. It's deemed " + passwordStrength);
+                    }
                     var register = new RegisterController(new UserDatabase(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db"));
-                    register.Register(username, passBox.Password,UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                    register.Register(username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                     /* then create private key of file based on what user chose, something like:
 
