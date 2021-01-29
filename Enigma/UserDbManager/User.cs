@@ -73,10 +73,10 @@ namespace Enigma.UserDbManager
         /// </summary>
         /// <param name="password">Entered user password.</param>
         /// <returns>true if passwords match, otherwise false.</returns>
-        public bool IsPasswordValid(string password)
+        public bool IsPasswordValid(string password, byte[] pepper)
         {
             var passBytes = Encoding.ASCII.GetBytes(password);
-            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(UserDatabase.Pepper).ToArray());
+            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(pepper).ToArray());
 
             // from March 2019., NIST recommends 80,000 iterations
             using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, Salt, 80_000, HashAlgorithmName.SHA256);

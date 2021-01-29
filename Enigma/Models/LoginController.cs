@@ -27,7 +27,7 @@ namespace Enigma.Models
                 throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
-            if (user != null && user.IsPasswordValid(password))
+            if (user != null && user.IsPasswordValid(password, dataComp.Pepper))
             {
                 dataComp.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
                 dataComp.ResetLoginAttempts(user);

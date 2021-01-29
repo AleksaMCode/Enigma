@@ -16,7 +16,7 @@ namespace Enigma.UserDbManager
         /// Cprng value used for password hashing.
         /// NIST require a pepper to be at least 112 b (14 B) long. This recommendation is valid up until 2030.
         /// </summary>
-        private byte[] Pepper { get; } = new byte[16];
+        public byte[] Pepper { get; } = new byte[16];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserDatabase"/> class with a databese and stores a pepper value from the filesystem.
