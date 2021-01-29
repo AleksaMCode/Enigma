@@ -33,9 +33,9 @@ namespace Enigma.Models
                 throw new Exception("This password is not allowed. Please try again.");
             }
 
-            if (!PasswordAdvisor.IsPasswordStrong(password, false))
+            if (!PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
             {
-                throw new Exception("Password is too weak. Please try again.");
+                throw new Exception(string.Format("Password is too weak. It's deemed {0}. Please try again.", passwordStrength));
             }
 
             var cert = new X509Certificate2(certificateFilePath);
@@ -169,7 +169,7 @@ namespace Enigma.Models
                 password = new string(passArray);
                 passArray = Enumerable.Repeat('0', passArray.Length).ToArray(); // zeroization
 
-                if (PasswordAdvisor.IsPasswordStrong(password, false))
+                if (PasswordAdvisor.IsPasswordStrong(password, out var _, false))
                 {
                     break;
                 }
