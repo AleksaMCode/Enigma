@@ -31,7 +31,7 @@ namespace Enigma.Wpf.ViewModels
         {
             navigator = mainWindow;
             usersDb = db;
-            enigmaEfs = new EnigmaEfs(user, rootDir);
+            enigmaEfs = new EnigmaEfs(user, rootDir, userPrivateKey);
             shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
             CurrentItems.Add(shared);
 
@@ -106,7 +106,7 @@ namespace Enigma.Wpf.ViewModels
             form.OnSubmit += (ImportFormData data) =>
             {
                 //CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
-                enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, enigmaEfs.currentUser.PublicKey, data.DeleteOriginal);
+                enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
             };
 
             navigator.OpenFlyoutPanel(form);
