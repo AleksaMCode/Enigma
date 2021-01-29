@@ -135,6 +135,14 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleDeleteItem(FileSystemItem obj)
         {
+            if (obj.Type == FileSystemItemType.File)
+            {
+                enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
+            }
+            else
+            {
+                enigmaEfs.DeleteDirectory(rootDir + addressBarText + obj.Name);
+            }
             navigator.ShowMessage("Test", "Pressed delete item menu item.");
         }
 
