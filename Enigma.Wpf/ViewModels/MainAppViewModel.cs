@@ -120,7 +120,20 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleCreateFolder()
         {
-            navigator.ShowMessage("Test", "Pressed Create folder menu item.");
+            var form = new ImportFormViewModel(navigator);
+
+            form.OnSubmit += (CreateFolderFormData data) =>
+            {
+                CreateDirectory(rootDir + addressBarText + data.DirName);
+            };
+            navigator.OpenFlyoutPanel(form);
+
+            //navigator.ShowMessage("Test", "Pressed Create folder menu item.");
+        }
+
+        private void CreateDirectory()
+        {
+            throw new System.NotImplementedException();
         }
 
         public ICommand DeleteItemCommand => new RelayCommand<FileSystemItem>(HandleDeleteItem);
