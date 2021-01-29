@@ -61,7 +61,7 @@ namespace Enigma.UserDbManager
             {
                 throw new Exception(string.Format("Username '{0}' already exists.", username));
             }
-            else if(username.Length > 20)
+            else if (username.Length > 20)
             {
                 throw new Exception(string.Format("Username '{0}' exceeds 20 character limit.", username));
             }
@@ -141,7 +141,7 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
-        /// Updates user password.
+        /// Updates user password. Users are prevented from reusing their last password.
         /// </summary>
         /// <param name="user">User whos password needs to be updated.</param>
         /// <param name="password">Users new password.</param>
@@ -151,17 +151,26 @@ namespace Enigma.UserDbManager
 
             var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
 
-            // from March 2019., NIST recommends 80,000 iterations
-            using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256);
-            var passHash = pbkdf2Hasher.GetBytes(256 / 8);
+            byte[] passHash;
+            // create a hash using users old salt
+            using (var pbkdf2HasherOld = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256))
+            {
+                passHash = pbkdf2HasherOld.GetBytes(256 / 8);
+            }
 
-            // users are prevented from reusing their old password
+            // users are prevented from reusing their last password
             if (passHash.SequenceEqual(user.PassHash))
             {
                 throw new Exception("Password reuse isn't allowed.");
             }
 
+            // change users salt and update his passwords hash value
+            new RNGCryptoServiceProvider().GetBytes(user.Salt);
+            using var pbkdf2HasherNew = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256);
+            passHash = pbkdf2HasherNew.GetBytes(256 / 8);
+
             user.PassHash = passHash;
+            context.SaveChanges();
         }
 
         /// <summary>
