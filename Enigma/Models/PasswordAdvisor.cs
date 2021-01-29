@@ -47,7 +47,7 @@ namespace Enigma.Models
             return true;
         }
 
-        public static bool IsPasswordStrong(string password, bool wordListGenerated = false, int numberOfWordsGenerated = 0)
+        public static bool IsPasswordStrong(string password, out string passwordStrength, bool wordListGenerated = false, int numberOfWordsGenerated = 0)
         {
             // Memorized secrets SHALL be at least 8 characters in length not including spaces.
             if (string.Concat(password.Where(c => !char.IsWhiteSpace(c))).Length < minimumLength)
@@ -61,19 +61,34 @@ namespace Enigma.Models
 
             switch (GetPasswordEntropy(password, wordListGenerated, numberOfWordsGenerated))
             {
-                case PasswordEntropy.VeryWeak:
+                //case PasswordEntropy.VeryWeak:
+                //{
+                //    passwordStrength = "Very Weak";
+                //    return false;
+                //}
                 case PasswordEntropy.Weak:
                 {
+                    passwordStrength = "Weak";
                     return false;
                 }
                 case PasswordEntropy.Reasonable:
+                {
+                    passwordStrength = "Reasonable";
+                    return true;
+                }
                 case PasswordEntropy.Strong:
+                {
+                    passwordStrength = "Strong";
+                    return true;
+                }
                 case PasswordEntropy.VeryStrong:
                 {
+                    passwordStrength = "VeryStrong";
                     return true;
                 }
                 default:
                 {
+                    passwordStrength = "Very Weak";
                     return false;
                 }
             }
