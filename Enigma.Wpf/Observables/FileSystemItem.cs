@@ -43,7 +43,7 @@ namespace Enigma.Observables
             Type = FileSystemItemType.Folder;
         }
 
-        public bool AccessGranted()
+        public bool IsAccessGranted()
         {
             return efsObject.Name == null ? false : true;
         }

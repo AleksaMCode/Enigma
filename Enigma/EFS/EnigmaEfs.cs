@@ -22,7 +22,7 @@ namespace Enigma.EFS
         /// <summary>
         /// Information about the currently logged in user.
         /// </summary>
-        private readonly UserInformation currentUser;
+        public readonly UserInformation currentUser;
 
         /// <summary>
         /// Information on whether the user has a private RSA USB key. 

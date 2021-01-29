@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Windows.Input;
 using Enigma.EFS;
+using Enigma.Enums;
 using Enigma.Models;
 using Enigma.Observables;
 using Enigma.UserDbManager;
@@ -19,21 +20,19 @@ namespace Enigma.Wpf.ViewModels
         private ObservableCollection<FileSystemItem> currentItems;
         private string addressBarText;
         private readonly FileSystemItem shared;
-        private readonly UserInformation currentUser;
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
 
         public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey)
         {
             navigator = mainWindow;
-            currentUser = user;
             usersDb = db;
-            enigmaEfs = new EnigmaEfs(currentUser);
-            shared = new FileSystemItem(new EfsDirectory(@"D:\EnigmaEFS\Shared", currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
+            enigmaEfs = new EnigmaEfs(user);
+            shared = new FileSystemItem(new EfsDirectory(@"D:\EnigmaEFS\Shared", enigmaEfs.currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
             CurrentItems.Add(shared);
 
-            var userDir = new EfsDirectory(@"D:\EnigmaEFS\" + currentUser.Username, currentUser.Id, userPrivateKey);
-            foreach(var efsObject in userDir.objects)
+            var userDir = new EfsDirectory(@"D:\EnigmaEFS\" + enigmaEfs.currentUser.Username, enigmaEfs.currentUser.Id, userPrivateKey);
+            foreach (var efsObject in userDir.objects)
             {
                 CurrentItems.Add(new FileSystemItem(efsObject));
             }
@@ -102,7 +101,8 @@ namespace Enigma.Wpf.ViewModels
 
             form.OnSubmit += (ImportFormData data) =>
             {
-                CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
+                //CurrentItems.Add(new FileSystemItem { Name = data.InputFilePath, Type = Enums.FileSystemItemType.File });
+                enigmaEfs.Upload(data.InputFilePath, @"D:\EnigmEFS" + addressBarText,enigmaEfs.currentUser.PublicKey,,,data.DeleteOriginal);
             };
 
             navigator.OpenFlyoutPanel(form);
@@ -133,6 +133,19 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleExportItem(FileSystemItem obj)
         {
+            //if (obj.Type == FileSystemItemType.Folder || obj.Type == FileSystemItemType.SharedFolder)
+            //{
+            //    navigator.ShowMessage("Error", "Folders can't be expored. Batch exporting is not supprted.");
+            //}
+            //if(obj.IsAccessGranted())
+            //{
+
+            //}
+            //else
+            //{
+            //    navigator.ShowMessage("Error", "You don't have access to this file.");
+            //}
+
             navigator.ShowMessage("Test", "Pressed export item menu item.");
         }
 
@@ -140,7 +153,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleInit()
         {
-            navigator.ShowMessage(string.Format("Welcome {0}", currentUser.Username), "Your last login time was: " + currentUser.LastLogin + "\nIf you dont remember using your account then, please change your password.");
+            navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + "\nIf you dont remember using your account then, please change your password.");
         }
 
         private void HandleDefaultAction(FileSystemItem obj)
