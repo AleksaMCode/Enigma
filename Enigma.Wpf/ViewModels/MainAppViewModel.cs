@@ -139,11 +139,15 @@ namespace Enigma.Wpf.ViewModels
             {
                 enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
             }
-            else
+            else if (obj.Type == FileSystemItemType.Folder)
             {
                 enigmaEfs.DeleteDirectory(rootDir + addressBarText + obj.Name);
             }
-            navigator.ShowMessage("Test", "Pressed delete item menu item.");
+            else
+            {
+                navigator.ShowMessage("Error", "You can't delete Shared folder.");
+            }
+            //navigator.ShowMessage("Test", "Pressed delete item menu item.");
         }
 
         public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
