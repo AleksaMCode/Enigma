@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Enigma.Enums;
 
@@ -34,9 +35,12 @@ namespace Enigma.Models
         public static bool CommonPasswordCheck(string password, string commonPasswordsPath)
         {
             string commonPassword;
-            var file = new StreamReader(commonPasswordsPath);
+            var bufferSize = 512; // sector size in Windows = 512 b; this buffer size gave me best speed performance
 
-            while ((commonPassword = file.ReadLine()) != null)
+            using var fileStream = File.OpenRead(commonPasswordsPath);
+            using var streamReader = new StreamReader(fileStream, Encoding.ASCII, true, bufferSize);
+
+            while ((commonPassword = streamReader.ReadLine()) != null)
             {
                 if (commonPassword.Equals(password))
                 {
