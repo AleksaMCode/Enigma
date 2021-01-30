@@ -20,6 +20,26 @@ namespace Enigma.Models
         private static readonly int maximumLength = 200;
 
         /// <summary>
+        /// Regex for uppercase letter Latin letters.
+        /// </summary>
+        private static readonly Regex upperCaseRegex = new Regex("[A-Z]", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Regex for lowercasef letter Latin letters.
+        /// </summary>
+        private static readonly Regex lowerCaseRegex = new Regex("[a-z]", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Regex for arabic numerals.
+        /// </summary>
+        private static readonly Regex arabicNumeralsRegex = new Regex("[0-9]", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Regex for non alphanumeric characters of all ASCII printable characters.
+        /// </summary>
+        private static readonly Regex NonAlphaRegex = new Regex("[^0-9a-zA-Z]", RegexOptions.Compiled);
+
+        /// <summary>
         /// Number of symbols in a symbol set. Used to calculate password entropy.
         /// </summary>
         public enum PasswordPoolSize
@@ -230,7 +250,8 @@ namespace Enigma.Models
         /// <returns>Number of upper case Latin letters in a user password..</returns>
         private static int UpperCaseCount(string password)
         {
-            return Regex.Matches(password, "[A-Z]").Count;
+            //return Regex.Matches(password, "[A-Z]").Count;
+            return upperCaseRegex.Matches(password).Count;
         }
 
         /// <summary>
@@ -240,7 +261,8 @@ namespace Enigma.Models
         /// <returns>Number of lower case Latin letters in a user password..</returns>
         private static int LowerCaseCount(string password)
         {
-            return Regex.Matches(password, "[a-z]").Count;
+            //return Regex.Matches(password, "[a-z]").Count;
+            return lowerCaseRegex.Matches(password).Count;
         }
 
         /// <summary>
@@ -250,7 +272,8 @@ namespace Enigma.Models
         /// <returns>Number of Arabic numerals in a user password.</returns>
         private static int NumericCount(string password)
         {
-            return Regex.Matches(password, "[0-9]").Count;
+            //return Regex.Matches(password, "[0-9]").Count;
+            return arabicNumeralsRegex.Matches(password).Count;
         }
 
         /// <summary>
@@ -260,7 +283,8 @@ namespace Enigma.Models
         /// <returns>Number of non alphanumeric characters in a user password.</returns>
         private static int NonAlphaCount(string password)
         {
-            return Regex.Matches(password, @"[^0-9a-zA-Z]").Count;
+            //return Regex.Matches(password, @"[^0-9a-zA-Z]").Count;
+            return NonAlphaRegex.Matches(password).Count;
         }
     }
 }
