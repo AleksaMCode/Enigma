@@ -218,6 +218,7 @@ As an additional security random delimiter with random length, that varies betwe
 ### Github projects
 Some of the projects that **Enigma EFS** uses, either directly or indirectly.
 - [Cryptor](https://github.com/Valyreon/cryptor-wpf-project)
+- [SecLists]([SecLists](https://github.com/danielmiessler/SecLists))
 - [RSA keys](https://gist.github.com/valep27/4a720c25b35fff83fbf872516f847863)
 - [Bouncy Castle](https://github.com/bcgit/bc-csharp)
 - [NTFS simulator](https://github.com/AleksaMCode/ntfs-simulator)
