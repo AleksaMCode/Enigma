@@ -35,7 +35,7 @@ namespace Enigma.Models
         public static bool CommonPasswordCheck(string password, string commonPasswordsPath)
         {
             string commonPassword;
-            var bufferSize = 512; // sector size in Windows = 512 b; this buffer size gave me best speed performance
+            var bufferSize = 4_096; // cluster size in NTFS = 4,096 b; this buffer size gave me best speed performance
 
             using var fileStream = File.OpenRead(commonPasswordsPath);
             using var streamReader = new StreamReader(fileStream, Encoding.ASCII, true, bufferSize);
