@@ -214,18 +214,20 @@ namespace Enigma.Models
 
             var maxNumberOfWords = csprng.Next(6, 10);
 
+            // loop only repeats if the generated passphrase has low entropy; this loop will never repeat because for the minimum of 6 words passphrase will have a good entropy
             while (true)
             {
                 var numberOfWords = 0;
                 string index;
                 passphrase = "";
 
-                while (numberOfWords < maxNumberOfWords)
+                // loop repeats until we create a passphrase with an appropriate number of words
+                do
                 {
                     var numberExist = false;
-                    string line = null;
 
-                    while (!numberExist)
+                    // loop is used if the resulting 5-digit number isn't in the list
+                    do
                     {
                         // five dice rolls
                         for (var i = 0; i < 5; ++i)
@@ -239,24 +241,27 @@ namespace Enigma.Models
                         // TODO: can this be optimized?
                         using (var file = new StreamReader(dicewareWordsPath))
                         {
+                            string line = null;
                             while ((line = file.ReadLine()) != null)
                             {
                                 if (line.Contains(index))
                                 {
+                                    passphrase += line.Split('\t')[1].Trim();
+                                    numberOfWords++;
                                     numberExist = true;
                                     break;
                                 }
                             }
                         }
-                    }
+                    } while (!numberExist);
 
-                    passphrase += line.Split('\t')[1].Trim();
+                    // add delimiter between words
                     if (numberOfWords != maxNumberOfWords - 1)
                     {
                         passphrase += delimiter;
                     }
-                    numberOfWords++;
-                }
+                } while (numberOfWords < maxNumberOfWords);
+                
 
                 if (PasswordAdvisor.IsPasswordStrong(passphrase, out _, true, maxNumberOfWords))
                 {
