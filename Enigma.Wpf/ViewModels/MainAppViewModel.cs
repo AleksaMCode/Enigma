@@ -131,11 +131,11 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleCreateFolder()
         {
-            var form = new ImportFormViewModel(navigator);
+            var form = new InputStringFormViewModel(navigator);
 
-            form.OnSubmit += (CreateFolderFormData data) =>
+            form.OnSubmit += (string dirName) =>
             {
-                Directory.CreateDirectory(rootDir + addressBarText + data.DirName);
+                Directory.CreateDirectory(rootDir + addressBarText + DirName);
             };
             navigator.OpenFlyoutPanel(form);
 
