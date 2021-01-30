@@ -34,6 +34,12 @@ namespace Enigma.Models
             DicewareWordList = 7776
         }
 
+        /// <summary>
+        /// Checks a given password against the list of 10 M commonly used passwords.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <param name="commonPasswordsPath">Path to the common passwords list.</param>
+        /// <returns>true if the password has a match in a given list, otherwise false.</returns>
         public static bool CommonPasswordCheck(string password, string commonPasswordsPath)
         {
             string commonPassword;
@@ -53,6 +59,14 @@ namespace Enigma.Models
             return false;
         }
 
+        /// <summary>
+        /// Check if a given password is strong. Every password that has an entropy above 40 is accepted.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <param name="passwordStrength">Ascii value of the password entropy.</param>
+        /// <param name="wordListGenerated">Set to to true if the password is generated using Diceware method, otherwise set to false.</param>
+        /// <param name="numberOfWordsGenerated">Set to a total number of Diceware generated words in a passphrase, otherwise set to 0.</param>
+        /// <returns>true if password entropy is above 40, otherwise false.</returns>
         public static bool IsPasswordStrong(string password, out string passwordStrength, bool wordListGenerated = false, int numberOfWordsGenerated = 0)
         {
             // Memorized secrets SHALL be at least 8 characters in length not including spaces.
@@ -99,7 +113,14 @@ namespace Enigma.Models
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Gets a given password entropy.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <param name="wordListGenerated">Set to to true if the password is generated using Diceware method, otherwise set to false.</param>
+        /// <param name="numberOfWordsGenerated">Set to a total number of Diceware generated words in a passphrase, otherwise set to 0.</param>
+        /// <returns>Password entropy.</returns>
         private static PasswordEntropy GetPasswordEntropy(string password, bool wordListGenerated, int numberOfWordsGenerated = 0)
         {
             var entropy = CalculateEntropy(password, wordListGenerated, numberOfWordsGenerated);
@@ -126,6 +147,13 @@ namespace Enigma.Models
             }
         }
 
+        /// <summary>
+        /// Calculates a given password entropy.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <param name="wordListGenerated">Set to to true if the password is generated using Diceware method, otherwise set to false.</param>
+        /// <param name="numberOfWordsGenerated">Set to a total number of Diceware generated words in a passphrase, otherwise set to 0.</param>
+        /// <returns>Password entropy value.</returns>
         private static double CalculateEntropy(string password, bool wordListGenerated, int numberOfWordsGenerated = 0)
         {
             if (wordListGenerated == true)
@@ -195,21 +223,41 @@ namespace Enigma.Models
             }
         }
 
+        /// <summary>
+        /// Calculates a number of upper case Latin letters in a given password using regex.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <returns>Number of upper case Latin letters in a user password..</returns>
         private static int UpperCaseCount(string password)
         {
             return Regex.Matches(password, "[A-Z]").Count;
         }
 
+        /// <summary>
+        /// Calculates a number of upper case Latin letters in a given password using regex.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <returns>Number of lower case Latin letters in a user password..</returns>
         private static int LowerCaseCount(string password)
         {
             return Regex.Matches(password, "[a-z]").Count;
         }
 
+        /// <summary>
+        /// Calculates a number of Arabic numerals in a given password using regex.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <returns>Number of Arabic numerals in a user password.</returns>
         private static int NumericCount(string password)
         {
             return Regex.Matches(password, "[0-9]").Count;
         }
 
+        /// <summary>
+        /// Calculates a number of non alphanumeric characters in a given password using regex.
+        /// </summary>
+        /// <param name="password">Users password.</param>
+        /// <returns>Number of non alphanumeric characters in a user password.</returns>
         private static int NonAlphaCount(string password)
         {
             return Regex.Matches(password, @"[^0-9a-zA-Z]").Count;
