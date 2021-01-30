@@ -31,15 +31,15 @@ namespace Enigma.Wpf.ViewModels
         /// </summary>
         private readonly string rootDir;
 
-        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir, bool certExpired)
+        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir)
         {
             navigator = mainWindow;
             usersDb = db;
             enigmaEfs = new EnigmaEfs(user, rootDir, userPrivateKey);
-            shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, userPrivateKey)); /*{ Type = Enums.FileSystemItemType.SharedFolder, Name = "Shared" };*/
+            shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, userPrivateKey));
             CurrentItems.Add(shared);
             this.rootDir = rootDir;
-            userCertificateExpired = certExpired;
+            userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) < DateTime.Now;
 
             var userDir = new EfsDirectory(rootDir + "\\" + enigmaEfs.currentUser.Username, enigmaEfs.currentUser.Id, userPrivateKey);
             foreach (var efsObject in userDir.objects)
