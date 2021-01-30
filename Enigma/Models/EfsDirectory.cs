@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace Enigma.Models
 {
     /// <summary>
-    /// An MVVM model class used for representing Enigma Efs directories.
+    /// Represents Enigma Efs directories.
     /// </summary>
     public class EfsDirectory : IEfsStorageObject
     {

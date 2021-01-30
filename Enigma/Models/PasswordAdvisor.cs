@@ -7,6 +7,9 @@ using Enigma.Enums;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// Used to enforce different password policies.
+    /// </summary>
     public static class PasswordAdvisor
     {
         /// <summary>

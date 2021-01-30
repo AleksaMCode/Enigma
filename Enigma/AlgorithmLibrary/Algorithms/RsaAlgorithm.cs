@@ -103,6 +103,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return array1.SequenceEqual(array2);
         }
 
+        /// <summary>
+        /// Encrypts data using RSA asymmetric encryption.
+        /// </summary>
+        /// <param name="data">Input data (opentext) used for encryption.</param>
+        /// <returns>Encrypted data.</returns>
         public byte[] Encrypt(byte[] data)
         {
             byte[] encryptedData;
@@ -115,6 +120,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return encryptedData;
         }
 
+        /// <summary>
+        /// Decrypts data using RSA asymmetric encryption.
+        /// </summary>
+        /// <param name="data">Encrypted data (ciphertext) used for decryption.</param>
+        /// <returns>Decrypted data.</returns>
         public byte[] Decrypt(byte[] data)
         {
             byte[] decryptedData;
@@ -126,6 +136,13 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return decryptedData;
         }
 
+        /// <summary>
+        /// Computes the hash value of the specified byte array using the specified hash
+        /// algorithm, and signs the resulting hash value.
+        /// </summary>
+        /// <param name="data">The input data for which to compute the hash.</param>
+        /// <param name="hashAlgo">The hash algorithm to use to create the hash value.</param>
+        /// <returns>The <see cref="System.Security.Cryptography.RSA"></see> signature for the specified data.</returns>
         public byte[] CreateSignature(byte[] data, HashAlgorithm hashAlgo)
         {
             using var rsaProvider = new RSACryptoServiceProvider();
@@ -134,14 +151,27 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return rsaProvider.SignData(data, hashAlgo);
         }
 
-        public bool VerifySignature(byte[] data, HashAlgorithm hasher, byte[] signature)
+        /// <summary>
+        /// Verifies that a digital signature is valid by determining the hash value in the
+        /// signature using the provided public key and comparing it to the hash value of
+        /// the provided data.
+        /// </summary>
+        /// <param name="data">The data that was signed.</param>
+        /// <param name="hashAlgo">The name of the hash algorithm used to create the hash value of the data.</param>
+        /// <param name="signature">The signature data to be verified.</param>
+        /// <returns>true if the signature is valid, otherwise false.</returns>
+        public bool VerifySignature(byte[] data, HashAlgorithm hashAlgo, byte[] signature)
         {
             using var rsaProvider = new RSACryptoServiceProvider();
 
             rsaProvider.ImportParameters(Key);
-            return rsaProvider.VerifyData(data, hasher, signature);
+            return rsaProvider.VerifyData(data, hashAlgo, signature);
         }
 
+        /// <summary>
+        /// Gets asymmetric algorithm full name.
+        /// </summary>
+        /// <returns>The <see cref="System.Security.Cryptography.RSA"></see> full name.</returns>
         public string GetAlgorithmNameSignature()
         {
             return NameSignature;

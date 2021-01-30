@@ -7,14 +7,27 @@ using Enigma.UserDbManager;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// Represents login controler used to enforce projects login security policies realised as 2FA.
+    /// </summary>
     public class LoginController
     {
+        /// <summary>
+        /// First part of 2FA.
+        /// </summary>
+        /// <param name="username">Users username.</param>
+        /// <param name="password">Users password.</param>
+        /// <param name="userDatabasePath">Path to users database stored in config file.</param>
+        /// <param name="pepperPath">Path to Enigma Pepper value stored in config file.</param>
+        /// <param name="data">User database object.</param>
+        /// <returns>Logged in user information.</returns>
         public UserInformation LoginPartOne(string username, string password, string userDatabasePath, string pepperPath, out UserDatabase data)
         {
             var dataComp = new UserDatabase(userDatabasePath, pepperPath);
 
             var user = dataComp.GetUser(username);
 
+            // if user has entered his mistyped his password three times
             if (user != null && user.LoginAttempt == 3)
             {
                 // delete all users files
@@ -27,6 +40,7 @@ namespace Enigma.Models
                 throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
+            // if user has entered correct password
             if (user != null && user.IsPasswordValid(password, dataComp.Pepper))
             {
                 dataComp.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
@@ -34,6 +48,7 @@ namespace Enigma.Models
                 data = dataComp;
                 return new UserInformation(user);
             }
+            // if user has entered incorrect password
             else
             {
                 dataComp.LoginAttemptIncrement(user);
@@ -41,6 +56,11 @@ namespace Enigma.Models
             }
         }
 
+        /// <summary>
+        /// Second part of 2FA.
+        /// </summary>
+        /// <param name="user">User information.</param>
+        /// <param name="certificate">User <see cref="X509Certificate2"/> public certificate in raw form.</param>
         public void LoginPartTwo(UserInformation user, byte[] certificate)
         {
             var userCert = new X509Certificate2(certificate);

@@ -7,6 +7,9 @@ using Org.BouncyCastle.X509;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// Validator for <see cref="X509Certificate2"/> user public certificates.
+    /// </summary>
     public static class CertificateValidator
     {
         /// <summary>
@@ -15,7 +18,7 @@ namespace Enigma.Models
         /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <param name="error">String describing error.</param>
         /// <param name="checkRoot">If set to <see cref="true"/> true, <see cref="VerifyCertificate(X509Certificate2, out string, bool)"/>  will check if certificate is issued by a proper root certificate. </param>
-        /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise returns false.</returns>
+        /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise false.</returns>
         public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error, bool checkRoot)
         {
             var authority = new X509Certificate2(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\ca.pem");    // root certificate that this application trusts
@@ -59,7 +62,7 @@ namespace Enigma.Models
         /// Checks if key size is equal or greater than 2048 bits.
         /// </summary>
         /// <param name="certificateToValidate">Certificate that is checked.</param>
-        /// <returns>true if the key is equal or greater than 2048 bits, otherwise returns false.</returns>
+        /// <returns>true if the key is equal or greater than 2048 bits, otherwise false.</returns>
         public static bool VerifyCertificateKeyLength(X509Certificate2 certificateToValidate)
         {
             // Since 2015, NIST recommends a minimum of 2048 bit keys for RSA, an update to the widely accepted recommendation of a 1024 bit minimum since at least 2002.
@@ -70,7 +73,7 @@ namespace Enigma.Models
         /// Check if certificate has been revoked.
         /// </summary>
         /// <param name="certificateToValidate"> Certificate that is checked.</param>
-        /// <returns>true if certificate has been revoked, otherwise returns false.</returns>
+        /// <returns>true if certificate has been revoked, otherwise false.</returns>
         public static bool VerifyCertificateRevocationStatus(X509Certificate2 certificateToValidate)
         {
             try
@@ -91,7 +94,7 @@ namespace Enigma.Models
         /// Check if certificate key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>.
         /// </summary>
         /// <param name="certificateToValidate"> Certificate that is checked.</param>
-        /// <returns>true if the key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>, otherwise returns false.</returns>
+        /// <returns>true if the key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>, otherwise false.</returns>
         public static bool VerifyKeyUsage(X509Certificate2 certificateToValidate)
         {
             var extensions = certificateToValidate.Extensions.OfType<X509KeyUsageExtension>().ToList();

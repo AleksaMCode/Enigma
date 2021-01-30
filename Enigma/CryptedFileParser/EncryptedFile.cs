@@ -81,7 +81,7 @@ namespace Enigma.CryptedFileParser
         /// <summary>
         /// Encrypts original file using set parameters.
         /// </summary>
-        /// <param name="originalFile">Original, un-encrypted file.</param>
+        /// <param name="originalFile">Original, unencrypted file.</param>
         /// <param name="userId">Id of the user who is encrypting original file.</param>
         /// <param name="userPrivateKey">Private RSA key of the user encrypting the file.</param>
         /// <returns>Encrypted file in its raw form.</returns>
