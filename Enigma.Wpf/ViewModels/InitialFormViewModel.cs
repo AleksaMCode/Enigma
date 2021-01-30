@@ -98,8 +98,8 @@ namespace Enigma.Wpf.ViewModels
                 {
                     var password = passBox.Password;
                     var login2fa = new LoginController();
-                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, pepperPath, out var db);
-                    login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath));
+                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, pepperPath, out var db, out var userDbInfo);
+                    login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath), db, userDbInfo);
                     // new view prompting for users private rsa key. this is the only time app asks for private rsa key.
                     navigator.GoToControl(new RsaKeyViewModel(navigator, user, db, enigmaEfsRoot));
                     //navigator.GoToControl(new MainAppViewModel(navigator, user, db, privateKey, enigmaEfsRoot, Convert.ToDateTime(user.CertificateExpirationDate) < DateTime.Now)); // on successful login

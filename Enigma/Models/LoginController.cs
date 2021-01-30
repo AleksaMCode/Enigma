@@ -21,7 +21,7 @@ namespace Enigma.Models
         /// <param name="pepperPath">Path to Enigma Pepper value stored in config file.</param>
         /// <param name="data">User database object.</param>
         /// <returns>Logged in user information.</returns>
-        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, string pepperPath, out UserDatabase data)
+        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, string pepperPath, out UserDatabase db, out User userDbInfo)
         {
             var dataComp = new UserDatabase(userDatabasePath, pepperPath);
 
@@ -43,9 +43,8 @@ namespace Enigma.Models
             // if user has entered correct password
             if (user != null && user.IsPasswordValid(password, dataComp.Pepper))
             {
-                dataComp.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
-                dataComp.ResetLoginAttempts(user);
-                data = dataComp;
+                db = dataComp;
+                userDbInfo = user;
                 return new UserInformation(user);
             }
             // if user has entered incorrect password
@@ -61,19 +60,29 @@ namespace Enigma.Models
         /// </summary>
         /// <param name="user">User information.</param>
         /// <param name="certificate">User <see cref="X509Certificate2"/> public certificate in raw form.</param>
-        public void LoginPartTwo(UserInformation user, byte[] certificate)
+        public void LoginPartTwo(UserInformation user, byte[] certificate, UserDatabase db, User userDbInfo)
         {
             var userCert = new X509Certificate2(certificate);
             var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
 
+            // compare user public RSA key from x509 public certificate with a public RSA key that was stored when user first registered
             if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, user.PublicKey))
             {
                 throw new Exception("Wrong certificate used.");
             }
-
+            // if wrong file is loaded instead of the x509 public certificate in PEM format
             if (userCert == null)
             {
                 throw new Exception("Certificate error.");
+            }
+
+            // update user last login time and reset atttemp count
+            db.UpdateLoginTime(userDbInfo, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+
+            // reset login attempt if necessary
+            if (userDbInfo.LoginAttempt != 0)
+            {
+                db.ResetLoginAttempts(userDbInfo);
             }
 
             //if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
@@ -81,10 +90,10 @@ namespace Enigma.Models
             //    throw new Exception(errorMsg);
             //}
 
-            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
-            {
-                throw new Exception("Certificate has been revoked.");
-            }
+            //if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+            //{
+            //    throw new Exception("Certificate has been revoked.");
+            //}
         }
 
         //public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)
