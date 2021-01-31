@@ -10,7 +10,8 @@
     xmlns:viewModels="clr-namespace:Enigma.Wpf.ViewModels"
     d:DesignHeight="500"
     d:DesignWidth="500"
-    mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainAppViewModel}">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance viewModels:MainAppViewModel}">
 
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="Loaded">

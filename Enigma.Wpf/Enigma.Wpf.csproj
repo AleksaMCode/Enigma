@@ -95,6 +95,7 @@
     <Compile Include="Controls\ModalPanel.xaml.cs">
       <DependentUpon>ModalPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToGridLengthConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\FileTypeToIconConverter.cs" />
@@ -102,16 +103,22 @@
     <Compile Include="Enums\FileSystemItemType.cs" />
     <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Forms\Data\ImportFormData.cs" />
+    <Compile Include="Forms\Data\PrivateKeyFormData.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
     <Compile Include="Observables\FileSystemItem.cs" />
     <Compile Include="ViewModels\Forms\ImportFormViewModel.cs" />
+    <Compile Include="ViewModels\Forms\PrivateKeyFormViewModel.cs" />
+    <Compile Include="ViewModels\Forms\ShareFormViewModel.cs" />
     <Compile Include="ViewModels\InitialFormViewModel.cs" />
     <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBaseWithValidation.cs" />
     <Compile Include="Views\Forms\ImportFormView.xaml.cs">
       <DependentUpon>ImportFormView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Forms\PrivateKeyFormView.xaml.cs">
+      <DependentUpon>PrivateKeyFormView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Forms\ShareFormView.xaml.cs">
       <DependentUpon>ShareFormView.xaml</DependentUpon>
@@ -133,6 +140,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Forms\PrivateKeyFormView.xaml" />
     <Page Include="Views\Forms\ShareFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

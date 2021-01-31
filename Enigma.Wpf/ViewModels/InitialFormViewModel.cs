@@ -7,6 +7,7 @@ using Enigma.Models;
 using Enigma.UserDbManager;
 using Enigma.Wpf.Enums;
 using Enigma.Wpf.Interfaces;
+using Enigma.Wpf.ViewModels.Forms;
 using GalaSoft.MvvmLight.Command;
 
 namespace Enigma.Wpf.ViewModels
@@ -50,7 +51,23 @@ namespace Enigma.Wpf.ViewModels
                     var login2fa = new LoginController();
                     var user = login2fa.LoginPartOne(Username, password, out var db);
                     //login2fa.LoginPartTwo(user,/*raw certificate*/);
-                    navigator.GoToControl(new MainAppViewModel(navigator, user, db)); // on successful login
+
+                    var keyForm = new PrivateKeyFormViewModel(navigator, true);
+
+                    keyForm.OnSubmit += data =>
+                    {
+                        if (data.KeyPassword == "123")
+                        {
+                            // on successful login
+                            navigator.GoToControl(new MainAppViewModel(navigator, user, db));
+                        }
+                        else
+                        {
+                            navigator.ShowMessage("Error", "Wrong RSA password.");
+                        }
+                    };
+
+                    navigator.OpenFlyoutPanel(keyForm);
                 }
                 else
                 {
