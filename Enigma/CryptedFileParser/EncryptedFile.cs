@@ -143,9 +143,34 @@ namespace Enigma.CryptedFileParser
                 throw new CryptographicException("Unsuccessful decryption. File has been compromised.", e);
             }
 
+            HashAlgorithm hashAlgo;
+
+            try
+            {
+                hashAlgo = AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+            }
+            catch (CryptographicException)
+            {
+                var hashIAlgo = AlgorithmUtility.GetHashSignerFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+
+                // if file signature isn't valid Exception will be thrown!
+                if (new RsaAlgorithm(ownerPublicKey).VerifySignature(fileContent, hashIAlgo, ((SecurityDescriptor)Headers[1]).Signature))
+                {
+                    // update encrypted file ReadTime and RTimeUserId
+                    ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+                    ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
+                    return new OriginalFile(fileContent, fileName);
+                }
+                else
+                {
+                    throw new CryptographicException("File integrity has been compromised.");
+                }
+            }
+
+
             // if file signature isn't valid Exception will be thrown!
-            if (new RsaAlgorithm(ownerPublicKey)
-                .VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature))
+            if (new RsaAlgorithm(ownerPublicKey).VerifySignature(fileContent, hashAlgo, ((SecurityDescriptor)Headers[1]).Signature))
             {
                 // update encrypted file ReadTime and RTimeUserId
                 ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
