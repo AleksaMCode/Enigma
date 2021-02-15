@@ -21,7 +21,7 @@ namespace Enigma.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginController"/> class using a password pepper path that is stored on FS.
         /// </summary>
-        /// <param name="pepperPath"></param>
+        /// <param name="pepperPath">Path to Enigma Pepper value that is stored in config file.</param>
         public LoginController(string pepperPath)
         {
             this.pepperPath = pepperPath;
@@ -33,8 +33,8 @@ namespace Enigma.Models
         /// <param name="username">Users username.</param>
         /// <param name="password">Users password.</param>
         /// <param name="userDatabasePath">Path to users database stored in config file.</param>
-        /// <param name="pepperPath">Path to Enigma Pepper value stored in config file.</param>
-        /// <param name="data">User database object.</param>
+        /// <param name="db">Enigmas user database.</param>
+        /// <param name="userDbInfo">User information.</param>
         /// <returns>Logged in user information.</returns>
         public UserInformation LoginPartOne(string username, string password, string userDatabasePath, out UserDatabase db, out User userDbInfo)
         {
