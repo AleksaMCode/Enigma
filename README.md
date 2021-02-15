@@ -111,16 +111,19 @@ Hashing algorithms that are implemented in <b>Enigma EFS</b>.
 
 Algorithm | Variant | Output size<br>(bits)
 | --- | :---: | :---:
+<a href="https://en.wikipedia.org/wiki/MD2_(hash_function)">MD2</a> | x | 128
+<a href="https://en.wikipedia.org/wiki/MD4">MD4</a> | x | 128
 <a href="https://en.wikipedia.org/wiki/MD5">MD5</a> | x | 128
 <a href="https://en.wikipedia.org/wiki/SHA-1">SHA-1 | x | 160
-<a href="https://en.wikipedia.org/wiki/SHA-2">SHA-2</a> | SHA-256<br>SHA-384<br>SHA-512 | 256<br>384<br>512
+<a href="https://en.wikipedia.org/wiki/SHA-2">SHA-2</a> | SHA-224<br>SHA-256<br>SHA-384<br>SHA-512 | 224<br>256<br>384<br>512
 <a href="https://en.wikipedia.org/wiki/SHA-3">SHA-3</a> | SHA3-224<br>SHA3-256<br>SHA3-384<br>SHA3-512 | 224<br>256<br>384<br>512
+<a href="https://en.wikipedia.org/wiki/RIPEMD">RIPEMD</a> | RIPEMD-128<br>RIPEMD-160<br>RIPEMD-256 | 128<br>160<br>256
 
-<p align="justify"><b>*</b> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions.</p>
+<p align="justify"><b>*</b> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Also, RIPEMD-128 isn't considered secure because 128-bit result and MD2 and MD4 are obsolete.</p>
 
 ## Passwords and keys
 ### Password guidelines
-<p align="justify">Guidelines for choosing good passwords are typically designed to make passwords harder to discover by intelligent guessing. All the guidelines are NIST compliant. <p>
+<p align="justify">Guidelines for choosing good passwords are typically designed to make passwords harder to discover by intelligent guessing. All the guidelines are NIST compliant.<p>
 <ol>
     <li><p align="justify">Memorized secrets are at least 8 characters in length not including spaces.</p></li>
     <li><p align="justify">Passwords are only required to be changed if there is evidence of compromise.</p></li>
