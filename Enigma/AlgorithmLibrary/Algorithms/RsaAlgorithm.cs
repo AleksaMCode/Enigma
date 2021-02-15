@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 
@@ -138,7 +139,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         /// <summary>
         /// Computes the hash value of the specified byte array using the specified hash
-        /// algorithm, and signs the resulting hash value.
+        /// algorithm (<see cref="MD5"/>, <see cref="SHA1"/>, <see cref="SHA256"/>, <see cref="SHA384"/> or <see cref="SHA512"/>) and signs the resulting hash value.
         /// </summary>
         /// <param name="data">The input data for which to compute the hash.</param>
         /// <param name="hashAlgo">The hash algorithm to use to create the hash value.</param>
@@ -149,6 +150,24 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
             rsaProvider.ImportParameters(Key);
             return rsaProvider.SignData(data, hashAlgo);
+        }
+
+        /// <summary>
+        /// Computes the hash value of the specified byte array using the specified hash
+        /// algorithm (MD2, MD4, RIPEMD-128, RIPEMD-160 or RIPEMD-256) and signs the resulting hash value.
+        /// </summary>
+        /// <param name="data">The input data for which to compute the hash.</param>
+        /// <param name="hashAlgo">The hash algorithm to use to create the hash value.</param>
+        /// <returns>The RSA signature for the specified data created using <see cref="Org.BouncyCastle"/> library.</returns>
+        public byte[] CreateSignature(byte[] data, ISigner hashAlgo)
+        {
+            // Convert .NETs RSAParameters to Bouncy Castles RsaKeyParameters
+            var key = new RsaKeyParameters(true, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
+
+            hashAlgo.Init(true, key);
+            hashAlgo.BlockUpdate(data, 0, data.Length);
+
+            return hashAlgo.GenerateSignature();
         }
 
         /// <summary>
@@ -166,6 +185,26 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
             rsaProvider.ImportParameters(Key);
             return rsaProvider.VerifyData(data, hashAlgo, signature);
+        }
+
+        /// <summary>
+        /// Verifies that a digital signature is valid by determining the hash value in the
+        /// signature using the provided public key and comparing it to the hash value of
+        /// the provided data.
+        /// </summary>
+        /// <param name="data">The data that was signed.</param>
+        /// <param name="hashAlgo">The name of the hash algorithm used to create the hash value of the data.</param>
+        /// <param name="signature">The signature data to be verified.</param>
+        /// <returns>true if the signature is valid, otherwise false.</returns>
+        public bool VerifySignature(byte[] data, ISigner hashAlgo, byte[] signature)
+        {
+            // Convert .NETs RSAParameters to Bouncy Castles RsaKeyParameters
+            var key = new RsaKeyParameters(false, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
+
+            hashAlgo.Init(false, key);
+            hashAlgo.BlockUpdate(data, 0, data.Length);
+
+            return hashAlgo.VerifySignature(signature);
         }
 
         /// <summary>
