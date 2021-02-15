@@ -5,6 +5,10 @@ using System.Text;
 
 namespace Enigma.PrivateKeyParsers
 {
+    /// <summary>
+    /// Defines the <see cref="KeyFileParser" /> class that is used for reading PEM and DER private key files.
+    /// Class from a <see href="https://github.com/Valyreon/cryptor-wpf-project">Cryptor project</see>.
+    /// </summary>
     public class KeyFileParser
     {
         private const string PrivateHeaderStart = "-----BEGIN RSA PRIVATE KEY-----";
@@ -26,8 +30,6 @@ namespace Enigma.PrivateKeyParsers
 
 
         private readonly bool tryBoth = false;
-
-        // TODO: add keyfile decryption
 
         public KeyFileParser(byte[] keyBytes)
         {
