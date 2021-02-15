@@ -16,13 +16,24 @@ namespace Enigma.Models
     {
         private readonly UserDatabase data;
 
-        public RegisterController(UserDatabase db)
+        /// <summary>
+        /// Common passwords list path on FS.
+        /// </summary>
+        private readonly string commonPasswordsPath;
+
+        public RegisterController(UserDatabase db, string commonPasswordsPath)
         {
             data = db;
+            this.commonPasswordsPath = commonPasswordsPath;
         }
 
-        public void Register(string username, string password, string certificateFilePath, bool usbKey, string commonPasswordsPath)
+        public void Register(ref string username, string password, string certificateFilePath, bool usbKey)
         {
+            // Add a random 4-digit number to every username
+            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
+            username += "#" + csprng.Next(1_000, 9_999).ToString();
+
             if (password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
@@ -81,8 +92,7 @@ namespace Enigma.Models
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
 
-            HideMyNeedle(new FileInfo(privateKeyPath).Directory.Root.FullName,
-                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
+            HideMyNeedle(privateKeyPath, new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
 
             // data scrambling
             new RNGCryptoServiceProvider().GetBytes(iv);
@@ -95,8 +105,11 @@ namespace Enigma.Models
         /// <summary>
         /// Implementation of <em>Needle in a Haystack</em> steganography. Encrypted RSA key in its entirety is hidden in a 100,000 times bigger binary file.
         /// </summary>
-        private void HideMyNeedle(string rootDir, string path, byte[] needle, byte[] salt, byte[] passwordDigest)
+        private void HideMyNeedle(string privateKeyPath, byte[] needle, byte[] salt, byte[] passwordDigest)
         {
+            var rootDir = new FileInfo(privateKeyPath).Directory.Root.FullName;
+            var path = privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin";
+
             // TODO: add MAC/HMAC and secure deletion of original RSA key
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
@@ -261,7 +274,7 @@ namespace Enigma.Models
                         passphrase += delimiter;
                     }
                 } while (numberOfWords < maxNumberOfWords);
-                
+
 
                 if (PasswordAdvisor.IsPasswordStrong(passphrase, out _, true, maxNumberOfWords))
                 {

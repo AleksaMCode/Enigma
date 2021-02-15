@@ -127,8 +127,8 @@ namespace Enigma.Wpf.ViewModels
                     try
                     {
                         var password = passBox.Password;
-                        var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath));
-                        register.Register(username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB, commonPasswordsPath);
+                        var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath);
+                        register.Register(ref username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                         /* then create private key of file based on what user chose, something like:
 
@@ -146,7 +146,7 @@ namespace Enigma.Wpf.ViewModels
                         */
 
                         // maybe after successful registration just show a message ?
-                        navigator.ShowMessage("Successful registration", "You have successfully registered. Please login to use Enigma EFS.");
+                        navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
                         passBox.Clear();
                         Username = "";
                     }
