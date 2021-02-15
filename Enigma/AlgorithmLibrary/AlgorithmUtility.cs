@@ -1,6 +1,8 @@
 using System;
 using System.Security.Cryptography;
 using Enigma.AlgorithmLibrary.Algorithms;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Security;
 
 namespace Enigma.AlgorithmLibrary
 {
@@ -180,6 +182,49 @@ namespace Enigma.AlgorithmLibrary
             else
             {
                 throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
+            }
+        }
+
+        /// <summary>
+        /// Gets the hash algorithm <see cref="ISigner"/> from the hash algorithm name signature.
+        /// </summary>
+        /// <param name="algoName">Hash algorithm name signature.</param>
+        /// <returns>New instance of the hash algorithm interface.</returns>
+        public static ISigner GetHashSignerFromNameSignature(string algoName)
+        {
+            if (algoName.Length > maxHashAlgoNameSignatureSize)
+            {
+                throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
+            }
+
+            var withRsaString = "withRSA";
+
+            switch (algoName)
+            {
+                case "MD2":
+                {
+                    return SignerUtilities.GetSigner(algoName + withRsaString);
+                }
+                case "MD4":
+                {
+                    return SignerUtilities.GetSigner(algoName + withRsaString);
+                }
+                case "RIPEMD-128":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                case "RIPEMD-160":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                case "RIPEMD-256":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                default:
+                {
+                    throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
+                }
             }
         }
 
