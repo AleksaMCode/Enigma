@@ -1,7 +1,6 @@
 using System;
 using System.Security.Cryptography;
 using Enigma.AlgorithmLibrary.Algorithms;
-using Enigma.CryptedFileParser.Exceptions;
 
 namespace Enigma.AlgorithmLibrary
 {
@@ -39,7 +38,7 @@ namespace Enigma.AlgorithmLibrary
         {
             return (algo is AesAlgorithm) || (algo is CamelliaAlgorithm) || (algo is TwofishAlgorithm) || (algo is TripleDesAlgorithm)
                 ? algo.GetAlgorithmNameSignature()
-                : throw new UnknownCryptAlgoException(algo.GetAlgorithmNameSignature());
+                : throw new CryptographicException("Unknown cryptor with code '" + algo.GetAlgorithmNameSignature() + "' used.");
         }
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace Enigma.AlgorithmLibrary
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
             {
-                throw new UnknownCryptAlgoException(algoName);
+                throw new CryptographicException("Unknown cryptor with code '" + algoName + "' used.");
             }
 
             // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
@@ -88,7 +87,7 @@ namespace Enigma.AlgorithmLibrary
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
             {
-                throw new UnknownCryptAlgoException(algoName);
+                throw new CryptographicException("Unknown cryptor with code '" + algoName + "' used.");
             }
 
             // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
@@ -142,7 +141,7 @@ namespace Enigma.AlgorithmLibrary
             }
             else
             {
-                throw new UnknownHashAlgoException("Unknown Hash Algorithm used.");
+                throw new CryptographicException("Unknown Hash Algorithm used.");
             }
         }
 
@@ -155,7 +154,7 @@ namespace Enigma.AlgorithmLibrary
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
             {
-                throw new UnknownHashAlgoException(algoName);
+                throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
             }
 
             if (algoName.Equals("MD5"))
@@ -180,7 +179,7 @@ namespace Enigma.AlgorithmLibrary
             }
             else
             {
-                throw new UnknownHashAlgoException(algoName);
+                throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
             }
         }
 
@@ -211,7 +210,7 @@ namespace Enigma.AlgorithmLibrary
                 }
                 default:
                 {
-                    throw new UnknownCipherModeException(mode);
+                    throw new CryptographicException("Unknown block cipher mode '" + mode + "' used.");
                 }
             }
         }

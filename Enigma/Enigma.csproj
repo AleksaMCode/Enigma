@@ -92,9 +92,6 @@
     <Compile Include="EFS\EnigmaEfs.cs" />
     <Compile Include="EFS\FileEncryptionKey.cs" />
     <Compile Include="CryptedFileParser\EncryptedFile.cs" />
-    <Compile Include="CryptedFileParser\Exceptions\UnknownCipherModeException.cs" />
-    <Compile Include="CryptedFileParser\Exceptions\UnknownCryptAlgoException.cs" />
-    <Compile Include="CryptedFileParser\Exceptions\UnknownHashAlgoException.cs" />
     <Compile Include="CryptedFileParser\OriginalFile.cs" />
     <Compile Include="EFS\Attributes\Attribute.cs" />
     <Compile Include="EFS\Attributes\SecurityDescriptor.cs" />
