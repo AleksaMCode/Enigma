@@ -119,7 +119,8 @@ Algorithm | Variant | Output size<br>(bits)
 <a href="https://en.wikipedia.org/wiki/SHA-3">SHA-3</a> | SHA3-224<br>SHA3-256<br>SHA3-384<br>SHA3-512 | 224<br>256<br>384<br>512
 <a href="https://en.wikipedia.org/wiki/RIPEMD">RIPEMD</a> | RIPEMD-128<br>RIPEMD-160<br>RIPEMD-256 | 128<br>160<br>256
 
-<p align="justify"><b>*</b> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Also, RIPEMD-128 isn't considered secure because 128-bit result and MD2 and MD4 are obsolete.</p>
+> **_NOTE:_**
+> <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Also, RIPEMD-128 isn't considered secure because 128-bit result and MD2 and MD4 are obsolete.</p>
 
 ## Passwords and keys
 ### Password guidelines
@@ -149,7 +150,8 @@ Case sensitive alphanumeric<br>(a–z, A–Z, 0–9) | 65 | 5.954 bits
 All ASCII printable characters | 95 | 6.570 bits
 Diceware word list | 7776 | 12.925 bits<br>per word
 
-<p align="justify"><b>Note:</b> NIST recommends dropping the arbitrary password complexity requirements needing mixtures of upper case letters, symbols and numbers. Based on cracking real-world passwords conclude "<i>notion of password entropy...does not provide a valid metric for measuring the security provided by password creation policie</i>". However, I have implemented Shannon's entropy in <b>Enigma EFS</b> despite it not being a good predictor of how quickly attackers can crack passwords.</p>
+> **_NOTE:_**
+> <p align="justify">NIST recommends dropping the arbitrary password complexity requirements needing mixtures of upper case letters, symbols and numbers. Based on cracking real-world passwords conclude "<i>notion of password entropy...does not provide a valid metric for measuring the security provided by password creation policie</i>". However, I have implemented Shannon's entropy in <b>Enigma EFS</b> despite it not being a good predictor of how quickly attackers can crack passwords.</p>
 
 ### Passphrase
 <p align="justify"><img src="./resources/xkcd_password_strength.png" width="350" title="xkcd illustration" align="left" hspace="5" vspace="5">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma EFS</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domain of <img src="./resources/diceware_domain.png" title="diceware domain" style="vertical-align: -0.505ex" width="100">, that provides anywhere from 78 to 128 bits of entropy.
