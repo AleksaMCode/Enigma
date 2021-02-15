@@ -187,6 +187,8 @@ namespace Enigma.Wpf.ViewModels
                     currentItems.Add(new FileSystemItem(
                         new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
                         File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
+
+                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
                 }
                 catch (Exception e)
                 {
@@ -206,6 +208,7 @@ namespace Enigma.Wpf.ViewModels
             form.OnSubmit += (string dirName) =>
             {
                 Directory.CreateDirectory(rootDir + addressBarText + dirName);
+                SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
             };
             navigator.OpenFlyoutPanel(form);
 
@@ -228,11 +231,13 @@ namespace Enigma.Wpf.ViewModels
                 else
                 {
                     enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
+                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
                 }
             }
             else if (obj.Type == FileSystemItemType.Folder)
             {
                 enigmaEfs.DeleteDirectory(rootDir + addressBarText + obj.Name);
+                SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
             }
             else
             {
