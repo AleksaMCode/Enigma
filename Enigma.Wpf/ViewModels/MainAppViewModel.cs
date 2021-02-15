@@ -369,14 +369,14 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleReadFile(FileSystemItem obj)
         {
-            if(obj.Type == FileSystemItemType.File)
+            if (obj.Type == FileSystemItemType.File)
             {
                 try
                 {
                     enigmaEfs.OpenFile(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.PublicKey);
                     // handle .txt files
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     navigator.ShowMessage("Error", ex.Message);
                 }
@@ -384,6 +384,33 @@ namespace Enigma.Wpf.ViewModels
             else
             {
                 navigator.ShowMessage("Eror", "You can only read files.");
+            }
+        }
+
+        private void HandleFileUpdate(FileSystemItem obj)
+        {
+            if (obj.Type == FileSystemItemType.File)
+            {
+                var form = new FileUpdateFormViewModel(navigator);
+
+                form.OnSubmit += (string filePath) =>
+                {
+                    try
+                    {
+                        enigmaEfs.Update(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), filePath, enigmaEfs.userPrivateKey);
+                        // handle .txt update
+                    }
+                    catch (Exception ex)
+                    {
+                        navigator.ShowMessage("Error", ex.Message);
+                    }
+                };
+
+                navigator.OpenFlyoutPanel(form);
+            }
+            else
+            {
+                navigator.ShowMessage("Eror", "You can only update files.");
             }
         }
 
