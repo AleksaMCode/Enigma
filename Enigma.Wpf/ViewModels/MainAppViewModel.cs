@@ -136,6 +136,24 @@ namespace Enigma.Wpf.ViewModels
             navigator.GoToPreviousControl();
         }
 
+        private void HandlePasswordChange()
+        {
+            var form = new ChangePasswordFormViewModel(navigator);
+
+            form.OnSubmit += (string password) =>
+            {
+                try
+                {
+                    usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, password);
+                }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+            };
+            navigator.OpenFlyoutPanel(form);
+        }
+
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);
 
         private void HandleImportFile()
