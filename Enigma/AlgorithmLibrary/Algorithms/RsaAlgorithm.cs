@@ -97,7 +97,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         /// <summary>
         /// Helper method for <see cref="AreKeysMatched2(RSAParameters, RSAParameters)"/> obsolete method.
-        /// <returns>true if arrays mathch; false if arrays don't match.</returns>
+        /// <returns>true if arrays match; false if arrays don't match.</returns>
         [Obsolete("Only used in a deprecated method AreKeysMatched2")]
         private static bool ByteArrayCompare(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
         {
