@@ -20,7 +20,6 @@ namespace Enigma.Wpf.ViewModels
     {
         private readonly INavigator navigator;
         private ObservableCollection<FileSystemItem> currentItems;
-        private string addressBarText;
         private readonly FileSystemItem shared;
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
@@ -30,6 +29,9 @@ namespace Enigma.Wpf.ViewModels
         /// Root directory of Enigma EFS that contains Shared and users directories.
         /// </summary>
         private readonly string rootDir;
+
+        private string addressBarText;
+        private string previousDir = null;
 
         public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir)
         {
@@ -41,11 +43,7 @@ namespace Enigma.Wpf.ViewModels
             this.rootDir = rootDir;
             userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) < DateTime.Now;
 
-            var userDir = new EfsDirectory(rootDir + "\\" + enigmaEfs.currentUser.Username, enigmaEfs.currentUser.Id, userPrivateKey);
-            foreach (var efsObject in userDir.objects)
-            {
-                CurrentItems.Add(new FileSystemItem(efsObject));
-            }
+            SetCurrentItems(enigmaEfs.currentUser.Username);
 
             //CurrentItems = new ObservableCollection<FileSystemItem>
             //{
@@ -77,21 +75,58 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleBackButton()
         {
-            navigator.ShowMessage("Test", "Pressed back button.");
+            //navigator.ShowMessage("Test", "Pressed back button.");
+
+            if (addressBarText != "\\")
+            {
+                SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + previousDir);
+
+                var tempDir = previousDir;
+                previousDir = addressBarText;
+                addressBarText = tempDir;
+            }
         }
 
         public ICommand ForwardCommand => new RelayCommand(HandleForwardButton);
 
         private void HandleForwardButton()
         {
-            navigator.ShowMessage("Test", "Pressed forward button.");
+            //navigator.ShowMessage("Test", "Pressed forward button.");
+            if (previousDir != null)
+            {
+                SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + previousDir);
+
+                var tempDir = previousDir;
+                previousDir = addressBarText;
+                addressBarText = tempDir;
+            }
         }
 
         public ICommand UpCommand => new RelayCommand(HandleUpButton);
 
+        // change this to home button
         private void HandleUpButton()
         {
-            navigator.ShowMessage("Test", "Pressed up button.");
+            //navigator.ShowMessage("Test", "Pressed up button.");
+            if (addressBarText != "\\")
+            {
+                SetCurrentItems(enigmaEfs.currentUser.Username);
+
+                var tempDir = previousDir;
+                previousDir = addressBarText;
+                addressBarText = tempDir;
+            }
+        }
+
+        private void SetCurrentItems(string path)
+        {
+            CurrentItems = null;
+
+            var userDir = new EfsDirectory(rootDir + "\\" + path, enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey);
+            foreach (var efsObject in userDir.objects)
+            {
+                CurrentItems.Add(new FileSystemItem(efsObject));
+            }
         }
 
         public ICommand LogOutCommand => new RelayCommand(HandleLogOut);
@@ -118,7 +153,7 @@ namespace Enigma.Wpf.ViewModels
                         new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
                         File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     navigator.ShowMessage("Error", e.Message);
                 }
@@ -135,7 +170,7 @@ namespace Enigma.Wpf.ViewModels
 
             form.OnSubmit += (string dirName) =>
             {
-                Directory.CreateDirectory(rootDir + addressBarText + DirName);
+                Directory.CreateDirectory(rootDir + addressBarText + dirName);
             };
             navigator.OpenFlyoutPanel(form);
 
@@ -196,7 +231,7 @@ namespace Enigma.Wpf.ViewModels
                     {
                         enigmaEfs.Download(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         navigator.ShowMessage("Error", e.Message);
                     }
@@ -217,10 +252,12 @@ namespace Enigma.Wpf.ViewModels
         private void HandleInit()
         {
             var welcomeMessage = "\nIf you dont remember using your account then, please change your password.";
+
             if (userCertificateExpired)
             {
-                welcomeMessage += "\nYou certificate has expired. You can still use Enigma EFS, but you can't import or edit any files.";
+                welcomeMessage += "\nYour certificate has expired. You can still use Enigma EFS, but you can't import or edit any files.";
             }
+
             navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + welcomeMessage);
         }
 
