@@ -19,7 +19,7 @@ namespace Enigma.AlgorithmLibrary
         /// <summary>
         /// Maximum length of the hash algorithm name signature.
         /// </summary>
-        public static readonly int maxHashAlgoNameSignatureSize = 6;
+        public static readonly int maxHashAlgoNameSignatureSize = 10;
 
         /// <summary>
         /// Parses key size stored as <see cref="string"/> to <see cref="int"/>.
@@ -154,7 +154,7 @@ namespace Enigma.AlgorithmLibrary
         /// <returns>New instance of the hash algorithm.</returns>
         public static HashAlgorithm GetHashAlgoFromNameSignature(string algoName)
         {
-            if (algoName.Length > maxAlgoNameSignatureSize)
+            if (algoName.Length > maxHashAlgoNameSignatureSize)
             {
                 throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
             }
