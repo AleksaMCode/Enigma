@@ -12,8 +12,14 @@ using Org.BouncyCastle.Security;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// Allows to register new users to Enigma.
+    /// </summary>
     public class RegisterController
     {
+        /// <summary>
+        /// Enigmas user database.
+        /// </summary>
         private readonly UserDatabase data;
 
         /// <summary>
@@ -21,29 +27,43 @@ namespace Enigma.Models
         /// </summary>
         private readonly string commonPasswordsPath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegisterController"/> class using a <see cref="UserDatabase"/> and a path to a common password list on FS.
+        /// </summary>
+        /// <param name="db">Enigmas user database.</param>
+        /// <param name="commonPasswordsPath">Path to common password list on stored on FS.</param>
         public RegisterController(UserDatabase db, string commonPasswordsPath)
         {
             data = db;
             this.commonPasswordsPath = commonPasswordsPath;
         }
 
+        /// <summary>
+        /// Registers a new user if the register policy are met. 
+        /// </summary>
+        /// <param name="username">Users account username.</param>
+        /// <param name="password">Users password.</param>
+        /// <param name="certificateFilePath">Path on FS to users certificate.</param>
+        /// <param name="usbKey">Set to true if user want to have an private USB key, otherwise it's set to false.</param>
         public void Register(ref string username, string password, string certificateFilePath, bool usbKey)
         {
-            // Add a random 4-digit number to every username
-            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
-            username += "#" + csprng.Next(1_000, 9_999).ToString();
-
             if (password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
             }
 
+            // Add a random 4-digit number to every username
+            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
+            username += "#" + csprng.Next(1_000, 9_999).ToString();
+
+            // Check if a password used some of the most common passwords discovered in various data breaches.
             if (!PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
 
+            // Check password strength.
             if (!PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
             {
                 throw new Exception(string.Format("Password is too weak. It's deemed {0}. Please try again.", passwordStrength));
@@ -51,24 +71,31 @@ namespace Enigma.Models
 
             var cert = new X509Certificate2(certificateFilePath);
 
-
+            // Check if key length is >= 2048 bits.
             if (CertificateValidator.VerifyCertificateKeyLength(cert) == false)
             {
                 throw new Exception("Key length has to be at least 2048 bits.");
             }
+
+            // Checks if the certificate has expired and if it is issued by a proper root certificate.
             if (CertificateValidator.VerifyCertificate(cert, out var errorMsg, true) == false)
             {
                 throw new Exception(errorMsg);
             }
-            else if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
+
+            // Check if the certificate is revoked.
+            if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
             {
                 throw new Exception("Certificate has been revoked.");
             }
-            else if (CertificateValidator.VerifyKeyUsage(cert) == false)
+
+            // Check if certificate has a proper key usage set.
+            if (CertificateValidator.VerifyKeyUsage(cert) == false)
             {
                 throw new Exception("Certificate must have 'digitalSignature' and 'keyEncipherment' set as it's key usage.");
             }
 
+            // Add a new user to Users.db.
             data.AddUser(username, password, File.ReadAllBytes(certificateFilePath), usbKey);
         }
 
@@ -102,9 +129,14 @@ namespace Enigma.Models
             new RNGCryptoServiceProvider().GetBytes(passwordBytes);
         }
 
+
         /// <summary>
         /// Implementation of <em>Needle in a Haystack</em> steganography. Encrypted RSA key in its entirety is hidden in a 100,000 times bigger binary file.
         /// </summary>
+        /// <param name="privateKeyPath">Path to users private key.</param>
+        /// <param name="needle">Users encrypted private key.</param>
+        /// <param name="salt">Salt used to create password digest.</param>
+        /// <param name="passwordDigest">Users password digest.</param>
         private void HideMyNeedle(string privateKeyPath, byte[] needle, byte[] salt, byte[] passwordDigest)
         {
             var rootDir = new FileInfo(privateKeyPath).Directory.Root.FullName;
