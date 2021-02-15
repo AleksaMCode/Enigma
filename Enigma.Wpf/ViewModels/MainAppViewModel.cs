@@ -235,15 +235,29 @@ namespace Enigma.Wpf.ViewModels
             // Yes | No
             if (obj.Type == FileSystemItemType.File)
             {
-                // check if user is a file owner
-                if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
+                if (obj.IsAccessGranted())
                 {
-                    navigator.ShowMessage("Error", "You can't delete file.");
+                    try
+                    {
+                        // check if user is a file owner
+                        if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
+                        {
+                            navigator.ShowMessage("Error", "You can't delete file.");
+                        }
+                        else
+                        {
+                            enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
+                            SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        navigator.ShowMessage("Error", ex.Message);
+                    }
                 }
                 else
                 {
-                    enigmaEfs.DeleteFile(rootDir + addressBarText + obj.GetEncryptedFileName());
-                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                    navigator.ShowMessage("Error", "You don't have access to this file.");
                 }
             }
             else if (obj.Type == FileSystemItemType.Folder)
@@ -272,6 +286,10 @@ namespace Enigma.Wpf.ViewModels
                     if (userCertificateExpired)
                     {
                         throw new Exception("You cannot share any new files beacuse your certificate has expired.");
+                    }
+                    else if (!obj.IsAccessGranted())
+                    {
+                        throw new Exception("You cannot share this file because you don't have access to it.");
                     }
 
                     if (obj.Type == FileSystemItemType.File)
