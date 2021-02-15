@@ -367,6 +367,26 @@ namespace Enigma.Wpf.ViewModels
             navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + welcomeMessage);
         }
 
+        private void HandleReadFile(FileSystemItem obj)
+        {
+            if(obj.Type == FileSystemItemType.File)
+            {
+                try
+                {
+                    enigmaEfs.OpenFile(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.PublicKey);
+                    // handle .txt files
+                }
+                catch(Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+            }
+            else
+            {
+                navigator.ShowMessage("Eror", "You can only read files.");
+            }
+        }
+
         private void HandleDefaultAction(FileSystemItem obj)
         {
             if (obj.Type == FileSystemItemType.Folder || obj.Type == FileSystemItemType.SharedFolder)
