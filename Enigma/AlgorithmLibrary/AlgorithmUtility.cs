@@ -209,6 +209,10 @@ namespace Enigma.AlgorithmLibrary
                 {
                     return SignerUtilities.GetSigner(algoName + withRsaString);
                 }
+                case "SHA-224":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
                 case "RIPEMD-128":
                 {
                     return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
