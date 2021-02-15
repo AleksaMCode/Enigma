@@ -22,6 +22,7 @@
     - [Symmetric algorithms](#symmetric-algorithms)
     - [Asymmetric algorithm](#asymmetric-algorithm)
     - [Hashing algorithms](#hashing-algorithms)
+  - [Username](#username)
   - [Passwords and keys](#passwords-and-keys)
     - [Password guidelines](#password-guidelines)
     - [Password Entropy](#password-entropy)
@@ -75,7 +76,7 @@
 </p>
 
 ### Login
-<p align="justify">To access Enigmas EFS user needs to login. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user needs to provide <i>Username</i> and <i>Password</i> (something only the user knows). If the entered password matches the hash value stored for the user in the Enigmas database, user will be prompted to provide his certificate (something only the user has). After checking if the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. If the login attempt is successful, user is granted access to EFS.
+<p align="justify">To access <b>Enigmas EFS</b> user needs to login first. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user needs to provide <i>Username</i> and <i>Password</i> (something only user knows). If the entered password matches the hash value stored for the user in the Enigmas database, user will be prompted to provide his certificate (something only the user has). After checking if the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. If the login attempt is successful, user is granted access to EFS.
 </p>
 
 #### Login attempt limit
@@ -101,10 +102,11 @@ ALGORITHM<br>NAME | BLOCK CIPHER<br>MODE OF OPERATION | KEY SIZE<br>(bits) | BLO
 <a href="https://en.wikipedia.org/wiki/Camellia_(cipher)">Camellia</a> | ECB, CBC, CFB, OFB | 128, 192 and 256 | 128 
 <a href="https://en.wikipedia.org/wiki/Triple_DES">3DES</a> | ECB, CBC, CFB, OFB | 192 | 64
 <a href="https://www.schneier.com/academic/archives/1998/12/the_twofish_encrypti.html">Twofish</a> | ECB, CBC, CFB, OFB | 128, 192 and 256 | 128
-<p align="justify"><b>*</b> I don't recomment ECB mode because it's not <a href="https://en.wikipedia.org/wiki/Semantic_security">semantically secure</a>. The only time it could be safe to use is if its used for encryption of data smaller than 128 bits when using with AES, Camellia or Twofish, or 64 bits when using 3DES.</p>
+> **_NOTE:_**
+> <p align="justify"> I don't recomment ECB mode because it's not <a href="https://en.wikipedia.org/wiki/Semantic_security">semantically secure</a>. The only time it could be safe to use is if its used for encryption of data smaller than 128 bits when using with AES, Camellia or Twofish, or 64 bits when using with 3DES.</p>
 
 ### Asymmetric algorithm
-RSA cryptosystem is the only asymmetric algorithm implemented. Its used for symmetric key encryption and generating a digital signature of files.
+RSA cryptosystem is the only asymmetric algorithm implemented. It's used for symmetric key encryption and for generating a digital signature of files.
 
 ### Hashing algorithms
 Hashing algorithms that are implemented in <b>Enigma EFS</b>.
@@ -121,6 +123,9 @@ Algorithm | Variant | Output size<br>(bits)
 
 > **_NOTE:_**
 > <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Also, RIPEMD-128 isn't considered secure because 128-bit result and MD2 and MD4 are obsolete.</p>
+
+## Username
+<p align="justify">Usernames are provided by the user when registering. After having a talk with my professor, I've came to conclusion that a better approach to username creation would be to add random numbers to every username. This will make a brute force attack on users account more difficult and it will also allow duplicate usernames usage. Probability of a collision when using the same username is 0.0001. If the collision does happen, user should try to register again with the same username (probability of a two consecutive collisions is 0.00000001).<br>I've used a similar approach to creating usernames as the <a href="https://en.wikipedia.org/wiki/Discord_(software)">Discord</a>. Each username is assigned a four-digit number, prefixed with '#', which is added to the end of their username. E.q. if you choose a username <i>myname</i>, than your final username will look something like <i>username#5642</i>.</p>
 
 ## Passwords and keys
 ### Password guidelines
