@@ -250,7 +250,38 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleShareItem(FileSystemItem obj)
         {
-            navigator.ShowMessage("Test", "Pressed share item menu item.");
+            //navigator.ShowMessage("Test", "Pressed share item menu item.");
+            var form = new ShareFileFormViewModel(navigator);
+
+            form.OnSubmit += (string user) =>
+            {
+                try
+                {
+                    if (obj.Type == FileSystemItemType.File)
+                    {
+                        var fileForSharing = rootDir + addressBarText + "\\" + obj.GetEncryptedFileName();
+                        if (File.Exists(fileForSharing))
+                        {
+                            var userInfo = usersDb.GetUser(user);
+                            enigmaEfs.Share(fileForSharing, enigmaEfs.currentUser.Id, userInfo.Id, userInfo.PublicKey);
+                        }
+                        else
+                        {
+                            navigator.ShowMessage("Error", string.Format("File {0} is missing.", obj.Name));
+                        }
+                    }
+                    else
+                    {
+                        navigator.ShowMessage("Error", "You can only share files.");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+            };
+
+            navigator.OpenFlyoutPanel(form);
         }
 
         public ICommand ExportItemCommand => new RelayCommand<FileSystemItem>(HandleExportItem);
