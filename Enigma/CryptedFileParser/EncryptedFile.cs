@@ -88,13 +88,23 @@ namespace Enigma.CryptedFileParser
         public byte[] Encrypt(OriginalFile originalFile, int userId, RSAParameters userPrivateKey)
         {
             // create a file signature
-            ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).
-                CreateSignature(originalFile.FileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName));
+            try
+            {
+                // Exception will be thrown if the hashing algoritm is MD2, MD4 or RIPEMD.
+                var hashAlgo = AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+
+                ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).CreateSignature(originalFile.FileContent, hashAlgo);
+            }
+            catch (CryptographicException)
+            {
+                var hashAlgo = AlgorithmUtility.GetHashSignerFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+                ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).CreateSignature(originalFile.FileContent, hashAlgo);
+            }
 
             Headers[2] = new Data(originalFile.FileContent,
                 AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
 
-            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;                    
+            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
 
             return Flush();
         }
