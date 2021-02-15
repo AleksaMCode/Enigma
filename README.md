@@ -122,7 +122,7 @@ Algorithm | Variant | Output size<br>(bits)
 <a href="https://en.wikipedia.org/wiki/RIPEMD">RIPEMD</a> | RIPEMD-128<br>RIPEMD-160<br>RIPEMD-256 | 128<br>160<br>256
 
 > **_NOTE:_**
-> <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Also, RIPEMD-128 isn't considered secure because 128-bit result and MD2 and MD4 are obsolete.</p>
+> <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Keep in mind that RIPEMD-128 isn't considered secure because 128-bit result and also MD2 and MD4 are obsolete.</p>
 
 ## Username
 <p align="justify">Usernames are provided by the user when registering. After having a talk with my professor, I've came to conclusion that a better approach to username creation would be to add random numbers to every username. This will make a brute force attack on users account more difficult and it will also allow duplicate usernames usage. Probability of a collision when using the same username is 0.0001. If the collision does happen, user should try to register again with the same username (probability of a two consecutive collisions is 0.00000001).<br>I've used a similar approach to creating usernames as the <a href="https://en.wikipedia.org/wiki/Discord_(software)">Discord</a>. Each username is assigned a four-digit number, prefixed with '#', which is added to the end of their username. E.q. if you choose a username <i>myname</i>, than your final username will look something like <i>username#5642</i>.</p>
