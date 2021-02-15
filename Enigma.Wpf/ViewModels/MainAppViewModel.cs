@@ -383,7 +383,7 @@ namespace Enigma.Wpf.ViewModels
             }
             else
             {
-                navigator.ShowMessage("Eror", "You can only read files.");
+                navigator.ShowMessage("Error", "You can only read files.");
             }
         }
 
@@ -410,7 +410,7 @@ namespace Enigma.Wpf.ViewModels
             }
             else
             {
-                navigator.ShowMessage("Eror", "You can only update files.");
+                navigator.ShowMessage("Error", "You can only update files.");
             }
         }
 
