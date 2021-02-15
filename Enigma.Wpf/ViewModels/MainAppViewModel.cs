@@ -154,6 +154,23 @@ namespace Enigma.Wpf.ViewModels
             navigator.OpenFlyoutPanel(form);
         }
 
+        private void HandleAccountDeletion()
+        {
+            // problem with Shared file deletion?
+            if (Directory.Exists(rootDir + "\\" + enigmaEfs.currentUser.Username))
+            {
+                Directory.Delete(rootDir + "\\" + enigmaEfs.currentUser.Username, true);
+            }
+
+            // Remove user from user database.
+            usersDb.RemoveUser(enigmaEfs.currentUser.UserInfo);
+
+            SetCurrentItems(enigmaEfs.currentUser.Username);
+
+            // Logout from Enigma EFS.
+            HandleLogOut();
+        }
+
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);
 
         private void HandleImportFile()

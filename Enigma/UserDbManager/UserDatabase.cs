@@ -145,7 +145,7 @@ namespace Enigma.UserDbManager
         /// <summary>
         /// Updates user password. Users are prevented from reusing their last password.
         /// </summary>
-        /// <param name="user">User whos password needs to be updated.</param>
+        /// <param name="user">User whose password needs to be updated.</param>
         /// <param name="password">Users new password.</param>
         public void ChangePassword(User user, string password)
         {
@@ -172,6 +172,16 @@ namespace Enigma.UserDbManager
             passHash = pbkdf2HasherNew.GetBytes(256 / 8);
 
             user.PassHash = passHash;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Removes user from a database.
+        /// </summary>
+        /// <param name="user">User whose account is being deleted.</param>
+        public void RemoveUser(User user)
+        {
+            context.Users.Remove(user);
             context.SaveChanges();
         }
 
