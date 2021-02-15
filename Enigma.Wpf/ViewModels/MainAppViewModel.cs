@@ -120,12 +120,17 @@ namespace Enigma.Wpf.ViewModels
 
         private void SetCurrentItems(string path)
         {
-            CurrentItems = null;
+            CurrentItems = new ObservableCollection<FileSystemItem>();
 
             var userDir = new EfsDirectory(rootDir + "\\" + path, enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey);
             foreach (var efsObject in userDir.objects)
             {
                 CurrentItems.Add(new FileSystemItem(efsObject));
+            }
+
+            if (addressBarText == "\\")
+            {
+                CurrentItems.Add(shared);
             }
         }
 
@@ -346,17 +351,19 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleDefaultAction(FileSystemItem obj)
         {
-            if (obj.Name == "ImportantDocuments")
+            if (obj.Type == FileSystemItemType.Folder || obj.Type == FileSystemItemType.SharedFolder)
             {
-                CurrentItems = new ObservableCollection<FileSystemItem>
+                if (addressBarText != "\\")
                 {
-                    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "document1.doc" },
-                    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "sheet.xls" }
-                };
+                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText + "");
+                }
+                else
+                {
+                    SetCurrentItems(enigmaEfs.currentUser.Username);
+                }
+
+                previousDir = addressBarText;
                 AddressBarText += obj.Name;
-            }
-            else if (obj == shared)
-            {
             }
             else
             {
