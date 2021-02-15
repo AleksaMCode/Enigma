@@ -183,12 +183,19 @@ namespace Enigma.Wpf.ViewModels
             {
                 try
                 {
-                    var encrypedName = enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
-                    currentItems.Add(new FileSystemItem(
-                        new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
-                        File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
+                    if (!userCertificateExpired)
+                    {
+                        var encrypedName = enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
+                        currentItems.Add(new FileSystemItem(
+                            new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
+                            File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
 
-                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                        SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                    }
+                    else
+                    {
+                        throw new Exception("You cannot import any new files beacuse your certificate has expired.");
+                    }
                 }
                 catch (Exception e)
                 {
@@ -257,6 +264,11 @@ namespace Enigma.Wpf.ViewModels
             {
                 try
                 {
+                    if (userCertificateExpired)
+                    {
+                        throw new Exception("You cannot share any new files beacuse your certificate has expired.");
+                    }
+
                     if (obj.Type == FileSystemItemType.File)
                     {
                         var fileForSharing = rootDir + addressBarText + "\\" + obj.GetEncryptedFileName();
@@ -275,7 +287,7 @@ namespace Enigma.Wpf.ViewModels
                         navigator.ShowMessage("Error", "You can only share files.");
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     navigator.ShowMessage("Error", ex.Message);
                 }
