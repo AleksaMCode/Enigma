@@ -99,6 +99,13 @@ namespace Enigma.Wpf.ViewModels
                     var password = passBox.Password;
                     var login2fa = new LoginController(pepperPath);
                     var user = login2fa.LoginPartOne(Username, password, userDatabasePath, out var db, out var userDbInfo);
+
+                    // Check if a certificate exists.
+                    if(!File.Exists(UserCertificateFilePath))
+                    {
+                        throw new Exception("Certificate file is missing.");
+                    }
+
                     login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath), db, userDbInfo);
                     // new view prompting for users private rsa key. this is the only time app asks for private rsa key.
                     navigator.GoToControl(new RsaKeyViewModel(navigator, user, db, enigmaEfsRoot));
