@@ -85,6 +85,7 @@ namespace Enigma.Models
         {
             var keyRaw = DecryptTheUserKey(File.ReadAllBytes(privateKeyPath), password);
             return new KeyFileParser(keyRaw).GetParameters();
+            //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
         }
 
         /// <summary>

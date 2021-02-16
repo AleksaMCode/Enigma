@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
@@ -35,9 +36,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Import OpenSSH PEM public RSA key <see cref="string"/> into RSAParameters.
+        /// Import OpenSSH PEM public RSA key <see cref="string"/> into <see cref="RSAParameters"/>.
         /// <param name="publicKeyInPem">User public RSA key in PEM format.</param>
-        /// <returns>Importet RSA public key.</returns>
+        /// <returns>Imported RSA public key.</returns>
         /// </summary>
         public static RSAParameters ImportPublicKey(string publicKeyInPem)
         {
@@ -45,6 +46,18 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             var publicKey = (AsymmetricKeyParameter)pr.ReadObject();
 
             return DotNetUtilities.ToRSAParameters((RsaKeyParameters)publicKey);
+        }
+
+        /// <summary>
+        /// Import OPENSSH PEM private key <see cref="byte"/>[] into <see cref="RSAParameters"/>.
+        /// </summary>
+        /// <param name="privatePemRawKey">User private RSA PEM key in raw form.</param>
+        /// <returns>Imported RSA private key.</returns>
+        public static RSAParameters ImportPrivateKey(byte[] privatePemRawKey)
+        {
+            var pr = new PemReader(new StringReader(Encoding.ASCII.GetString(privatePemRawKey)));
+            var keyPair = (AsymmetricCipherKeyPair)pr.ReadObject();
+            return DotNetUtilities.ToRSAParameters((RsaPrivateCrtKeyParameters)keyPair.Private);
         }
 
         /// <summary>
