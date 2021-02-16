@@ -122,15 +122,15 @@ namespace Enigma.Wpf.ViewModels
         {
             CurrentItems = new ObservableCollection<FileSystemItem>();
 
+            if (addressBarText == "\\")
+            {
+                CurrentItems.Add(shared);
+            }
+
             var userDir = new EfsDirectory(rootDir + "\\" + path, enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey);
             foreach (var efsObject in userDir.objects)
             {
                 CurrentItems.Add(new FileSystemItem(efsObject));
-            }
-
-            if (addressBarText == "\\")
-            {
-                CurrentItems.Add(shared);
             }
         }
 
