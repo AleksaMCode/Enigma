@@ -82,7 +82,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Compares two public RSA keys or public with private RSA key.
+        /// Compares two public RSA keys or public with private RSA key. Method compares their Modules and Exponent values.
         /// When comparing private and public keys, this method is faster than <see cref="AreKeysMatched(RSAParameters, RSAParameters)"/> method.
         /// </summary>
         /// <returns>true if the keys match, otherwise false.</returns>
