@@ -261,7 +261,7 @@ namespace Enigma.EFS.Attributes
             var signatureLength = BitConverter.ToInt32(data, offset);                                                                   // parse Signature length
             offset += 4;
             Signature = new byte[signatureLength];
-            Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature length
+            Buffer.BlockCopy(data, offset, Signature, 0, signatureLength);                                                              // parse Signature
             offset += signatureLength;
         }
 
