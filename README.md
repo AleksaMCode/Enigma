@@ -118,11 +118,11 @@ Algorithm | Variant | Output size<br>(bits)
 <a href="https://en.wikipedia.org/wiki/MD5">MD5</a> | x | 128
 <a href="https://en.wikipedia.org/wiki/SHA-1">SHA-1 | x | 160
 <a href="https://en.wikipedia.org/wiki/SHA-2">SHA-2</a> | SHA-224<br>SHA-256<br>SHA-384<br>SHA-512 | 224<br>256<br>384<br>512
-<a href="https://en.wikipedia.org/wiki/SHA-3">SHA-3</a> | SHA3-224<br>SHA3-256<br>SHA3-384<br>SHA3-512 | 224<br>256<br>384<br>512
 <a href="https://en.wikipedia.org/wiki/RIPEMD">RIPEMD</a> | RIPEMD-128<br>RIPEMD-160<br>RIPEMD-256 | 128<br>160<br>256
+<!-- <a href="https://en.wikipedia.org/wiki/SHA-3">SHA-3</a> | SHA3-224<br>SHA3-256<br>SHA3-384<br>SHA3-512 | 224<br>256<br>384<br>512 -->
 
 > **_NOTE:_**
-> <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Keep in mind that RIPEMD-128 isn't considered secure because 128-bit result and also MD2 and MD4 are obsolete.</p>
+> <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Keep in mind that RIPEMD-128 and RIPEMD-160 aren't considered secure because message digest of (at least) 224 bits must be used. RIPEMD-256 isn't recommended by NIST, so caution is advised when using it. Also, MD2 and MD4 are obsolete.</p>
 
 ## Username
 <p align="justify">Usernames are provided by the user when registering. After having a talk with my professor, I've came to conclusion that a better approach to username creation would be to add random numbers to every username. This will make a <a href="https://en.wikipedia.org/wiki/Brute-force_attack">brute force attack</a> on users account more difficult and it will also allow duplicate usernames usage. Probability of a collision when using the same username is 0.0001. If the collision does happen, user should try to register again with the same username (probability of a two consecutive collisions is 0.00000001).<br><br>I've used a similar approach to creating usernames as <a href="https://en.wikipedia.org/wiki/Discord_(software)">Discord</a>. Each username is assigned a four-digit number, prefixed with '#', which is added to the end of their username. E.q. if you choose a username <i>myname</i>, than your final username will look something like <i>myname#5642</i>.</p>
@@ -209,7 +209,7 @@ As an additional security random delimiter with random length, that varies betwe
 - [ ] Implement encryption of large files.
   - [ ] Remove 2 GB file size restriction.
   - [ ] Remove file type limitations.
-- [ ] Implement SHA-3 hashing (-224,-256,-384 and -512).
+- [ ] ~~Implement SHA-3 hashing (-224,-256,-384 and -512).~~
 - [ ] Implement [trusted timestamping](https://en.wikipedia.org/wiki/Trusted_timestamping) and TSA.
 - [ ] Implement re-login process after 5 minutes of inactivity.
 - [ ] Implement *forgot password* functionality.
