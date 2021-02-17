@@ -122,7 +122,7 @@ public enum AttributeType : uint
 
 > **_Windows file naming restrictions_**
 > 
-> Use any character in the current code page for a name, including Unicode characters and characters in the extended character set (128–255), except for the following: <b><</b>, <b>\></b>, <b>"</b>, <b>/</b>, <b>\\</b>, <b>|</b>, <b>?</b> and <b>*</b>.
+> A filename cannot contain any of the following characters: <b><</b>, <b>\></b>, <b>"</b>, <b>/</b>, <b>\\</b>, <b>|</b>, <b>?</b> and <b>*</b>.
 
 Since the Base64 encoded name can contain forbidden name symbol forward slash, '<b>/</b>' is replaced with '<b>$</b>'.
 
