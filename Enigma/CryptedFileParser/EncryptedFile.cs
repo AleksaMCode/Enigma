@@ -70,7 +70,7 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Decodes the file name and then decrypts it using the file Key and Iv values with AES-256-OFB algorithm.
+        /// Decodes the file name and then decrypts it using the file Key and Iv values with AES-OFB algorithm.
         /// </summary>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         /// <returns>Full name of the file (name + extension).</returns>
