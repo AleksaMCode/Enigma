@@ -18,8 +18,9 @@
     - [File decryption](#file-decryption)
     - [File sharing](#file-sharing)
     - [File updating](#file-updating)
+    - [File reading](#file-reading)
   - [Encrypted file](#encrypted-file)
-  - [File naming](#file-naming)
+    - [File naming](#file-naming)
     - [Enigma EFS Encrypted File Attribute Types](#enigma-efs-encrypted-file-attribute-types)
       - [Layout of the Standard Information](#layout-of-the-standard-information)
       - [Layout of the Security Descriptor](#layout-of-the-security-descriptor)
@@ -92,18 +93,21 @@
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, users account is locked preventing him to login to Enigmas EFS. Only an admin can unlock an user account. Unlocking process is followed with a mandatory user password change.</p>
 
 ### File encryption
-<p align="justify">Files are encrypted using one of the symmetric algorithm.</p>
+<p align="justify">Files are encrypted using one of the available symmetric algorithms. After user pics symmetric algorithm, hash algorithm, key size and a block cipher mode of operation file is than encrypted. First the file headers are generated, after which the original file is signed and encrypted (in that order).</p>
 
-
-
-<p align="justify"></p>
-
+> **_NOTE:_**
+> 
+> Symmetric algorithm name, hash algorithm name and IV value are not encrypted because my research has led me to believe that their exposure won't weaken <b>Enigma</b>'s security.  
 
 ### File decryption
+<p align="justify">Encrypted files are decrypted using a stored encypted Key, IV and a encryption algorithm name stored inside of files Security Descriptor header. Encrypted Key is first decrypted using a user's private RSA key after which it's used for file decryption. After file decryption, a signature is then checked to see if files integrity has been compromised.</p>
 
 ### File sharing
+<p align="justify">Every user can share his file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file Key is encrypted using a shared user's public RSA key after which it's stored inside files Security Descriptor header.</p>
 
 ### File updating
+
+### File reading
 
 ## Encrypted file
 <p align="justify"><b>Enigma EFS</b> views each encrypted file as a set of file attributes. File elements such as its name, its security information, and even its data are file attributes. Each attribute is identified by an attribute type code stored as an <code>enum</code>.</p>
@@ -117,7 +121,7 @@ public enum AttributeType : uint
     DATA = 0x80,
 } 
 ```
-## File naming
+### File naming
 <p align="justify">Every file name is encrypted using a AES algorithm in OFB mode with IV and Key stored in file header. After encryption file name is <a href="https://en.wikipedia.org/wiki/Base64">Base64</a> encoded.</p>
 
 > **_Windows file naming restrictions_**
@@ -125,7 +129,6 @@ public enum AttributeType : uint
 > A filename cannot contain any of the following characters: <b><</b>, <b>\></b>, <b>"</b>, <b>/</b>, <b>\\</b>, <b>|</b>, <b>?</b> and <b>*</b>.
 
 Since the Base64 encoded name can contain forbidden name symbol forward slash, '<b>/</b>' is replaced with '<b>$</b>'.
-
 
 ### Enigma EFS Encrypted File Attribute Types
 Attribute Type | Attribute Name | Description
