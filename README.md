@@ -299,7 +299,6 @@ As an additional security random delimiter with random length, that varies betwe
 ### Books
 <ul>
     <li><p align="justify">Dirk Strauss - <i>Cryptography in .NET</i></p></li>
-    <li><p align="justify"><a href="http://dubeyko.com/development/FileSystems/NTFS/ntfsdoc.pdf">Richard Russon, Yuval Fledel - <i>NTFS Documentation</i></a></p></li>
     <li><p align="justify">Michael Welschenbach - <i>Cryptography in C and C++</i></p></li>
     <li><p align="justify">William Stallings - <i>Cryptography and Network Security: Principles and Practice</i></p></li>
     <li><p align="justify">John F. Dooley - <i>History of Cryptography and Cryptanalysis: Codes, Ciphers, and Their Algorithms</i></p></li>
@@ -307,6 +306,10 @@ As an additional security random delimiter with random length, that varies betwe
 </ul>
 
 ### Links
+<ul>
+    <li><p align="justify"><a href="http://dubeyko.com/development/FileSystems/NTFS/ntfsdoc.pdf">Richard Russon, Yuval Fledel - <i>NTFS Documentation</i></a></p></li>
+</ul>
+
 ### Github projects
 Some of the projects that **Enigma EFS** uses, either directly or indirectly.
 - [Cryptor](https://github.com/Valyreon/cryptor-wpf-project)
