@@ -18,6 +18,11 @@
     - [File decryption](#file-decryption)
     - [File sharing](#file-sharing)
     - [File updating](#file-updating)
+  - [Encrypted file](#encrypted-file)
+    - [Enigma EFS Encrypted File Attribute Types](#enigma-efs-encrypted-file-attribute-types)
+      - [Layout of the Standard Information](#layout-of-the-standard-information)
+      - [Layout of the Security Descriptor](#layout-of-the-security-descriptor)
+      - [Layout of the Data](#layout-of-the-data)
   - [Algorithms](#algorithms)
     - [Symmetric algorithms](#symmetric-algorithms)
     - [Asymmetric algorithm](#asymmetric-algorithm)
@@ -86,12 +91,75 @@
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, users account is locked preventing him to login to Enigmas EFS. Only an admin can unlock an user account. Unlocking process is followed with a mandatory user password change.</p>
 
 ### File encryption
+<p align="justify">Files are encrypted using one of the symmetric algorithm.</p>
+
+
+
+<p align="justify"></p>
+
 
 ### File decryption
 
 ### File sharing
 
 ### File updating
+
+## Encrypted file
+<p align="justify"><b>Enigma EFS</b> views each encrypted file as a set of file attributes. File elements such as its name, its security information, and even its data are file attributes. Each attribute is identified by an attribute type code stored as an <code>enum</code>.</p>
+
+```C#
+public enum AttributeType : uint
+{
+    Unkown = 0,
+    STANDARD_INFORMATION = 0x10,
+    SECURITY_DESCRIPTOR = 0x50,
+    DATA = 0x80,
+} 
+```
+
+### Enigma EFS Encrypted File Attribute Types
+Attribute Type | Attribute Name | Description
+--- | --- | ---
+0x10 | Standard Information | Information such as access mode (read-only, read/write, and so forth) timestamp, and link count.
+0x50 | Security Descriptor | 
+0x80 | Data | File data. NTFS supports multiple data attributes per file. Each file typically has one unnamed data attribute. A file can also have one or more named data attributes.
+
+#### Layout of the Standard Information
+Offset | Size<br>(bytes) | Description
+--- | --- | ---
+0x00 | 4 | Attribute Type (0x10)
+0x04 | 4 | Total Length
+0x08 | 8 | C Time - File Creation
+0x10 | 4 | Owner Id
+0x14 | 8 | A Time - File Altered
+0x1c | 4 | A Time User Id
+0x20 | 8 | R Time - File Read
+0x28 | 4 | R time User Id
+> Total size of this header is 44 bits.
+
+#### Layout of the Security Descriptor
+Offset | Size<br>(bytes) | Description
+--- | --- | ---
+0x000 | 4 | Attribute Type (0x50)
+0x004 | 1 | Algorithm Name Signature Length
+0x005 | 11 - 13 | Algorithm Name Signature (e.q. AES-256-CBC)
+0x010 | 1 | Hash Algorithm Name Length
+0x011 | 3 - 10 | Hash Algorithm Name (e.q. SHA256)
+0x017 | 1 | IV length
+0x018 | 8 or 16 | IV
+0x028 | 4 | Owner Id
+0x02c | 4 | Number of users that have access to the file<br>(max. 4 users) - e.q. only a file owner has access to the file
+0x030 | 4 | User Id
+0x034 | 4 | Encrypted Key Length
+0x038 | 256, 384 or 512 | Encrypted Key<br>(e.q. 256 when user has 2048 bits RSA key)
+0x138 | 4 | RSA Signature Length
+0x13c | 256, 384 or 512 | RSA Signature
+
+#### Layout of the Data
+Offset | Size<br>(bytes) | Description
+--- | --- | ---
+0x00 | 4 | Attribute Type (0x80)
+0x04 | up to 2 GB | Encrypted Data
 
 ## Algorithms
 ### Symmetric algorithms
@@ -195,7 +263,7 @@ As an additional security random delimiter with random length, that varies betwe
 </ul>
 <ul>
   <li><dt>Encryption using ECB mode</dt>
-  <dd><p align="justify">When updating already encrypted file, only IV value is changed while the KEY remains the same. This is potentially a problem when using a ECB mode which doesn't requires IV because an attacker who is observing different versions of the encrypted file can perhaps deduce an opentext.</p></dd></li>
+  <dd><p align="justify">When updating already encrypted file, only IV value is changed while the KEY remains the same. This is potentially a problem when using a ECB mode which doesn't requires IV. An attacker who is observing different versions of the encrypted file can perhaps deduce an opentext.</p></dd></li>
 </ul>
 <ul>
   <li><dt>3DES encryption</dt>
@@ -218,6 +286,7 @@ As an additional security random delimiter with random length, that varies betwe
 ### Books
 <ul>
     <li><p align="justify">Dirk Strauss - <i>Cryptography in .NET</i></p></li>
+    <li><p align="justify"><a href="http://dubeyko.com/development/FileSystems/NTFS/ntfsdoc.pdf">Richard Russon, Yuval Fledel - <i>NTFS Documentation</i></a></p></li>
     <li><p align="justify">Michael Welschenbach - <i>Cryptography in C and C++</i></p></li>
     <li><p align="justify">William Stallings - <i>Cryptography and Network Security: Principles and Practice</i></p></li>
     <li><p align="justify">John F. Dooley - <i>History of Cryptography and Cryptanalysis: Codes, Ciphers, and Their Algorithms</i></p></li>
