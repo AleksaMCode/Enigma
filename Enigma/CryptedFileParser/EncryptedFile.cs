@@ -58,8 +58,8 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm and encodes it to <see href="https://en.wikipedia.org/wiki/Base64">Base64</see>.
-        /// Since Base64 contains forward slash ('/') which is a <see href="https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file">reserved character</see> which can't be used for file naming, every '/' is replaced with '$'.
+        /// Encrypts the full file name using the file Key and Iv values with AES-OFB algorithm and encodes it to <see href="https://en.wikipedia.org/wiki/Base64">Base64</see>.
+        /// Since Base64 contains forward slash ('/') which is a <see href="https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file">reserved character</see> that can't be used for file naming, every '/' is replaced with '$'.
         /// </summary>
         /// <param name="name">Full name of the file (name + extension) that is being encrypted.</param>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
