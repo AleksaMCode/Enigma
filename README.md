@@ -19,6 +19,7 @@
     - [File sharing](#file-sharing)
     - [File updating](#file-updating)
   - [Encrypted file](#encrypted-file)
+  - [File naming](#file-naming)
     - [Enigma EFS Encrypted File Attribute Types](#enigma-efs-encrypted-file-attribute-types)
       - [Layout of the Standard Information](#layout-of-the-standard-information)
       - [Layout of the Security Descriptor](#layout-of-the-security-descriptor)
@@ -116,6 +117,15 @@ public enum AttributeType : uint
     DATA = 0x80,
 } 
 ```
+## File naming
+<p align="justify">Every file name is encrypted using a AES algorithm in OFB mode with IV and Key stored in file header. After encryption file name is <a href="https://en.wikipedia.org/wiki/Base64">Base64</a> encoded.</p>
+
+> **_Windows file naming restrictions_**
+> 
+> Use any character in the current code page for a name, including Unicode characters and characters in the extended character set (128–255), except for the following: <b><</b>, <b>\></b>, <b>"</b>, <b>/</b>, <b>\\</b>, <b>|</b>, <b>?</b> and <b>*</b>.
+
+Since the Base64 encoded name can contain forbidden name symbol forward slash, '<b>/</b>' is replaced with '<b>$</b>'.
+
 
 ### Enigma EFS Encrypted File Attribute Types
 Attribute Type | Attribute Name | Description
