@@ -120,9 +120,9 @@ public enum AttributeType : uint
 ### Enigma EFS Encrypted File Attribute Types
 Attribute Type | Attribute Name | Description
 --- | --- | ---
-0x10 | Standard Information | Information such as access mode (read-only, read/write, and so forth) timestamp, and link count.
-0x50 | Security Descriptor | 
-0x80 | Data | File data. NTFS supports multiple data attributes per file. Each file typically has one unnamed data attribute. A file can also have one or more named data attributes.
+0x10 | Standard Information | Information such as creation time, modified time and read time.
+0x50 | Security Descriptor | Information such as symmetric algorithm name, hash algorithm name, IV value, encrypted Key value, Owner Id and RSA Signature data.
+0x80 | Data | Encrypted file data.
 
 #### Layout of the Standard Information
 Offset | Size<br>(bytes) | Description
