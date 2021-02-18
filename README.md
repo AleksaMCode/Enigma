@@ -15,10 +15,12 @@
       - [Login attempt limit](#login-attempt-limit)
       - [Nuclear switch](#nuclear-switch)
     - [Add file](#add-file)
+    - [Create and add new <code>.txt</code> file](#create-and-add-new-txt-file)
     - [Remove file](#remove-file)
     - [File sharing](#file-sharing)
     - [File unsharing](#file-unsharing)
     - [File updating](#file-updating)
+    - [<code>.txt</code> file updating](#txt-file-updating)
     - [File reading](#file-reading)
   - [Encrypted file](#encrypted-file)
     - [File encryption](#file-encryption)
@@ -96,8 +98,13 @@
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, users account is locked preventing him to login to Enigmas EFS. Only an admin can unlock an user account. Unlocking process is followed with a mandatory user password change.</p>
 
 ### Add file
+<p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported.</p>
+
+### Create and add new <code>.txt</code> file
+<p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using build-in application text editor.</p>
 
 ### Remove file
+<p align="justify">Users can simply delete their files without any restrictions.</p>
 
 ### File sharing
 <p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
@@ -111,6 +118,9 @@
 > **_NOTE:_**
 > 
 > Filename will be changed since the file's IV is also changed.
+
+### <code>.txt</code> file updating
+<p align="justify">User can update <code>.txt</code> files stored on <b>Enigma EFS</b> by using build-in application text editor. This update requires file to be decrypted first before allowing user to change context of the <code>.txt</code> file.</p>
 
 ### File reading
 <p align="justify">User can view encrypted files that are stored on <b>Enigma EFS</b>. File is first decrypted and stored on FS in temp directory. Method used for file reading checks for the existence of environment variables in the following order and uses the first path found:
@@ -166,7 +176,7 @@ Since the Base64 encoded name can contain forbidden name symbol forward slash, '
 Attribute Type | Attribute Name | Description
 --- | --- | ---
 0x10 | Standard Information | Information such as creation time, modified time and read time.
-0x50 | Security Descriptor | Information such as symmetric algorithm name, hash algorithm name, IV value, encrypted Key value, Owner Id and RSA Signature data.
+0x50 | Security Descriptor | <p align="justify">Information such as symmetric algorithm name, hash algorithm name, IV value, encrypted Key value, Owner Id and RSA Signature data.</p>
 0x80 | Data | Encrypted file data.
 
 #### Layout of the Standard Information
@@ -193,7 +203,7 @@ Offset | Size<br>(bytes) | Description
 0x017 | 1 | IV length
 0x018 | 8 or 16 | IV
 0x028 | 4 | Owner Id
-0x02c | 4 | Number of users that have access to the file<br>(max. 4 users) - e.q. only a file owner has access to the file
+0x02c | 4 | <p align="justify">Number of users that have access to the file (max. 4 users)<br> e.q. only a file owner has access to the file</p>
 0x030 | 4 | User Id
 0x034 | 4 | Encrypted Key Length
 0x038 | 256, 384 or 512 | Encrypted Key<br>(e.q. 256 when user has 2048 bits RSA key)
