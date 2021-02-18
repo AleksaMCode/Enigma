@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Enigma.Models;
 using Enigma.UserDbManager;
@@ -16,6 +17,7 @@ namespace Enigma.Wpf.ViewModels
     {
         private readonly INavigator navigator;
         private string username;
+        private string certificatePath;
         private PrivateKeyOption privateKeySignupOption;
 
         public InitialFormViewModel(INavigator mainWindowViewModel)
@@ -27,6 +29,25 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand SignUpCommand => new RelayCommand<PasswordBox>(HandleRegister);
 
+        public ICommand ChooseCertificateCommand => new RelayCommand<PasswordBox>(HandleChooseCertificate);
+
+        private void HandleChooseCertificate(PasswordBox obj)
+        {
+            using var fileChooseDialog = new OpenFileDialog
+            {
+                ValidateNames = true,
+                CheckFileExists = true,
+                CheckPathExists = true
+            };
+
+            var x = fileChooseDialog.ShowDialog();
+
+            if (x == DialogResult.OK)
+            {
+                CertificatePath = fileChooseDialog.FileName;
+            }
+        }
+
         [Required(ErrorMessage = "Username is required for login.")]
         public string Username
         {
@@ -34,7 +55,13 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => Username, ref username, value);
         }
 
-        // Luka please remove this.
+        [Required(ErrorMessage = "Certificate is required for login.")]
+        public string CertificatePath
+        {
+            get => certificatePath;
+            set => Set(() => CertificatePath, ref certificatePath, value);
+        }
+
         public PrivateKeyOption PrivateKeySignupOption
         {
             get => privateKeySignupOption;
