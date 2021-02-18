@@ -4,6 +4,7 @@ using System.Text;
 using Enigma.AlgorithmLibrary;
 using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.EFS.Attributes;
+using Org.BouncyCastle.Crypto;
 
 namespace Enigma.CryptedFileParser
 {
@@ -57,8 +58,8 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Encrypts the full file name using the file Key and Iv values with AES-256-OFB algorithm and encodes it to <see href="https://en.wikipedia.org/wiki/Base64">Base64</see>.
-        /// Since Base64 contains forward slash ('/') which is a <see href="https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file">reserved character</see> which can't be used for file naming, every '/' is replaced with '$'.
+        /// Encrypts the full file name using the file Key and Iv values with AES-OFB algorithm and encodes it to <see href="https://en.wikipedia.org/wiki/Base64">Base64</see>.
+        /// Since Base64 contains forward slash ('/') which is a <see href="https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file">reserved character</see> that can't be used for file naming, every '/' is replaced with '$'.
         /// </summary>
         /// <param name="name">Full name of the file (name + extension) that is being encrypted.</param>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
@@ -69,7 +70,7 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Decodes the file name and then decrypts it using the file Key and Iv values with AES-256-OFB algorithm.
+        /// Decodes the file name and then decrypts it using the file Key and Iv values with AES-OFB algorithm.
         /// </summary>
         /// <param name="aes">AES algorithm used for decryption of the full file name.</param>
         /// <returns>Full name of the file (name + extension).</returns>
@@ -81,20 +82,20 @@ namespace Enigma.CryptedFileParser
         /// <summary>
         /// Encrypts original file using set parameters.
         /// </summary>
-        /// <param name="originalFile">Original, un-encrypted file.</param>
+        /// <param name="originalFile">Original, unencrypted file.</param>
         /// <param name="userId">Id of the user who is encrypting original file.</param>
         /// <param name="userPrivateKey">Private RSA key of the user encrypting the file.</param>
         /// <returns>Encrypted file in its raw form.</returns>
         public byte[] Encrypt(OriginalFile originalFile, int userId, RSAParameters userPrivateKey)
         {
             // create a file signature
-            ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).
-                CreateSignature(originalFile.FileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName));
+            SignFile(originalFile.FileContent, ref userPrivateKey);
 
             Headers[2] = new Data(originalFile.FileContent,
-                AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
+                AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature,
+                ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
 
-            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;                    
+            ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
 
             return Flush();
         }
@@ -134,19 +135,9 @@ namespace Enigma.CryptedFileParser
             }
 
             // if file signature isn't valid Exception will be thrown!
-            if (new RsaAlgorithm(ownerPublicKey)
-                .VerifySignature(fileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName), ((SecurityDescriptor)Headers[1]).Signature))
-            {
-                // update encrypted file ReadTime and RTimeUserId
-                ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
-                ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
-
-                return new OriginalFile(fileContent, fileName);
-            }
-            else
-            {
-                throw new CryptographicException("File integrity has been compromised.");
-            }
+            return CheckFileSignature(fileContent, userId, ownerPublicKey)
+                ? new OriginalFile(fileContent, fileName)
+                : throw new CryptographicException("File integrity has been compromised.");
         }
 
         /// <summary>
@@ -177,19 +168,93 @@ namespace Enigma.CryptedFileParser
             ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(oldEncryptedFile, ref offset);
 
             // update file signature
-            ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).
-                CreateSignature(updateFile.FileContent, AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName));
+            SignFile(updateFile.FileContent, ref userPrivateKey);
+
 
             // update IV value
             new RNGCryptoServiceProvider().GetBytes(((SecurityDescriptor)Headers[1]).IV);
 
             Headers[2] = new Data(updateFile.FileContent,
-                            AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
+                            AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature,
+                            ((SecurityDescriptor)Headers[1]).GetKey(userId, userPrivateKey), ((SecurityDescriptor)Headers[1]).IV));
 
             // update the file size
             ((StandardInformation)Headers[0]).TotalLength = (uint)((Data)Headers[2]).EncryptedData.Length;
 
             return Flush();
+        }
+
+        /// <summary>
+        /// Creates a file signature using the unencripted data and user private RSA key.
+        /// </summary>
+        /// <param name="data">Original, unencrypted file in raw format.</param>
+        /// <param name="userPrivateKey">Private RSA key of the user encrypting the file.</param>
+        private void SignFile(byte[] data, ref RSAParameters userPrivateKey)
+        {
+            try
+            {
+                // Exception will be thrown if the hashing algoritm is MD2, MD4 or RIPEMD.
+                var hashAlgo = AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+                ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).CreateSignature(data, hashAlgo);
+            }
+            catch (CryptographicException)
+            {
+                var hashAlgo = AlgorithmUtility.GetHashSignerFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+                ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).CreateSignature(data, hashAlgo);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the file signature is valid.
+        /// </summary>
+        /// <param name="data">Original, decrypted file in raw format.</param>
+        /// <param name="userId">Id of the user decrypting the file.</param>
+        /// <param name="ownerPublicKey">Public RSA key of the file owner used to verify file signature.</param>
+        /// <returns>true if the signature is valid, otherwise false.</returns>
+        private bool CheckFileSignature(byte[] data, int userId, RSAParameters ownerPublicKey)
+        {
+            try
+            {
+                var hashAlgo = AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+                return CheckFileSignatureHelper(data, userId, ownerPublicKey, hashAlgo);
+            }
+            catch (CryptographicException)
+            {
+                var hashAlgo = AlgorithmUtility.GetHashSignerFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
+                return CheckFileSignatureHelper(data, userId, ownerPublicKey, hashAlgo);
+            }
+        }
+
+        private bool CheckFileSignatureHelper(byte[] data, int userId, RSAParameters ownerPublicKey, HashAlgorithm hashAlgo)
+        {
+            if (new RsaAlgorithm(ownerPublicKey).VerifySignature(data, hashAlgo, ((SecurityDescriptor)Headers[1]).Signature))
+            {
+                // update encrypted file ReadTime and RTimeUserId
+                ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+                ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool CheckFileSignatureHelper(byte[] data, int userId, RSAParameters ownerPublicKey, ISigner hashAlgo)
+        {
+            if (new RsaAlgorithm(ownerPublicKey).VerifySignature(data, hashAlgo, ((SecurityDescriptor)Headers[1]).Signature))
+            {
+                // update encrypted file ReadTime and RTimeUserId
+                ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+                ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

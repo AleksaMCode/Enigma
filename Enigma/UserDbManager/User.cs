@@ -59,19 +59,24 @@ namespace Enigma.UserDbManager
 
         /// <summary>
         /// Value used to lock user account. Set to false (0) by default or to true (1) is user account has been locked.
-        /// When user cant login if the values is set to true.
+        /// User can't login if the values is set to true.
         /// </summary>
         public int Locked { get; set; }
+
+        /// <summary>
+        /// Users certificate expiration date.
+        /// </summary>
+        public string CertificateExpirationDate { get; set; }
 
         /// <summary>
         /// Checks if the entered user password matches the hash stored in the database.
         /// </summary>
         /// <param name="password">Entered user password.</param>
         /// <returns>true if passwords match, otherwise false.</returns>
-        public bool IsPasswordValid(string password)
+        public bool IsPasswordValid(string password, byte[] pepper)
         {
             var passBytes = Encoding.ASCII.GetBytes(password);
-            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(UserDatabase.Pepper).ToArray());
+            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(pepper).ToArray());
 
             // from March 2019., NIST recommends 80,000 iterations
             using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, Salt, 80_000, HashAlgorithmName.SHA256);

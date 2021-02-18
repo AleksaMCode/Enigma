@@ -7,16 +7,42 @@ using Enigma.UserDbManager;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// Represents login controler used to enforce projects login security policies realised as 2FA.
+    /// </summary>
     public class LoginController
     {
-        private readonly string userDatabasePath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\Users.db";
 
-        public UserInformation LoginPartOne(string username, string password, out UserDatabase data)
+        /// <summary>
+        /// Pepper file path on FS.
+        /// </summary>
+        private readonly string pepperPath;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginController"/> class using a password pepper path that is stored on FS.
+        /// </summary>
+        /// <param name="pepperPath">Path to Enigma Pepper value that is stored in config file.</param>
+        public LoginController(string pepperPath)
         {
-            var dataComp = new UserDatabase(userDatabasePath);
+            this.pepperPath = pepperPath;
+        }
+
+        /// <summary>
+        /// First part of 2FA.
+        /// </summary>
+        /// <param name="username">Users username.</param>
+        /// <param name="password">Users password.</param>
+        /// <param name="userDatabasePath">Path to users database stored in config file.</param>
+        /// <param name="db">Enigmas user database.</param>
+        /// <param name="userDbInfo">User information.</param>
+        /// <returns>Logged in user information.</returns>
+        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, out UserDatabase db, out User userDbInfo)
+        {
+            var dataComp = new UserDatabase(userDatabasePath, pepperPath);
 
             var user = dataComp.GetUser(username);
 
+            // if user has entered his mistyped his password three times
             if (user != null && user.LoginAttempt == 3)
             {
                 // delete all users files
@@ -29,13 +55,14 @@ namespace Enigma.Models
                 throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
-            if (user != null && user.IsPasswordValid(password))
+            // if user has entered correct password
+            if (user != null && user.IsPasswordValid(password, dataComp.Pepper))
             {
-                dataComp.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
-                dataComp.ResetLoginAttempts(user);
-                data = dataComp;
+                db = dataComp;
+                userDbInfo = user;
                 return new UserInformation(user);
             }
+            // if user has entered incorrect password
             else
             {
                 dataComp.LoginAttemptIncrement(user);
@@ -43,30 +70,45 @@ namespace Enigma.Models
             }
         }
 
-        public void LoginPartTwo(UserInformation user, byte[] certificate)
+        /// <summary>
+        /// Second part of 2FA.
+        /// </summary>
+        /// <param name="user">User information.</param>
+        /// <param name="certificate">User <see cref="X509Certificate2"/> public certificate in raw form.</param>
+        public void LoginPartTwo(UserInformation user, byte[] certificate, UserDatabase db, User userDbInfo)
         {
             var userCert = new X509Certificate2(certificate);
             var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
 
+            // compare user public RSA key from x509 public certificate with a public RSA key that was stored when user first registered
             if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, user.PublicKey))
             {
                 throw new Exception("Wrong certificate used.");
             }
-
+            // if wrong file is loaded instead of the x509 public certificate in PEM format
             if (userCert == null)
             {
                 throw new Exception("Certificate error.");
             }
 
-            if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
+            // update user last login time and reset atttemp count
+            db.UpdateLoginTime(userDbInfo, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+
+            // reset login attempt if necessary
+            if (userDbInfo.LoginAttempt != 0)
             {
-                throw new Exception(errorMsg);
+                db.ResetLoginAttempts(userDbInfo);
             }
 
-            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
-            {
-                throw new Exception("Certificate has been revoked.");
-            }
+            //if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
+            //{
+            //    throw new Exception(errorMsg);
+            //}
+
+            //if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+            //{
+            //    throw new Exception("Certificate has been revoked.");
+            //}
         }
 
         //public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)

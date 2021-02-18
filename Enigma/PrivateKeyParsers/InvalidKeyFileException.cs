@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace Enigma.PrivateKeyParsers
 {
+    /// <summary>
+    /// Class from a <see href="https://github.com/Valyreon/cryptor-wpf-project">Cryptor project</see>.
+    /// </summary>
     public class InvalidKeyFileException : Exception
     {
         public InvalidKeyFileException()

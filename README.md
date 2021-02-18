@@ -18,10 +18,18 @@
     - [File decryption](#file-decryption)
     - [File sharing](#file-sharing)
     - [File updating](#file-updating)
+    - [File reading](#file-reading)
+  - [Encrypted file](#encrypted-file)
+    - [File naming](#file-naming)
+    - [Enigma EFS Encrypted File Attribute Types](#enigma-efs-encrypted-file-attribute-types)
+      - [Layout of the Standard Information](#layout-of-the-standard-information)
+      - [Layout of the Security Descriptor](#layout-of-the-security-descriptor)
+      - [Layout of the Data](#layout-of-the-data)
   - [Algorithms](#algorithms)
     - [Symmetric algorithms](#symmetric-algorithms)
     - [Asymmetric algorithm](#asymmetric-algorithm)
     - [Hashing algorithms](#hashing-algorithms)
+  - [Username](#username)
   - [Passwords and keys](#passwords-and-keys)
     - [Password guidelines](#password-guidelines)
     - [Password Entropy](#password-entropy)
@@ -75,7 +83,7 @@
 </p>
 
 ### Login
-<p align="justify">To access Enigmas EFS user needs to login. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user needs to provide <i>Username</i> and <i>Password</i> (something only the user knows). If the entered password matches the hash value stored for the user in the Enigmas database, user will be prompted to provide his certificate (something only the user has). After checking if the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. If the login attempt is successful, user is granted access to EFS.
+<p align="justify">To access <b>Enigmas EFS</b> user needs to login first. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user needs to provide <i>Username</i> and <i>Password</i> (something only user knows). If the entered password matches the hash value stored for the user in the Enigmas database, user will be prompted to provide his certificate (something only the user has). After checking if the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. If the login attempt is successful, user is granted access to EFS.
 </p>
 
 #### Login attempt limit
@@ -85,12 +93,86 @@
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, users account is locked preventing him to login to Enigmas EFS. Only an admin can unlock an user account. Unlocking process is followed with a mandatory user password change.</p>
 
 ### File encryption
+<p align="justify">Files are encrypted using one of the available symmetric algorithms. After user pics symmetric algorithm, hash algorithm, key size and a block cipher mode of operation file is than encrypted. First the file headers are generated, after which the original file is signed and encrypted (in that order).</p>
+
+> **_NOTE:_**
+> 
+> Symmetric algorithm name, hash algorithm name and IV value are not encrypted because my research has led me to believe that their exposure won't weaken <b>Enigma</b>'s security.  
 
 ### File decryption
+<p align="justify">Encrypted files are decrypted using a stored encypted Key, IV and a encryption algorithm name stored inside of files Security Descriptor header. Encrypted Key is first decrypted using a user's private RSA key after which it's used for file decryption. After file decryption, a signature is then checked to see if files integrity has been compromised.</p>
 
 ### File sharing
+<p align="justify">Every user can share his file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file Key is encrypted using a shared user's public RSA key after which it's stored inside files Security Descriptor header.</p>
 
 ### File updating
+
+### File reading
+
+## Encrypted file
+<p align="justify"><b>Enigma EFS</b> views each encrypted file as a set of file attributes. File elements such as its name, its security information, and even its data are file attributes. Each attribute is identified by an attribute type code stored as an <code>enum</code>.</p>
+
+```C#
+public enum AttributeType : uint
+{
+    Unkown = 0,
+    STANDARD_INFORMATION = 0x10,
+    SECURITY_DESCRIPTOR = 0x50,
+    DATA = 0x80,
+} 
+```
+### File naming
+<p align="justify">Every file name is encrypted using a AES algorithm in OFB mode with IV and Key stored in file header. After encryption file name is <a href="https://en.wikipedia.org/wiki/Base64">Base64</a> encoded.</p>
+
+> **_Windows file naming restrictions_**
+> 
+> A filename cannot contain any of the following characters: <b><</b>, <b>\></b>, <b>"</b>, <b>/</b>, <b>\\</b>, <b>|</b>, <b>?</b> and <b>*</b>.
+
+Since the Base64 encoded name can contain forbidden name symbol forward slash, '<b>/</b>' is replaced with '<b>$</b>'.
+
+### Enigma EFS Encrypted File Attribute Types
+Attribute Type | Attribute Name | Description
+--- | --- | ---
+0x10 | Standard Information | Information such as creation time, modified time and read time.
+0x50 | Security Descriptor | Information such as symmetric algorithm name, hash algorithm name, IV value, encrypted Key value, Owner Id and RSA Signature data.
+0x80 | Data | Encrypted file data.
+
+#### Layout of the Standard Information
+Offset | Size<br>(bytes) | Description
+--- | --- | ---
+0x00 | 4 | Attribute Type (0x10)
+0x04 | 4 | Total Length
+0x08 | 8 | C Time - File Creation
+0x10 | 4 | Owner Id
+0x14 | 8 | A Time - File Altered
+0x1c | 4 | A Time User Id
+0x20 | 8 | R Time - File Read
+0x28 | 4 | R time User Id
+> Total size of this header is 44 bits.
+
+#### Layout of the Security Descriptor
+Offset | Size<br>(bytes) | Description
+--- | --- | ---
+0x000 | 4 | Attribute Type (0x50)
+0x004 | 1 | Algorithm Name Signature Length
+0x005 | 11 - 13 | Algorithm Name Signature (e.q. AES-256-CBC)
+0x010 | 1 | Hash Algorithm Name Length
+0x011 | 3 - 10 | Hash Algorithm Name (e.q. SHA256)
+0x017 | 1 | IV length
+0x018 | 8 or 16 | IV
+0x028 | 4 | Owner Id
+0x02c | 4 | Number of users that have access to the file<br>(max. 4 users) - e.q. only a file owner has access to the file
+0x030 | 4 | User Id
+0x034 | 4 | Encrypted Key Length
+0x038 | 256, 384 or 512 | Encrypted Key<br>(e.q. 256 when user has 2048 bits RSA key)
+0x138 | 4 | RSA Signature Length
+0x13c | 256, 384 or 512 | RSA Signature
+
+#### Layout of the Data
+Offset | Size<br>(bytes) | Description
+--- | --- | ---
+0x00 | 4 | Attribute Type (0x80)
+0x04 | up to 2 GB | Encrypted Data
 
 ## Algorithms
 ### Symmetric algorithms
@@ -101,26 +183,34 @@ ALGORITHM<br>NAME | BLOCK CIPHER<br>MODE OF OPERATION | KEY SIZE<br>(bits) | BLO
 <a href="https://en.wikipedia.org/wiki/Camellia_(cipher)">Camellia</a> | ECB, CBC, CFB, OFB | 128, 192 and 256 | 128 
 <a href="https://en.wikipedia.org/wiki/Triple_DES">3DES</a> | ECB, CBC, CFB, OFB | 192 | 64
 <a href="https://www.schneier.com/academic/archives/1998/12/the_twofish_encrypti.html">Twofish</a> | ECB, CBC, CFB, OFB | 128, 192 and 256 | 128
-<p align="justify"><b>*</b> I don't recomment ECB mode because it's not <a href="https://en.wikipedia.org/wiki/Semantic_security">semantically secure</a>. The only time it could be safe to use is if its used for encryption of data smaller than 128 bits when using with AES, Camellia or Twofish, or 64 bits when using 3DES.</p>
+> **_NOTE:_**
+> <p align="justify"> I don't recomment ECB mode because it's not <a href="https://en.wikipedia.org/wiki/Semantic_security">semantically secure</a>. The only time it could be safe to use is if its used for encryption of data smaller than 128 bits when using with AES, Camellia or Twofish, or 64 bits when using with 3DES.</p>
 
 ### Asymmetric algorithm
-RSA cryptosystem is the only asymmetric algorithm implemented. Its used for symmetric key encryption and generating a digital signature of files.
+RSA cryptosystem is the only asymmetric algorithm implemented. It's used for symmetric key encryption and for generating a digital signature of files.
 
 ### Hashing algorithms
 Hashing algorithms that are implemented in <b>Enigma EFS</b>.
 
 Algorithm | Variant | Output size<br>(bits)
 | --- | :---: | :---:
+<a href="https://en.wikipedia.org/wiki/MD2_(hash_function)">MD2</a> | x | 128
+<a href="https://en.wikipedia.org/wiki/MD4">MD4</a> | x | 128
 <a href="https://en.wikipedia.org/wiki/MD5">MD5</a> | x | 128
 <a href="https://en.wikipedia.org/wiki/SHA-1">SHA-1 | x | 160
-<a href="https://en.wikipedia.org/wiki/SHA-2">SHA-2</a> | SHA-256<br>SHA-384<br>SHA-512 | 256<br>384<br>512
-<a href="https://en.wikipedia.org/wiki/SHA-3">SHA-3</a> | SHA3-224<br>SHA3-256<br>SHA3-384<br>SHA3-512 | 224<br>256<br>384<br>512
+<a href="https://en.wikipedia.org/wiki/SHA-2">SHA-2</a> | SHA-224<br>SHA-256<br>SHA-384<br>SHA-512 | 224<br>256<br>384<br>512
+<a href="https://en.wikipedia.org/wiki/RIPEMD">RIPEMD</a> | RIPEMD-128<br>RIPEMD-160<br>RIPEMD-256 | 128<br>160<br>256
+<!-- <a href="https://en.wikipedia.org/wiki/SHA-3">SHA-3</a> | SHA3-224<br>SHA3-256<br>SHA3-384<br>SHA3-512 | 224<br>256<br>384<br>512 -->
 
-<p align="justify"><b>*</b> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions.</p>
+> **_NOTE:_**
+> <p align="justify"> MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Keep in mind that RIPEMD-128 and RIPEMD-160 aren't considered secure because message digest of (at least) 224 bits must be used. RIPEMD-256 isn't recommended by NIST, so caution is advised when using it. Also, MD2 and MD4 are obsolete.</p>
+
+## Username
+<p align="justify">Username is provided by the user when registering. After having a talk with my professor, I've came to conclusion that a better approach to username creation would be to add random numbers to every username. This will make a <a href="https://en.wikipedia.org/wiki/Brute-force_attack">brute force attack</a> on users account more difficult and it will also allow duplicate username usage. Probability of a collision when using the same username is 0.0001. If the collision does happen, user should try to register again with the same username (probability of a two consecutive collisions is 0.00000001).<br><br>I've used a similar approach to creating usernames as <a href="https://en.wikipedia.org/wiki/Discord_(software)#User_profiles">Discord</a>. Each username is assigned a four-digit number, prefixed with '#', which is added to the end of their username. E.q. if you choose a username <i>myname</i>, than your final username will look something like <i>myname#5642</i>.</p>
 
 ## Passwords and keys
 ### Password guidelines
-<p align="justify">Guidelines for choosing good passwords are typically designed to make passwords harder to discover by intelligent guessing. All the guidelines are NIST compliant. <p>
+<p align="justify">Guidelines for choosing good passwords are typically designed to make passwords harder to discover by intelligent guessing. All the guidelines are NIST compliant.<p>
 <ol>
     <li><p align="justify">Memorized secrets are at least 8 characters in length not including spaces.</p></li>
     <li><p align="justify">Passwords are only required to be changed if there is evidence of compromise.</p></li>
@@ -133,7 +223,7 @@ Algorithm | Variant | Output size<br>(bits)
 
 ### Password Entropy
 <p align="justify">In <b>Enigma EFS</b> password strength is specified in terms of <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">entropy</a> (concept from <a href="https://en.wikipedia.org/wiki/Information_theory">information theory</a>) which is measured in bits. For passwords generated by a process that randomly selects a string of symbols of length, L, from a set of N possible symbols, the number of possible passwords can be found by raising the number of symbols to the power L. Increasing either L or N will strengthen the generated password. The strength of a random password as measured by the <a href="https://en.wikipedia.org/wiki/Claude_Shannon">Shannons</a> entropy is just the base-2 logarithm of the number of possible passwords, assuming each symbol in the password is produced independently. Random password's information entropy, H, is given by the formula:</p>
-<p align="center"><img src="./resources/information_entropy.png">.</p>
+<p align="center"><img src="./resources/information_entropy.png" style="vertical-align: -0.505ex">.</p>
 <p align="justify">Entropy per symbol for different symbol sets:</p>
 
 SYMBOL SET | SYMBOL<br>COUNT | ENTROPY PER<br>SYMBOL
@@ -146,11 +236,12 @@ Case sensitive alphanumeric<br>(a–z, A–Z, 0–9) | 65 | 5.954 bits
 All ASCII printable characters | 95 | 6.570 bits
 Diceware word list | 7776 | 12.925 bits<br>per word
 
-<p align="justify"><b>Note:</b> NIST recommends dropping the arbitrary password complexity requirements needing mixtures of upper case letters, symbols and numbers. Based on cracking real-world passwords conclude "<i>notion of password entropy...does not provide a valid metric for measuring the security provided by password creation policie</i>". However, I have implemented Shannon's entropy in <b>Enigma EFS</b> despite it not being a good predictor of how quickly attackers can crack passwords.</p>
+> **_NOTE:_**
+> <p align="justify">NIST recommends dropping the arbitrary password complexity requirements needing mixtures of upper case letters, symbols and numbers. Based on cracking real-world passwords conclude "<i>notion of password entropy...does not provide a valid metric for measuring the security provided by password creation policie</i>". However, I have implemented Shannon's entropy in <b>Enigma EFS</b> despite it not being a good predictor of how quickly attackers can crack passwords.</p>
 
 ### Passphrase
-<p align="justify"><img src="./resources/xkcd_password_strength.png" width="350" title="xkcd illustration" align="left" hspace="5" vspace="5">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma EFS</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domain of <img src="./resources/diceware_domain.png" title="diceware domain" width="100">, that provides anywhere from 78 to 128 bits of entropy.
-Number 7,776 (<img src="./resources/diceware_7776.png" width="65" align="down">) was chosen to allow words to be selected by throwing dice five times.  Every dice throw is simulated by CSPRNG.
+<p align="justify"><img src="./resources/xkcd_password_strength.png" width="350" title="xkcd illustration" align="left" hspace="5" vspace="5">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma EFS</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domain of <img src="./resources/diceware_domain.png" title="diceware domain" style="vertical-align: -0.505ex" width="100">, that provides anywhere from 78 to 128 bits of entropy.
+Number 7,776 (<img src="./resources/diceware_7776.png" width="65" style="vertical-align: -0.505ex">) was chosen to allow words to be selected by throwing dice five times.  Every dice throw is simulated by CSPRNG.
 As an additional security random delimiter with random length, that varies between 3 and 5 charters (ASCII chars between 0x20 and 0x41), is used.</p>
 
 ### Password protection and storage
@@ -159,11 +250,11 @@ As an additional security random delimiter with random length, that varies betwe
 <p align="justify">A supplementary approach to frustrating brute-force attacks is to derive the key from the password/passphrase using a deliberately slow hash function. <b>Enigma EFS</b> uses NIST recommended key derivation function <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a>. One weakness of PBKDF2 is that while its number of iterations can be adjusted to make it take an arbitrarily large amount of computing time, it's not a memory-hard function. A function that is not only time-hard but also memory-hard like <a href="https://en.wikipedia.org/wiki/Balloon_hashing">Balloon</a> or <a href="https://en.wikipedia.org/wiki/Argon2">Argon2</a> could add more security to the system.</p>
 
 ### RSA key encryption and hidding
-<p align="justify">When first creating an account, every user is prompted to encrypt his private RSA key using his password. Unlike a user account password, RSA password doesn't need to have a high entropy. The only limitation is that is has to be at least 8 characters long. Every RSA key is encrypted using AES-256-OFB algorithm. Key and Iv are derived from the users password using a SHA-512 hashing algorithm.</p>
+<p align="justify">When first creating an account, every user is prompted to encrypt his private RSA key using his password. Unlike a user account password, RSA password doesn't need to have a high entropy. The only limitation is that is has to be at least 8 characters long. Every RSA key is encrypted using AES-OFB algorithm. Key and IV are derived from the users password using a SHA-512 hashing algorithm.</p>
 
 #### <i>Needle in a Haystack</i> Steganography
 <p align="justify">After encryption, encrypted RSA key is hidden in a haystack of CSPRNG random data which is than stored on FS or on a user USB. Haystack size is always random and its size is given by the formula:</p>
-<p align="center"><img src="./resources/haystack-size.png"></p>
+<p align="center"><img src="./resources/haystack-size.png" style="vertical-align: -0.505ex"></p>
 <p align="justify">The idea was to hide a block of useful data in a much larger block of random data which will virtually indistinguishable from our hidden data. Given that description, a better name would perhaps be a <i>needle in a stack of needles</i>. Does this actually increase the security of the private key? I'm not really sure, there is good chance this is a good example of <a href="https://en.wikipedia.org/wiki/Security_theater">security theater</a>. What I do know is that the private RSA key should be secure as long as the users password is strong and kept a secret. If users RSA key is stored on a USB it should have an added security advantage compared to key stored on FS duo to <a href="https://en.wikipedia.org/wiki/Physical_security">physical security</a>.</p>
 
 ##### Haystack structure
@@ -185,7 +276,7 @@ As an additional security random delimiter with random length, that varies betwe
 </ul>
 <ul>
   <li><dt>Encryption using ECB mode</dt>
-  <dd><p align="justify">When updating already encrypted file, only IV value is changed while the KEY remains the same. This is potentially a problem when using a ECB mode which doesn't requires IV because an attacker who is observing different versions of the encrypted file can perhaps deduce an opentext.</p></dd></li>
+  <dd><p align="justify">When updating already encrypted file, only IV value is changed while the KEY remains the same. This is potentially a problem when using a ECB mode which doesn't requires IV. An attacker who is observing different versions of the encrypted file can perhaps deduce an opentext.</p></dd></li>
 </ul>
 <ul>
   <li><dt>3DES encryption</dt>
@@ -199,7 +290,7 @@ As an additional security random delimiter with random length, that varies betwe
 - [ ] Implement encryption of large files.
   - [ ] Remove 2 GB file size restriction.
   - [ ] Remove file type limitations.
-- [ ] Implement SHA-3 hashing (-224,-256,-384 and -512).
+- [ ] ~~Implement SHA-3 hashing (-224,-256,-384 and -512).~~
 - [ ] Implement [trusted timestamping](https://en.wikipedia.org/wiki/Trusted_timestamping) and TSA.
 - [ ] Implement re-login process after 5 minutes of inactivity.
 - [ ] Implement *forgot password* functionality.
@@ -215,9 +306,14 @@ As an additional security random delimiter with random length, that varies betwe
 </ul>
 
 ### Links
+<ul>
+    <li><p align="justify"><a href="http://dubeyko.com/development/FileSystems/NTFS/ntfsdoc.pdf">Richard Russon, Yuval Fledel - <i>NTFS Documentation</i></a></p></li>
+</ul>
+
 ### Github projects
 Some of the projects that **Enigma EFS** uses, either directly or indirectly.
 - [Cryptor](https://github.com/Valyreon/cryptor-wpf-project)
+- [SecLists](https://github.com/danielmiessler/SecLists)
 - [RSA keys](https://gist.github.com/valep27/4a720c25b35fff83fbf872516f847863)
 - [Bouncy Castle](https://github.com/bcgit/bc-csharp)
 - [NTFS simulator](https://github.com/AleksaMCode/ntfs-simulator)

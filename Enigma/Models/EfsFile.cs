@@ -7,7 +7,7 @@ using Enigma.EFS.Attributes;
 namespace Enigma.Models
 {
     /// <summary>
-    /// An MVVM model class used for representing Enigma encrypted files.
+    /// Represents Enigma encrypted files.
     /// </summary>
     public class EfsFile : IEfsStorageObject
     {
@@ -16,12 +16,14 @@ namespace Enigma.Models
         /// <summary>
         /// Unencrypted name of the file.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = null;
 
         /// <summary>
         /// Encrypted name of the file.
         /// </summary>
-        public string EncryptedName { get; set; }
+        public string EncryptedName { get; set; } = null;
+
+        public int OwnerId { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EfsFile"/> class using specified parameters.
@@ -47,6 +49,7 @@ namespace Enigma.Models
             var offset = 44; // we are skipping StandardInformation header
             var securityDescriptorHeader = new SecurityDescriptor();
             securityDescriptorHeader.ParseSecurityDescriptor(file, ref offset);
+            OwnerId = securityDescriptorHeader.OwnerId;
 
             try
             {
@@ -56,7 +59,7 @@ namespace Enigma.Models
             // When reading files in Shared folder, users who don't have approved access will be able to see files in folder but won't be able to read them or see their real names.
             catch (Exception)
             {
-                Name = EncryptedName;
+                //Name = EncryptedName;
             }
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -15,16 +16,17 @@ namespace Enigma.UserDbManager
         /// Cprng value used for password hashing.
         /// NIST require a pepper to be at least 112 b (14 B) long. This recommendation is valid up until 2030.
         /// </summary>
-        public static byte[] Pepper { get; } = new byte[16];
+        public byte[] Pepper { get; } = new byte[16];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserDatabase"/> class with a databese and stores a pepper value from the filesystem.
         /// </summary>
         /// <param name="pathToDatabase">Path to the Users.db on the filesystem.</param>
-        public UserDatabase(string pathToDatabase)
+        public UserDatabase(string pathToDatabase, string pathToPepper)
         {
             context = new UsersContext(pathToDatabase);
-            new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: store pepper somewhere on computer. Where?
+            Pepper = Encoding.ASCII.GetBytes(File.ReadAllLines(pathToPepper)[0]);
+            //new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: store pepper somewhere on computer. Where?
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace Enigma.UserDbManager
             {
                 throw new Exception(string.Format("Username '{0}' already exists.", username));
             }
-            else if(username.Length > 20)
+            else if (username.Length > 20)
             {
                 throw new Exception(string.Format("Username '{0}' exceeds 20 character limit.", username));
             }
@@ -80,16 +82,19 @@ namespace Enigma.UserDbManager
             // set last login time to current time
             var dateTime = DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss");
 
+            var userCert = new X509Certificate2(certificate);
+
             var toAdd = new User
             {
                 Username = username,
                 Salt = salt,
                 PassHash = passHash,
-                PublicKey = new X509Certificate2(certificate).GetPublicKey(),
+                PublicKey = userCert.GetPublicKey(),
                 LastLogin = dateTime,
                 LoginAttempt = 0,
                 UsbKey = usbKey ? 1 : 0,
-                Locked = 0
+                Locked = 0,
+                CertificateExpirationDate = userCert.GetExpirationDateString()
             };
 
             context.Users.Add(toAdd);
@@ -138,9 +143,9 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
-        /// Updates user password.
+        /// Updates user password. Users are prevented from reusing their last password.
         /// </summary>
-        /// <param name="user">User whos password needs to be updated.</param>
+        /// <param name="user">User whose password needs to be updated.</param>
         /// <param name="password">Users new password.</param>
         public void ChangePassword(User user, string password)
         {
@@ -148,17 +153,36 @@ namespace Enigma.UserDbManager
 
             var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
 
-            // from March 2019., NIST recommends 80,000 iterations
-            using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256);
-            var passHash = pbkdf2Hasher.GetBytes(256 / 8);
+            byte[] passHash;
+            // create a hash using users old salt
+            using (var pbkdf2HasherOld = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256))
+            {
+                passHash = pbkdf2HasherOld.GetBytes(256 / 8);
+            }
 
-            // users are prevented from reusing their old password
+            // users are prevented from reusing their last password
             if (passHash.SequenceEqual(user.PassHash))
             {
                 throw new Exception("Password reuse isn't allowed.");
             }
 
+            // change users salt and update his passwords hash value
+            new RNGCryptoServiceProvider().GetBytes(user.Salt);
+            using var pbkdf2HasherNew = new Rfc2898DeriveBytes(passAndPepperHash, user.Salt, 80_000, HashAlgorithmName.SHA256);
+            passHash = pbkdf2HasherNew.GetBytes(256 / 8);
+
             user.PassHash = passHash;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Removes user from a database.
+        /// </summary>
+        /// <param name="user">User whose account is being deleted.</param>
+        public void RemoveUser(User user)
+        {
+            context.Users.Remove(user);
+            context.SaveChanges();
         }
 
         /// <summary>

@@ -17,12 +17,12 @@ namespace Enigma.Models
         /// <summary>
         /// Information from the user database about the currently logged in user.
         /// </summary>
-        private readonly User user;
+        public readonly User UserInfo;
 
         /// <summary>
         /// Users Id.
         /// </summary>
-        public int Id => user.Id;
+        public int Id => UserInfo.Id;
 
         /*/// <summary>
         /// Users private RSA key.
@@ -32,7 +32,7 @@ namespace Enigma.Models
         /// <summary>
         /// Users username from the database.
         /// </summary>
-        public string Username => user.Username;
+        public string Username => UserInfo.Username;
 
         /*/// <summary>
         /// Users <see cref="X509Certificate2"/> certificate from the database.
@@ -42,18 +42,29 @@ namespace Enigma.Models
         /// <summary>
         /// Users public RSA key derived from his <see cref="Certificate"/>.
         /// </summary>
-        public RSAParameters PublicKey => RsaAlgorithm.ImportPublicKey(Encoding.ASCII.GetString(user.PublicKey));
+        public RSAParameters PublicKey => RsaAlgorithm.ImportPublicKey(Encoding.ASCII.GetString(UserInfo.PublicKey));
         //public RSAParameters PublicKey => ((RSACryptoServiceProvider)Certificate.PublicKey.Key).ExportParameters(false);
 
         /// <summary>
         /// Users last login time.
         /// </summary>
-        public string LastLogin => user.LastLogin;
+        public string LastLogin => UserInfo.LastLogin;
 
         /// <summary>
         /// Information on whether the user has private RSA USB key. 
         /// </summary>
-        public bool UsbKey => user.UsbKey == 1;
+        public bool UsbKey => UserInfo.UsbKey == 1;
+
+        /// <summary>
+        /// Value used to lock user account. Set to false (0) by default or to true (1) is user account has been locked.
+        /// User can't login if the values is set to true.
+        /// </summary>
+        public int Locked => UserInfo.Locked;
+
+        /// <summary>
+        /// Users certificate expiration date.
+        /// </summary>
+        public string CertificateExpirationDate => UserInfo.CertificateExpirationDate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information.
@@ -61,7 +72,7 @@ namespace Enigma.Models
         /// <param name="user">Users database information.</param>
         public UserInformation(User user)
         {
-            this.user = user;
+            UserInfo = user;
         }
 
         /// <summary>
@@ -74,6 +85,7 @@ namespace Enigma.Models
         {
             var keyRaw = DecryptTheUserKey(File.ReadAllBytes(privateKeyPath), password);
             return new KeyFileParser(keyRaw).GetParameters();
+            //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
         }
 
         /// <summary>

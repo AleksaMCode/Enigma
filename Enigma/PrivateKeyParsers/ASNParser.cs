@@ -3,6 +3,10 @@ using System.IO;
 
 namespace Enigma.PrivateKeyParsers
 {
+    /// <summary>
+    /// Defines the <see cref="ASNPrivateKeyParser" /> class that is used for parsing ASN.1 coded files.
+    /// Parser from a <see href="https://github.com/Valyreon/cryptor-wpf-project">Cryptor project</see>.
+    /// </summary>
     internal class ASNPrivateKeyParser : IDisposable
     {
         private readonly BinaryReader reader;

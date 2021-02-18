@@ -2,8 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 
@@ -34,9 +36,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Import OpenSSH PEM public RSA key <see cref="string"/> into RSAParameters.
+        /// Import OpenSSH PEM public RSA key <see cref="string"/> into <see cref="RSAParameters"/>.
         /// <param name="publicKeyInPem">User public RSA key in PEM format.</param>
-        /// <returns>Importet RSA public key.</returns>
+        /// <returns>Imported RSA public key.</returns>
         /// </summary>
         public static RSAParameters ImportPublicKey(string publicKeyInPem)
         {
@@ -44,6 +46,18 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             var publicKey = (AsymmetricKeyParameter)pr.ReadObject();
 
             return DotNetUtilities.ToRSAParameters((RsaKeyParameters)publicKey);
+        }
+
+        /// <summary>
+        /// Import OPENSSH PEM private key <see cref="byte"/>[] into <see cref="RSAParameters"/>.
+        /// </summary>
+        /// <param name="privatePemRawKey">User private RSA PEM key in raw form.</param>
+        /// <returns>Imported RSA private key.</returns>
+        public static RSAParameters ImportPrivateKey(byte[] privatePemRawKey)
+        {
+            var pr = new PemReader(new StringReader(Encoding.ASCII.GetString(privatePemRawKey)));
+            var keyPair = (AsymmetricCipherKeyPair)pr.ReadObject();
+            return DotNetUtilities.ToRSAParameters((RsaPrivateCrtKeyParameters)keyPair.Private);
         }
 
         /// <summary>
@@ -68,7 +82,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Compares two public RSA keys or public with private RSA key.
+        /// Compares two public RSA keys or public with private RSA key. Method compares their Modules and Exponent values.
         /// When comparing private and public keys, this method is faster than <see cref="AreKeysMatched(RSAParameters, RSAParameters)"/> method.
         /// </summary>
         /// <returns>true if the keys match, otherwise false.</returns>
@@ -96,13 +110,18 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         /// <summary>
         /// Helper method for <see cref="AreKeysMatched2(RSAParameters, RSAParameters)"/> obsolete method.
-        /// <returns>true if arrays mathch; false if arrays don't match.</returns>
+        /// <returns>true if arrays match; false if arrays don't match.</returns>
         [Obsolete("Only used in a deprecated method AreKeysMatched2")]
         private static bool ByteArrayCompare(ReadOnlySpan<byte> array1, ReadOnlySpan<byte> array2)
         {
             return array1.SequenceEqual(array2);
         }
 
+        /// <summary>
+        /// Encrypts data using RSA asymmetric encryption.
+        /// </summary>
+        /// <param name="data">Input data (opentext) used for encryption.</param>
+        /// <returns>Encrypted data.</returns>
         public byte[] Encrypt(byte[] data)
         {
             byte[] encryptedData;
@@ -115,6 +134,11 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return encryptedData;
         }
 
+        /// <summary>
+        /// Decrypts data using RSA asymmetric encryption.
+        /// </summary>
+        /// <param name="data">Encrypted data (ciphertext) used for decryption.</param>
+        /// <returns>Decrypted data.</returns>
         public byte[] Decrypt(byte[] data)
         {
             byte[] decryptedData;
@@ -126,6 +150,13 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return decryptedData;
         }
 
+        /// <summary>
+        /// Computes the hash value of the specified byte array using the specified hash
+        /// algorithm (<see cref="MD5"/>, <see cref="SHA1"/>, <see cref="SHA256"/>, <see cref="SHA384"/> or <see cref="SHA512"/>) and signs the resulting hash value.
+        /// </summary>
+        /// <param name="data">The input data for which to compute the hash.</param>
+        /// <param name="hashAlgo">The hash algorithm to use to create the hash value.</param>
+        /// <returns>The <see cref="System.Security.Cryptography.RSA"></see> signature for the specified data.</returns>
         public byte[] CreateSignature(byte[] data, HashAlgorithm hashAlgo)
         {
             using var rsaProvider = new RSACryptoServiceProvider();
@@ -134,14 +165,65 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return rsaProvider.SignData(data, hashAlgo);
         }
 
-        public bool VerifySignature(byte[] data, HashAlgorithm hasher, byte[] signature)
+        /// <summary>
+        /// Computes the hash value of the specified byte array using the specified hash
+        /// algorithm (MD2, MD4, RIPEMD-128, RIPEMD-160 or RIPEMD-256) and signs the resulting hash value.
+        /// </summary>
+        /// <param name="data">The input data for which to compute the hash.</param>
+        /// <param name="hashAlgo">The hash algorithm to use to create the hash value.</param>
+        /// <returns>The RSA signature for the specified data created using <see cref="Org.BouncyCastle"/> library.</returns>
+        public byte[] CreateSignature(byte[] data, ISigner hashAlgo)
+        {
+            // Convert .NETs RSAParameters to Bouncy Castles RsaKeyParameters
+            var key = new RsaKeyParameters(true, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
+
+            hashAlgo.Init(true, key);
+            hashAlgo.BlockUpdate(data, 0, data.Length);
+
+            return hashAlgo.GenerateSignature();
+        }
+
+        /// <summary>
+        /// Verifies that a digital signature is valid by determining the hash value in the
+        /// signature using the provided public key and comparing it to the hash value of
+        /// the provided data.
+        /// </summary>
+        /// <param name="data">The data that was signed.</param>
+        /// <param name="hashAlgo">The name of the hash algorithm used to create the hash value of the data.</param>
+        /// <param name="signature">The signature data to be verified.</param>
+        /// <returns>true if the signature is valid, otherwise false.</returns>
+        public bool VerifySignature(byte[] data, HashAlgorithm hashAlgo, byte[] signature)
         {
             using var rsaProvider = new RSACryptoServiceProvider();
 
             rsaProvider.ImportParameters(Key);
-            return rsaProvider.VerifyData(data, hasher, signature);
+            return rsaProvider.VerifyData(data, hashAlgo, signature);
         }
 
+        /// <summary>
+        /// Verifies that a digital signature is valid by determining the hash value in the
+        /// signature using the provided public key and comparing it to the hash value of
+        /// the provided data.
+        /// </summary>
+        /// <param name="data">The data that was signed.</param>
+        /// <param name="hashAlgo">The name of the hash algorithm used to create the hash value of the data.</param>
+        /// <param name="signature">The signature data to be verified.</param>
+        /// <returns>true if the signature is valid, otherwise false.</returns>
+        public bool VerifySignature(byte[] data, ISigner hashAlgo, byte[] signature)
+        {
+            // Convert .NETs RSAParameters to Bouncy Castles RsaKeyParameters
+            var key = new RsaKeyParameters(false, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
+
+            hashAlgo.Init(false, key);
+            hashAlgo.BlockUpdate(data, 0, data.Length);
+
+            return hashAlgo.VerifySignature(signature);
+        }
+
+        /// <summary>
+        /// Gets asymmetric algorithm full name.
+        /// </summary>
+        /// <returns>The <see cref="System.Security.Cryptography.RSA"></see> full name.</returns>
         public string GetAlgorithmNameSignature()
         {
             return NameSignature;

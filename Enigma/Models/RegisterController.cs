@@ -12,52 +12,90 @@ using Org.BouncyCastle.Security;
 
 namespace Enigma.Models
 {
+    /// <summary>
+    /// Allows to register new users to Enigma.
+    /// </summary>
     public class RegisterController
     {
+        /// <summary>
+        /// Enigmas user database.
+        /// </summary>
         private readonly UserDatabase data;
 
-        public RegisterController(UserDatabase db)
+        /// <summary>
+        /// Common passwords list path on FS.
+        /// </summary>
+        private readonly string commonPasswordsPath;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegisterController"/> class using a <see cref="UserDatabase"/> and a path to a common password list on FS.
+        /// </summary>
+        /// <param name="db">Enigmas user database.</param>
+        /// <param name="commonPasswordsPath">Path to common password list on stored on FS.</param>
+        public RegisterController(UserDatabase db, string commonPasswordsPath)
         {
             data = db;
+            this.commonPasswordsPath = commonPasswordsPath;
         }
 
-        public void Register(string username, string password, string certificateFilePath, bool usbKey)
+        /// <summary>
+        /// Registers a new user if the register policy are met. 
+        /// </summary>
+        /// <param name="username">Users account username.</param>
+        /// <param name="password">Users password.</param>
+        /// <param name="certificateFilePath">Path on FS to users certificate.</param>
+        /// <param name="usbKey">Set to true if user want to have an private USB key, otherwise it's set to false.</param>
+        public void Register(ref string username, string password, string certificateFilePath, bool usbKey)
         {
             if (password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
             }
 
-            if (!PasswordAdvisor.CommonPasswordCheck(password))
+            // Add a random 4-digit number to every username
+            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
+            username += "#" + csprng.Next(1_000, 9_999).ToString();
+
+            // Check if a password used some of the most common passwords discovered in various data breaches.
+            if (!PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
 
-            if (!PasswordAdvisor.IsPasswordStrong(password, false))
+            // Check password strength.
+            if (!PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
             {
-                throw new Exception("Password is too weak. Please try again.");
+                throw new Exception(string.Format("Password is too weak. It's deemed {0}. Please try again.", passwordStrength));
             }
 
             var cert = new X509Certificate2(certificateFilePath);
 
-
+            // Check if key length is >= 2048 bits.
             if (CertificateValidator.VerifyCertificateKeyLength(cert) == false)
             {
                 throw new Exception("Key length has to be at least 2048 bits.");
             }
+
+            // Checks if the certificate has expired and if it is issued by a proper root certificate.
             if (CertificateValidator.VerifyCertificate(cert, out var errorMsg, true) == false)
             {
                 throw new Exception(errorMsg);
             }
-            else if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
+
+            // Check if the certificate is revoked.
+            if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
             {
                 throw new Exception("Certificate has been revoked.");
             }
-            else if (CertificateValidator.VerifyKeyUsage(cert) == false)
+
+            // Check if certificate has a proper key usage set.
+            if (CertificateValidator.VerifyKeyUsage(cert) == false)
             {
                 throw new Exception("Certificate must have 'digitalSignature' and 'keyEncipherment' set as it's key usage.");
             }
 
+            // Add a new user to Users.db.
             data.AddUser(username, password, File.ReadAllBytes(certificateFilePath), usbKey);
         }
 
@@ -81,8 +119,7 @@ namespace Enigma.Models
             Buffer.BlockCopy(hash, 0, key, 0, 32);
             Buffer.BlockCopy(hash, 32, iv, 0, 16);
 
-            HideMyNeedle(new FileInfo(privateKeyPath).Directory.Root.FullName,
-                privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin", new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
+            HideMyNeedle(privateKeyPath, new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
 
             // data scrambling
             new RNGCryptoServiceProvider().GetBytes(iv);
@@ -92,11 +129,19 @@ namespace Enigma.Models
             new RNGCryptoServiceProvider().GetBytes(passwordBytes);
         }
 
+
         /// <summary>
         /// Implementation of <em>Needle in a Haystack</em> steganography. Encrypted RSA key in its entirety is hidden in a 100,000 times bigger binary file.
         /// </summary>
-        private void HideMyNeedle(string rootDir, string path, byte[] needle, byte[] salt, byte[] passwordDigest)
+        /// <param name="privateKeyPath">Path to users private key.</param>
+        /// <param name="needle">Users encrypted private key.</param>
+        /// <param name="salt">Salt used to create password digest.</param>
+        /// <param name="passwordDigest">Users password digest.</param>
+        private void HideMyNeedle(string privateKeyPath, byte[] needle, byte[] salt, byte[] passwordDigest)
         {
+            var rootDir = new FileInfo(privateKeyPath).Directory.Root.FullName;
+            var path = privateKeyPath.Substring(0, privateKeyPath.LastIndexOf('\\')) + "\\key.bin";
+
             // TODO: add MAC/HMAC and secure deletion of original RSA key
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
@@ -169,7 +214,7 @@ namespace Enigma.Models
                 password = new string(passArray);
                 passArray = Enumerable.Repeat('0', passArray.Length).ToArray(); // zeroization
 
-                if (PasswordAdvisor.IsPasswordStrong(password, false))
+                if (PasswordAdvisor.IsPasswordStrong(password, out var _, false))
                 {
                     break;
                 }
@@ -203,7 +248,7 @@ namespace Enigma.Models
         /// Generates a random passphrase that contains between 6 and 10 words using a <em>Diceware</em> method (<see href="https://www.eff.org/dice">EFF Dice-Generated Passphrases</see>).
         /// </summary>
         /// <returns>Random ASCII password createad using a <em>Diceware</em> method.</returns>
-        public string GeneratePassphrase()
+        public string GeneratePassphrase(string dicewareWordsPath)
         {
             var diceRollResult = 0;
             string passphrase;
@@ -214,18 +259,20 @@ namespace Enigma.Models
 
             var maxNumberOfWords = csprng.Next(6, 10);
 
+            // loop only repeats if the generated passphrase has low entropy; this loop will never repeat because for the minimum of 6 words passphrase will have a good entropy
             while (true)
             {
                 var numberOfWords = 0;
                 string index;
                 passphrase = "";
 
-                while (numberOfWords < maxNumberOfWords)
+                // loop repeats until we create a passphrase with an appropriate number of words
+                do
                 {
                     var numberExist = false;
-                    string line = null;
 
-                    while (!numberExist)
+                    // loop is used if the resulting 5-digit number isn't in the list
+                    do
                     {
                         // five dice rolls
                         for (var i = 0; i < 5; ++i)
@@ -237,28 +284,31 @@ namespace Enigma.Models
                         diceRollResult = 0;
 
                         // TODO: can this be optimized?
-                        using (var file = new StreamReader(@"C:\Users\Aleksa\source\repos\Enigma\Enigma\eff_large_wordlist.txt"))
+                        using (var file = new StreamReader(dicewareWordsPath))
                         {
+                            string line = null;
                             while ((line = file.ReadLine()) != null)
                             {
                                 if (line.Contains(index))
                                 {
+                                    passphrase += line.Split('\t')[1].Trim();
+                                    numberOfWords++;
                                     numberExist = true;
                                     break;
                                 }
                             }
                         }
-                    }
+                    } while (!numberExist);
 
-                    passphrase += line.Split('\t')[1].Trim();
+                    // add delimiter between words
                     if (numberOfWords != maxNumberOfWords - 1)
                     {
                         passphrase += delimiter;
                     }
-                    numberOfWords++;
-                }
+                } while (numberOfWords < maxNumberOfWords);
 
-                if (PasswordAdvisor.IsPasswordStrong(passphrase, true, maxNumberOfWords))
+
+                if (PasswordAdvisor.IsPasswordStrong(passphrase, out _, true, maxNumberOfWords))
                 {
                     break;
                 }

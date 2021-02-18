@@ -1,7 +1,8 @@
 using System;
 using System.Security.Cryptography;
 using Enigma.AlgorithmLibrary.Algorithms;
-using Enigma.CryptedFileParser.Exceptions;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Security;
 
 namespace Enigma.AlgorithmLibrary
 {
@@ -18,7 +19,7 @@ namespace Enigma.AlgorithmLibrary
         /// <summary>
         /// Maximum length of the hash algorithm name signature.
         /// </summary>
-        public static readonly int maxHashAlgoNameSignatureSize = 6;
+        public static readonly int maxHashAlgoNameSignatureSize = 10;
 
         /// <summary>
         /// Parses key size stored as <see cref="string"/> to <see cref="int"/>.
@@ -39,7 +40,7 @@ namespace Enigma.AlgorithmLibrary
         {
             return (algo is AesAlgorithm) || (algo is CamelliaAlgorithm) || (algo is TwofishAlgorithm) || (algo is TripleDesAlgorithm)
                 ? algo.GetAlgorithmNameSignature()
-                : throw new UnknownCryptAlgoException(algo.GetAlgorithmNameSignature());
+                : throw new CryptographicException("Unknown cryptor with code '" + algo.GetAlgorithmNameSignature() + "' used.");
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace Enigma.AlgorithmLibrary
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
             {
-                throw new UnknownCryptAlgoException(algoName);
+                throw new CryptographicException("Unknown cryptor with code '" + algoName + "' used.");
             }
 
             // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
@@ -88,7 +89,7 @@ namespace Enigma.AlgorithmLibrary
         {
             if (algoName.Length > maxAlgoNameSignatureSize)
             {
-                throw new UnknownCryptAlgoException(algoName);
+                throw new CryptographicException("Unknown cryptor with code '" + algoName + "' used.");
             }
 
             // split the name in AlgoName, KeySize and CipherMode for AES, Camellia and Twofish, e.q. AES-256-OFB
@@ -142,7 +143,7 @@ namespace Enigma.AlgorithmLibrary
             }
             else
             {
-                throw new UnknownHashAlgoException("Unknown Hash Algorithm used.");
+                throw new CryptographicException("Unknown Hash Algorithm used.");
             }
         }
 
@@ -153,9 +154,9 @@ namespace Enigma.AlgorithmLibrary
         /// <returns>New instance of the hash algorithm.</returns>
         public static HashAlgorithm GetHashAlgoFromNameSignature(string algoName)
         {
-            if (algoName.Length > maxAlgoNameSignatureSize)
+            if (algoName.Length > maxHashAlgoNameSignatureSize)
             {
-                throw new UnknownHashAlgoException(algoName);
+                throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
             }
 
             if (algoName.Equals("MD5"))
@@ -180,7 +181,54 @@ namespace Enigma.AlgorithmLibrary
             }
             else
             {
-                throw new UnknownHashAlgoException(algoName);
+                throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
+            }
+        }
+
+        /// <summary>
+        /// Gets the hash algorithm <see cref="ISigner"/> from the hash algorithm name signature.
+        /// </summary>
+        /// <param name="algoName">Hash algorithm name signature.</param>
+        /// <returns>New instance of the hash algorithm interface.</returns>
+        public static ISigner GetHashSignerFromNameSignature(string algoName)
+        {
+            if (algoName.Length > maxHashAlgoNameSignatureSize)
+            {
+                throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
+            }
+
+            var withRsaString = "withRSA";
+
+            switch (algoName)
+            {
+                case "MD2":
+                {
+                    return SignerUtilities.GetSigner(algoName + withRsaString);
+                }
+                case "MD4":
+                {
+                    return SignerUtilities.GetSigner(algoName + withRsaString);
+                }
+                case "SHA-224":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                case "RIPEMD-128":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                case "RIPEMD-160":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                case "RIPEMD-256":
+                {
+                    return SignerUtilities.GetSigner(algoName.Replace("-", "") + withRsaString);
+                }
+                default:
+                {
+                    throw new CryptographicException("Unknown hasher with code '" + algoName + "' used.");
+                }
             }
         }
 
@@ -211,7 +259,7 @@ namespace Enigma.AlgorithmLibrary
                 }
                 default:
                 {
-                    throw new UnknownCipherModeException(mode);
+                    throw new CryptographicException("Unknown block cipher mode '" + mode + "' used.");
                 }
             }
         }
