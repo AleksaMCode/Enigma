@@ -289,7 +289,7 @@ namespace Enigma.CryptedFileParser
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
         /// <param name="userId">Unique user identifier from the database.</param>
         /// <returns>Updated encrypted file.</returns>
-        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId)
+        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId, out int sharenumberOfSharedUsers)
         {
             var offset = 0;
 
@@ -300,7 +300,7 @@ namespace Enigma.CryptedFileParser
             ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
 
             // unshare a file with a user
-            ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
+            numberOfSharedUsers = ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
 
             return Flush();
         }

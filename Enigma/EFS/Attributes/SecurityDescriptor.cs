@@ -106,9 +106,10 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Unshare a file after sharing it with other specific user on EnigmaEfs.
         /// </summary>
-        /// <param name="userId">Unique user identifier from the database.</param>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
-        public void UnshareFile(int loggedInUserId, int userId)
+        /// <param name="userId">Unique user identifier from the database.</param>
+        /// <returns>Number of users that have access to a file.</returns>
+        public int UnshareFile(int loggedInUserId, int userId)
         {
             if (OwnerId == loggedInUserId)
             {
@@ -121,6 +122,8 @@ namespace Enigma.EFS.Attributes
             {
                 throw new Exception("Only file owner can unshare this file.");
             }
+
+            return Users.Count;
         }
 
         /// <summary>
