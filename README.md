@@ -17,6 +17,7 @@
     - [File encryption](#file-encryption)
     - [File decryption](#file-decryption)
     - [File sharing](#file-sharing)
+    - [File unsharing](#file-unsharing)
     - [File updating](#file-updating)
     - [File reading](#file-reading)
   - [Encrypted file](#encrypted-file)
@@ -104,6 +105,9 @@
 
 ### File sharing
 <p align="justify">Every user can share his file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file Key is encrypted using a shared user's public RSA key after which it's stored inside files Security Descriptor header.</p>
+
+### File unsharing
+<p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised, file then overwrites the old file.</p>
 
 ### File updating
 
