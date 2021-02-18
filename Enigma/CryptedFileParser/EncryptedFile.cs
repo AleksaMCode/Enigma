@@ -112,6 +112,11 @@ namespace Enigma.CryptedFileParser
         {
             var offset = 0;
             ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
+
+            // update id of the user who is accessing the file
+            ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+            ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
             offset += (int)((StandardInformation)Headers[0]).GetSaveLength();
 
             ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(encryptedFile, ref offset);
