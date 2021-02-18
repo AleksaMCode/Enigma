@@ -289,7 +289,7 @@ namespace Enigma.CryptedFileParser
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
         /// <param name="userId">Unique user identifier from the database.</param>
         /// <returns>Updated encrypted file.</returns>
-        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId, out int sharenumberOfSharedUsers)
+        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId, out int numberOfSharedUsers)
         {
             var offset = 0;
 
