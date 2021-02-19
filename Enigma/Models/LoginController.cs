@@ -115,10 +115,11 @@ namespace Enigma.Models
             //    throw new Exception(errorMsg);
             //}
 
-            //if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
-            //{
-            //    throw new Exception("Certificate has been revoked.");
-            //}
+            // Check if the certificate has been revoked.
+            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+            {
+                throw new Exception("Certificate has been revoked.");
+            }
         }
 
         //public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)
