@@ -163,6 +163,7 @@ namespace Enigma.Wpf.ViewModels
                     navigator.ShowMessage("Error", ex.Message);
                 }
             };
+
             navigator.OpenFlyoutPanel(form);
         }
 

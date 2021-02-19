@@ -101,6 +101,7 @@
     <Compile Include="Converters\StringToPrivateKeyOptionConverter.cs" />
     <Compile Include="Enums\FileSystemItemType.cs" />
     <Compile Include="Enums\PrivateKeyOption.cs" />
+    <Compile Include="Forms\Data\ChangePaswordFormData.cs" />
     <Compile Include="Forms\Data\ImportFormData.cs" />
     <Compile Include="Forms\Data\UnshareFormData.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
