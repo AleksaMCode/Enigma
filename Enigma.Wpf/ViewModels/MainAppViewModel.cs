@@ -375,14 +375,23 @@ namespace Enigma.Wpf.ViewModels
                     if (obj.Type == FileSystemItemType.File)
                     {
                         var path = addressBarText.StartsWith("\\Shared") ? rootDir + addressBarText : rootDir + "\\" + enigmaEfs.currentUser.Username + addressBarText;
+                        var fileForUnsharing = path + "\\" + obj.GetEncryptedFileName();
 
-                        if (data.UnshareAll)
+                        if (File.Exists(fileForUnsharing))
                         {
-                            enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id);
+
+                            if (data.UnshareAll)
+                            {
+                                enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id);
+                            }
+                            else
+                            {
+                                enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id, usersDb.getUserId(data.SharedUser));
+                            }
                         }
                         else
                         {
-                            enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id, usersDb.getUserId(data.SharedUser));
+                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
                         }
                     }
                 }
