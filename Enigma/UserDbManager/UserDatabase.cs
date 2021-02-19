@@ -167,10 +167,13 @@ namespace Enigma.UserDbManager
         /// Updates user password. Users are prevented from reusing their last password.
         /// </summary>
         /// <param name="user">User whose password needs to be updated.</param>
-        /// <param name="password">Users new password.</param>
-        public void ChangePassword(User user, string password)
+        /// <param name="newPassword">Users new password.</param>
+        /// <param name="oldPassword">Users old password.</param>
+        public void ChangePassword(User user, string newPassword, string oldPassword)
         {
-            var passBytes = Encoding.ASCII.GetBytes(password);
+            CheckOldPassword(user.PassHash, user.Salt, Encoding.ASCII.GetBytes(oldPassword));
+
+            var passBytes = Encoding.ASCII.GetBytes(newPassword);
 
             var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
 
@@ -194,6 +197,27 @@ namespace Enigma.UserDbManager
 
             user.PassHash = passHash;
             context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Compares the old password with the entered password.
+        /// </summary>
+        /// <param name="userPasswordHash">User's current password hash.</param>
+        /// <param name="passwordSalt">User's current password salt.</param>
+        /// <param name="enteredPassword">Users entered password.</param>
+        /// <returns>true if the passwords match; otherwise <see cref="Exception"/> is thrown.</returns>
+        private bool CheckOldPassword(byte[] userPasswordHash, byte[] passwordSalt, byte[] enteredPassword)
+        {
+            var passAndPepperHash = SHA256.Create().ComputeHash(enteredPassword.Concat(Pepper).ToArray());
+
+            byte[] passHash;
+
+            using (var pbkdf2HasherOld = new Rfc2898DeriveBytes(passAndPepperHash, passwordSalt, 80_000, HashAlgorithmName.SHA256))
+            {
+                passHash = pbkdf2HasherOld.GetBytes(256 / 8);
+            }
+
+            return !passHash.SequenceEqual(userPasswordHash) ? throw new Exception("You have entered a wrong password.") : true;
         }
 
         /// <summary>
@@ -261,7 +285,7 @@ namespace Enigma.UserDbManager
             var users = context.Users.AsEnumerable();
             var usernames = new List<string>(users.Count());
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 usernames.Add(user.Username);
             }

@@ -156,7 +156,7 @@ namespace Enigma.Wpf.ViewModels
                         throw new Exception("Password doesn't match.");
                     }
 
-                    usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword);
+                    usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword, data.OldPassword);
                 }
                 catch (Exception ex)
                 {
