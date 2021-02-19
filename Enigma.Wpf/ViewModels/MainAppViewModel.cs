@@ -329,7 +329,7 @@ namespace Enigma.Wpf.ViewModels
 
                             if (userInfo.Revoked == 0 && Convert.ToDateTime(userInfo.CertificateExpirationDate) < DateTime.Now)
                             {
-                                enigmaEfs.Share(fileForSharing, enigmaEfs.currentUser.Id, userInfo.Id, userInfo.PublicKey);
+                                enigmaEfs.Share(fileForSharing, enigmaEfs.currentUser.Id, new UserInformation(userInfo));
                             }
                             else
                             {

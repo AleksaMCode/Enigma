@@ -280,15 +280,15 @@ namespace Enigma.EFS
         /// Checks if user's certificate has expired or if it's been revoked.
         /// </summary>
         /// <param name="msg"></param>
-        private void CertificateCheck(string msg)
+        private void CertificateCheck(string msg, UserInformation user = null)
         {
-            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
+            if (Convert.ToDateTime(user != null ? user.CertificateExpirationDate : currentUser.CertificateExpirationDate) < DateTime.Now)
             {
-                throw new Exception(string.Format("Your certificate has expired. {0}", msg));
+                throw new Exception(string.Format("Certificate has expired. {0}", msg));
             }
-            else if (currentUser.Revoked)
+            else if (user != null ? user.Revoked : currentUser.Revoked)
             {
-                throw new Exception(string.Format("Your certificate has been revoked. {0}", msg));
+                throw new Exception(string.Format("Certificate has been revoked. {0}", msg));
             }
         }
 
@@ -297,12 +297,13 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="pathOnEfs">The name of the shared file.</param>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
-        /// <param name="userId">Unique user identifier from the database.</param>
-        /// <param name="userPublicKey">Users public RSA key.</param>
-        public void Share(string pathOnEfs, int loggedInUserId, int userId, RSAParameters userPublicKey)
+        /// <param name="shareUser">User you are sharing a file with.</param>
+        public void Share(string pathOnEfs, int loggedInUserId, UserInformation shareUser)
         {
+            CertificateCheck(string.Format("You cannot share files with {0}.", shareUser.Username));
+
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var updatedEncryptedFileRaw = encryptedFile.Share(File.ReadAllBytes(pathOnEfs), loggedInUserId, userId, userPrivateKey, userPublicKey);
+            var updatedEncryptedFileRaw = encryptedFile.Share(File.ReadAllBytes(pathOnEfs), loggedInUserId, shareUser.Id, userPrivateKey, shareUser.PublicKey);
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
