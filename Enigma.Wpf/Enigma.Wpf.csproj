@@ -102,6 +102,7 @@
     <Compile Include="Enums\FileSystemItemType.cs" />
     <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Forms\Data\ImportFormData.cs" />
+    <Compile Include="Forms\Data\UnshareFormData.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
     <Compile Include="Observables\FileSystemItem.cs" />

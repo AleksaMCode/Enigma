@@ -355,6 +355,29 @@ namespace Enigma.Wpf.ViewModels
             navigator.OpenFlyoutPanel(form);
         }
 
+        public ICommand UnshareItemCommand => new RelayCommand<FileSystemItem>(HandleUnshareItem);
+
+        private void HandleUnshareItem(FileSystemItem obj)
+        {
+            var form = new UnshareFileFormViewModel(navigator);
+
+            form.OnSubmit += (UnshareFormData data) =>
+            {
+                var path = addressBarText.StartsWith("\\Shared") ? rootDir + addressBarText : rootDir + "\\" + enigmaEfs.currentUser.Username + addressBarText;
+
+                if (data.UnshareAll)
+                {
+                    enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id);
+                }
+                else
+                {
+                    enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id, usersDb.getUserId(data.SharedUser));
+                }
+            };
+
+            navigator.OpenFlyoutPanel(form);
+        }
+
         public ICommand ExportItemCommand => new RelayCommand<FileSystemItem>(HandleExportItem);
 
         private void HandleExportItem(FileSystemItem obj)

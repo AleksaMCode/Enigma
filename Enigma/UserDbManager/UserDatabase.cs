@@ -50,6 +50,16 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
+        /// Gets a specific user's Id using user's username.
+        /// </summary>
+        /// <param name="username">Username of the user whos id is retrieved from database.</param>
+        /// <returns>User's Id.</returns>
+        public int getUserId(string username)
+        {
+            return context.Users.Where(u => u.Username == username).SingleOrDefault().Id;
+        }
+
+        /// <summary>
         /// Adds a new user to users database, while performing password hashing and hardening.
         /// </summary>
         /// <param name="username">User username.</param>
