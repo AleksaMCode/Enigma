@@ -138,6 +138,8 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleLogOut()
         {
+            // Remove all temporary files created by the user.
+            enigmaEfs.RemoveTempFiles();
             navigator.GoToPreviousControl();
         }
 
