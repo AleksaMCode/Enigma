@@ -91,7 +91,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Uplaods selected file. File is first encrypted after which is stored on the specified path on encrypted file system.
+        /// Uploads selected file. File is first encrypted after which is stored on the specified path on encrypted file system.
         /// </summary>
         /// <param name="pathOnFs">The fully qualified name of the new file.</param>
         /// <param name="pathOnEfs">Path on the encrypted file system where the file will be stored.</param>
@@ -106,24 +106,49 @@ namespace Enigma.EFS
                 throw new Exception("Your certificate has expired. You cannot import any new files.");
             }
 
-            var fileSize = new FileInfo(pathOnFs).Length;
+            // var fileSize = new FileInfo(pathOnFs).Length;
+            var fullFileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
+            var originalFile = new OriginalFile(File.ReadAllBytes(pathOnFs), fullFileName);
+
+            var encryptedName = Upload(originalFile, pathOnEfs, algorithmNameSignature, hashAlgorithmName);
+
+            if (deleteOriginal)
+            {
+                DeleteFile(pathOnFs);
+            }
+
+            return encryptedName;
+        }
+
+        /// <summary>
+        /// Uploads selected file. File is first encrypted after which is stored on the specified path on encrypted file system.
+        /// </summary>
+        /// <param name="originalFile">Original, unencrypted file.</param>
+        /// <param name="pathOnEfs">Path on the encrypted file system where the file will be stored.</param>
+        /// <param name="algorithmNameSignature">Name of the algorithm used for file encryption.</param>
+        /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
+        /// <returns>Encrypted name of the file.</returns>
+        public string Upload(OriginalFile originalFile, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName)
+        {
+            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
+            {
+                throw new Exception("Your certificate has expired. You cannot import any new files.");
+            }
+
             string encryptedName;
 
-            if (fileSize > 2_000_000_000)
+            if (originalFile.FileSize > 2_000_000_000)
             {
                 throw new Exception("File can't be larger than 2 GB.");
             }
 
-            if (CanItBeStored(fileSize))
+            if (CanItBeStored(originalFile.FileSize))
             {
-                var fullFileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
-                var originalFile = new OriginalFile(File.ReadAllBytes(pathOnFs), fullFileName);
-
-                // var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
-
-                var encryptedFile = new EncryptedFile(fullFileName, (uint)currentUser.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, userPrivateKey);
+                var encryptedFile = new EncryptedFile(originalFile.GetOriginalFileFullName(), (uint)currentUser.Id, algorithmNameSignature, hashAlgorithmName, currentUser.PublicKey, userPrivateKey);
                 var encryptedFileRaw = encryptedFile.Encrypt(originalFile, currentUser.Id, userPrivateKey);
                 encryptedName = encryptedFile.EncryptedName;
+
+                // var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
 
                 if (CanItBeStored(encryptedFileRaw.Length))
                 {
@@ -137,11 +162,6 @@ namespace Enigma.EFS
             else
             {
                 throw new Exception("Insufficient storage available. File can't be uploaded.");
-            }
-
-            if (deleteOriginal)
-            {
-                DeleteFile(pathOnFs);
             }
 
             return encryptedName;
@@ -198,7 +218,6 @@ namespace Enigma.EFS
             }
 
             var fullFileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
-            var updateFile = new OriginalFile(File.ReadAllBytes(pathOnFs), fullFileName);
 
             //var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
 
@@ -211,11 +230,31 @@ namespace Enigma.EFS
                 throw new Exception("File type must remain the same when updating an existing encrypted file.");
             }
 
+            Update(pathOnEfs, new OriginalFile(File.ReadAllBytes(pathOnFs), fullFileName));
+        }
+
+        /// <summary>
+        /// Updates selected encrypted file with a specified unencrypted file.
+        /// </summary>
+        /// <param name="pathOnEfs">The name of the file to update.</param>
+        /// <param name="updateFile">Updated, unencrypted file.</param>
+        public void Update(string pathOnEfs, OriginalFile updateFile)
+        {
+            if (updateFile.FileSize > 2_000_000_000)
+            {
+                throw new Exception("File can't be larger than 2 GB.");
+            }
+
+            if (!CanItBeStored(updateFile.FileSize))
+            {
+                throw new Exception("Insufficient storage available. File can't be uploaded.");
+            }
+
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
             var updatedEncryptedFileRaw = encryptedFile.Update(updateFile, File.ReadAllBytes(pathOnEfs), currentUser.Id, userPrivateKey);
 
             // name update is always necessary because files IV has been changed
-            encryptedFile.NameEncryption(fullFileName,
+            encryptedFile.NameEncryption(updateFile.GetOriginalFileFullName(),
                 new AesAlgorithm(((SecurityDescriptor)encryptedFile.Headers[1]).GetKey((int)currentUser.Id, userPrivateKey),
                 ((SecurityDescriptor)encryptedFile.Headers[1]).IV, "OFB"));
 
@@ -249,7 +288,7 @@ namespace Enigma.EFS
                 CreateFile(updatedEncryptedFileRaw, sharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
 
                 // When first sharing a file from user folder to shared folder.
-                if(pathOnEfs.Split('\\')[1] != sharedDir)
+                if (pathOnEfs.Split('\\')[1] != sharedDir)
                 {
                     DeleteFile(pathOnEfs);
                 }
@@ -292,40 +331,26 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Creates a new <em>.txt</em> file on file system.
+        /// Creates a new <em>.txt</em> file on EFS. File is first created in memory after which it's encrypted and stored on EFS.
         /// </summary>
         /// <param name="text">Content of the file.</param>
-        /// <param name="pathOnFs">Path on the file system where the file will be stored.</param>
+        /// <param name="pathOnEfs">Path on the encrypted file system where the file will be stored.</param>
         /// <param name="fileName">Name of the .txt file.</param>
-        public void CreateTxtFile(string text, string pathOnFs, string fileName)
+        /// <param name="algorithmNameSignature">Name of the algorithm used for file encryption.</param>
+        /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
+        public void CreateTxtFile(string text, string pathOnEfs, string fileName, string algorithmNameSignature, string hashAlgorithmName)
         {
-            var textFile = new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt");
-            if (CanItBeStored(textFile.FileContent.Length, pathOnFs.Substring(0, 2)))
-            {
-                CreateFile(textFile.FileContent, pathOnFs + "\\" + textFile.GetOriginalFileFullName());
-            }
-            else
-            {
-                throw new Exception("Insufficient storage available. File can't be created.");
-            }
+            Upload(new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt"), pathOnEfs, algorithmNameSignature, hashAlgorithmName);
         }
 
         /// <summary>
-        /// Edits an existing <em>.txt</em> file on file system by overwriting the original file.
+        /// Edits an existing <em>.txt</em> file on EFS by overwriting the original file.
         /// </summary>
-        /// <param name="text">Content from the .txt file.</param>
-        /// <param name="pathOnFs">Path on the file system where file is stored which includes files name.</param>
-        public void EditTxtFile(string text, string pathOnFs)
+        /// <param name="text">Content from the encrypted .txt file.</param>
+        /// <param name="pathOnEfs">Path on the EFS where file is stored which includes files name.</param>
+        public void EditTxtFile(string text, string pathOnEfs, string fileName)
         {
-            var fileName = pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1);
-            if (fileName.Substring(fileName.LastIndexOf('.') + 1).Equals("txt"))
-            {
-                CreateTxtFile(text, pathOnFs.Substring(pathOnFs.LastIndexOf('\\') + 1), fileName);
-            }
-            else
-            {
-                throw new Exception("File you are trying to edit isn't a .txt file");
-            }
+            Update(pathOnEfs, new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt"));
         }
 
         /// <summary>

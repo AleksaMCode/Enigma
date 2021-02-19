@@ -11,6 +11,8 @@ namespace Enigma.CryptedFileParser
 
         public string FileExtension { get; internal set; }
 
+        public int FileSize => FileContent.Length;
+
         /// <summary>
         /// List of allowed file extensions.
         /// </summary>
