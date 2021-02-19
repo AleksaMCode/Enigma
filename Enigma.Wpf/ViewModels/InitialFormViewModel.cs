@@ -98,10 +98,10 @@ namespace Enigma.Wpf.ViewModels
                 {
                     var password = passBox.Password;
                     var login2fa = new LoginController(pepperPath);
-                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, out var db, out var userDbInfo);
+                    var user = login2fa.LoginPartOne(Username, password, enigmaEfsRoot, userDatabasePath, out var db, out var userDbInfo);
 
                     // Check if a certificate exists.
-                    if(!File.Exists(UserCertificateFilePath))
+                    if (!File.Exists(UserCertificateFilePath))
                     {
                         throw new Exception("Certificate file is missing.");
                     }

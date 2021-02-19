@@ -36,22 +36,14 @@ namespace Enigma.Models
         /// <param name="db">Enigmas user database.</param>
         /// <param name="userDbInfo">User information.</param>
         /// <returns>Logged in user information.</returns>
-        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, out UserDatabase db, out User userDbInfo)
+        public UserInformation LoginPartOne(string username, string password, string enigmaEfsRoot, string userDatabasePath, out UserDatabase db, out User userDbInfo)
         {
             var dataComp = new UserDatabase(userDatabasePath, pepperPath);
 
             var user = dataComp.GetUser(username);
 
-            // if user has entered his mistyped his password three times
-            if (user != null && user.LoginAttempt == 3)
+            if (user.Locked == 1)
             {
-                // delete all users files
-                // problem deleting shared file ? 
-                if (Directory.Exists(@"D:\EnigmaEFS\" + username))
-                {
-                    Directory.Delete(@"D:\EnigmaEFS\" + username, true);
-                    dataComp.LockUser(user);
-                }
                 throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
@@ -62,10 +54,28 @@ namespace Enigma.Models
                 userDbInfo = user;
                 return new UserInformation(user);
             }
-            // if user has entered incorrect password
+            // if user has entered an incorrect password
             else
             {
                 dataComp.LoginAttemptIncrement(user);
+
+                // if user has mistyped his password three times
+                if (user != null && user.LoginAttempt == 3)
+                {
+                    // delete all users files
+                    if (Directory.Exists(enigmaEfsRoot + "\\" + username))
+                    {
+                        Directory.Delete(enigmaEfsRoot + "\\" + username, true);
+                    }
+                    if (Directory.Exists(enigmaEfsRoot + "\\Shared"))
+                    {
+                        DeleteSharedFiles(enigmaEfsRoot + "\\Shared", user.Id);
+                    }
+
+                    dataComp.LockUser(user);
+                    throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
+                }
+
                 throw new Exception(string.Format("Invalid username or password. {0} attempt(s) left", 3 - user.LoginAttempt));
             }
         }
@@ -125,6 +135,48 @@ namespace Enigma.Models
         //    {
         //        throw new Exception("The given private key does not match this user's certificate.");
         //    }
-        //}    
+        //}
+
+
+        /// <summary>
+        /// Deletes all files user has shared with others.
+        /// </summary>
+        /// <param name="path">Path to the shared folder.</param>
+        /// <param name="userId">Id of the user whose shared files are beeing deleted.</param>
+        private void DeleteSharedFiles(string path, int userId)
+        {
+            try
+            {
+                foreach (var filePath in Directory.GetFiles(path))
+                {
+                    if (userId == GetFileOwnerId(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+                foreach (var newDir in Directory.GetDirectories(path))
+                {
+                    DeleteSharedFiles(newDir, userId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Parses only 4 bytes of data that represents owner id. First 16 bytes are skipped, while the next 4 bytes are converted to an <see cref="int"/>.
+        /// </summary>
+        /// <param name="path">Full path to the file.</param>
+        /// <returns>File's owner id.</returns>
+        private int GetFileOwnerId(string path)
+        {
+            var ownerId = new byte[4];
+            using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
+            reader.BaseStream.Seek(16, SeekOrigin.Begin);
+            reader.Read(ownerId, 0, 4);
+            return BitConverter.ToInt32(ownerId, 0);
+        }
     }
 }
