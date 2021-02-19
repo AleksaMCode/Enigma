@@ -67,6 +67,12 @@ namespace Enigma.Models
         public string CertificateExpirationDate => UserInfo.CertificateExpirationDate;
 
         /// <summary>
+        /// Value used to denote that the user's certificate has been revoked. Set to false (0) by default or to true (1) is user account has been locked.
+        /// User can't add new files or share existing files on Enigma EFS if Revoked value is set to true.
+        /// </summary>
+        public bool Revoked => UserInfo.Revoked == 1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information.
         /// </summary>
         /// <param name="user">Users database information.</param>

@@ -115,10 +115,11 @@ namespace Enigma.Models
             //    throw new Exception(errorMsg);
             //}
 
-            // Check if the certificate has been revoked.
+            // Check if the certificate has been revoked and set Revoked value if necessary.
             if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
             {
-                throw new Exception("Certificate has been revoked.");
+                db.SetCertificateRevokeStatus(userDbInfo);
+                //throw new Exception("Certificate has been revoked.");
             }
         }
 

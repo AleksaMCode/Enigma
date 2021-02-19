@@ -94,7 +94,8 @@ namespace Enigma.UserDbManager
                 LoginAttempt = 0,
                 UsbKey = usbKey ? 1 : 0,
                 Locked = 0,
-                CertificateExpirationDate = userCert.GetExpirationDateString()
+                CertificateExpirationDate = userCert.GetExpirationDateString(),
+                Revoked = 0
             };
 
             context.Users.Add(toAdd);
@@ -115,10 +116,20 @@ namespace Enigma.UserDbManager
         /// <summary>
         /// Locks user account.
         /// </summary>
-        /// <param name="user">User whos account needs to be locked.</param>
+        /// <param name="user">User whose account needs to be locked.</param>
         public void LockUser(User user)
         {
             user.Locked = 1;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Sets user's certificate revoke status to true (1).
+        /// </summary>
+        /// <param name="user">User whose certificate revoke status needs to be set to true (1).</param>
+        public void SetCertificateRevokeStatus(User user)
+        {
+            user.Revoked = 1;
             context.SaveChanges();
         }
 
