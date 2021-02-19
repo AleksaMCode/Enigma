@@ -103,6 +103,7 @@
     <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Forms\Data\ChangePaswordFormData.cs" />
     <Compile Include="Forms\Data\ImportFormData.cs" />
+    <Compile Include="Forms\Data\TxtFormData.cs" />
     <Compile Include="Forms\Data\UnshareFormData.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
