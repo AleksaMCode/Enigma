@@ -363,15 +363,30 @@ namespace Enigma.Wpf.ViewModels
 
             form.OnSubmit += (UnshareFormData data) =>
             {
-                var path = addressBarText.StartsWith("\\Shared") ? rootDir + addressBarText : rootDir + "\\" + enigmaEfs.currentUser.Username + addressBarText;
+                try
+                {
+                    if (!obj.IsAccessGranted())
+                    {
+                        throw new Exception("You cannot unshare this file because you don't have access to it.");
+                    }
 
-                if (data.UnshareAll)
-                {
-                    enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id);
+                    if (obj.Type == FileSystemItemType.File)
+                    {
+                        var path = addressBarText.StartsWith("\\Shared") ? rootDir + addressBarText : rootDir + "\\" + enigmaEfs.currentUser.Username + addressBarText;
+
+                        if (data.UnshareAll)
+                        {
+                            enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id);
+                        }
+                        else
+                        {
+                            enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id, usersDb.getUserId(data.SharedUser));
+                        }
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id, usersDb.getUserId(data.SharedUser));
+                    navigator.ShowMessage("Error", ex.Message);
                 }
             };
 
