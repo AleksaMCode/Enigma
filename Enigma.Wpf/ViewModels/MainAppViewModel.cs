@@ -307,7 +307,7 @@ namespace Enigma.Wpf.ViewModels
             //navigator.ShowMessage("Test", "Pressed share item menu item.");
             var form = new ShareFileFormViewModel(navigator);
 
-            form.OnSubmit += (ShareFormData data) =>
+            form.OnSubmit += (string sharedUser) =>
             {
                 try
                 {
@@ -323,10 +323,10 @@ namespace Enigma.Wpf.ViewModels
 
                         if (File.Exists(fileForSharing))
                         {
-                            var userInfo = usersDb.GetUser(user);
+                            var userInfo = usersDb.GetUser(sharedUser);
                             if (userInfo.Locked == 1)
                             {
-                                throw new Exception(string.Format("You can't share you file with {0} because his account is locked.", data.User));
+                                throw new Exception(string.Format("You can't share you file with {0} because his account is locked.", sharedUser));
                             }
 
                             if (userInfo.Revoked == 0 && Convert.ToDateTime(userInfo.CertificateExpirationDate) < DateTime.Now)
@@ -335,7 +335,7 @@ namespace Enigma.Wpf.ViewModels
                             }
                             else
                             {
-                                throw new Exception(string.Format("You can't share your file with {0} because his certificate isn't valid anymore.", data.User));
+                                throw new Exception(string.Format("You can't share your file with {0} because his certificate isn't valid anymore.", sharedUser));
                             }
                         }
                         else
