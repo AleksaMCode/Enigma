@@ -375,12 +375,52 @@ namespace Enigma.EFS
         }
 
         /// <summary>
+        /// Deletes all files user has shared with others.
+        /// </summary>
+        /// <param name="path">Path to the shared folder.</param>
+        public void DeleteUsersShareFiles(string path)
+        {
+            try
+            {
+                foreach (var filePath in Directory.GetFiles(path))
+                {
+                    if (currentUser.Id == GetFileOwnerId(filePath))
+                    {
+                        DeleteFile(filePath);
+                    }
+                }
+                foreach (var newDir in Directory.GetDirectories(path))
+                {
+                    DeleteUsersShareFiles(newDir);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Deletes the specified directory and and any subdirectories and files in the directory.
         /// </summary>
         /// <param name="path">The name of the directory to remove.</param>
         public void DeleteDirectory(string path)
         {
             Directory.Delete(path, true);
+        }
+
+        /// <summary>
+        /// Parses only 4 bytes of data that represents owner id. First 16 bytes are skipped, while the next 4 bytes are converted to an <see cref="int"/>.
+        /// </summary>
+        /// <param name="path">Full path to the file.</param>
+        /// <returns>File's owner id.</returns>
+        private int GetFileOwnerId(string path)
+        {
+            var ownerId = new byte[4];
+            using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
+            reader.BaseStream.Seek(16, SeekOrigin.Begin);
+            reader.Read(ownerId, 0, 4);
+            return BitConverter.ToInt32(ownerId, 0);
         }
 
         /// <summary>
