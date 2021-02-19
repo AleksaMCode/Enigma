@@ -344,7 +344,29 @@ namespace Enigma.EFS
                 else
                 {
                     CreateFile(updatedEncryptedFileRaw, rootDir + "\\" + currentUser.Username + "\\" + encryptedFile.GetEncryptedFileFullName());
+                    DeleteFile(pathOnEfs);
                 }
+            }
+            else
+            {
+                throw new Exception("Insufficient storage available. File can't be updated.");
+            }
+        }
+
+        /// <summary>
+        /// Unshare a file with all shared users on EnigmaEfs.
+        /// </summary>
+        /// <param name="pathOnEfs"></param>
+        /// <param name="loggedInUserId"></param>
+        public void Unshare(string pathOnEfs, int loggedInUserId)
+        {
+            var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
+            var updatedEncryptedFileRaw = encryptedFile.Unshare(File.ReadAllBytes(pathOnEfs), loggedInUserId);
+
+            if (CanItBeStored(updatedEncryptedFileRaw.Length))
+            {
+                CreateFile(updatedEncryptedFileRaw, rootDir + "\\" + currentUser.Username + "\\" + encryptedFile.GetEncryptedFileFullName());
+                DeleteFile(pathOnEfs);
             }
             else
             {

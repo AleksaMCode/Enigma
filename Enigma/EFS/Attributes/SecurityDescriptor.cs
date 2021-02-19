@@ -127,6 +127,26 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
+        /// Unshare a file with other users.
+        /// </summary>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        public void UnshareFile(int loggedInUserId)
+        {
+            if (OwnerId == loggedInUserId && Users.Count != 1)
+            {
+                var ownerEncryptedFek = Users[0];
+                Users = new Dictionary<int, byte[]>
+                {
+                    { loggedInUserId, ownerEncryptedFek }
+                };
+            }
+            else
+            {
+                throw new Exception("Only file owner can unshare this file.");
+            }
+        }
+
+        /// <summary>
         /// Gets users decrypted Key used for symmetric encryption/decryption of the file.
         /// </summary>
         /// <param name="userId">Unique user identifier from the database.</param>
