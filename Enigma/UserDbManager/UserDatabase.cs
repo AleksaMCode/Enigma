@@ -234,12 +234,29 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
-        /// Get every user from the database.
+        /// Gets every user from the database.
         /// </summary>
         /// <returns>All users from database.</returns>
         public IEnumerable<User> GetAllUsers()
         {
             return context.Users.AsEnumerable();
+        }
+
+        /// <summary>
+        /// Gets every username from the database.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetAllUsernames()
+        {
+            var users = context.Users.AsEnumerable();
+            var usernames = new List<string>(users.Count());
+
+            foreach(var user in users)
+            {
+                usernames.Add(user.Username);
+            }
+
+            return usernames;
         }
     }
 }
