@@ -349,9 +349,10 @@ namespace Enigma.EFS
         /// <param name="fileName">Name of the .txt file.</param>
         /// <param name="algorithmNameSignature">Name of the algorithm used for file encryption.</param>
         /// <param name="hashAlgorithmName">Name of the hashing algorithm used to create a file signature.</param>
-        public void CreateTxtFile(string text, string pathOnEfs, string fileName, string algorithmNameSignature, string hashAlgorithmName)
+        /// <returns>Encrypted name of the file.</returns>
+        public string CreateTxtFile(string text, string pathOnEfs, string fileName, string algorithmNameSignature, string hashAlgorithmName)
         {
-            Upload(new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt"), pathOnEfs, algorithmNameSignature, hashAlgorithmName);
+            return Upload(new OriginalFile(Encoding.ASCII.GetBytes(text), fileName + ".txt"), pathOnEfs, algorithmNameSignature, hashAlgorithmName);
         }
 
         /// <summary>

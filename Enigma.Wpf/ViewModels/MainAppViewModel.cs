@@ -190,23 +190,36 @@ namespace Enigma.Wpf.ViewModels
             {
                 try
                 {
-                    if (!userCertificateExpired)
-                    {
-                        var encrypedName = enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
-                        currentItems.Add(new FileSystemItem(
-                            new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
-                            File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
 
-                        SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
-                    }
-                    else
-                    {
-                        throw new Exception("You cannot import any new files beacuse your certificate has expired.");
-                    }
+                    var encrypedName = enigmaEfs.Upload(data.InputFilePath, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
+                    // currentItems.Add(new FileSystemItem(
+                    //    new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
+                    //    File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
+                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    navigator.ShowMessage("Error", e.Message);
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+            };
+
+            navigator.OpenFlyoutPanel(form);
+        }
+
+        private void HandleCreateTxtFile()
+        {
+            var form = new TxtFileCreateFormViewModel(navigator);
+
+            form.OnSubmit += (TxtFormData data) =>
+            {
+                try
+                {
+                    var encrypedName = enigmaEfs.CreateTxtFile(data.Text, rootDir + addressBarText, data.AlgorithmIdentifier, data.HashIdentifier);
+                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
                 }
             };
 
@@ -221,11 +234,18 @@ namespace Enigma.Wpf.ViewModels
 
             form.OnSubmit += (string dirName) =>
             {
-                Directory.CreateDirectory(rootDir + addressBarText + dirName);
-                SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                try
+                {
+                    Directory.CreateDirectory(rootDir + addressBarText + dirName);
+                    SetCurrentItems(enigmaEfs.currentUser.Username + "\\" + addressBarText);
+                }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
             };
-            navigator.OpenFlyoutPanel(form);
 
+            navigator.OpenFlyoutPanel(form);
             //navigator.ShowMessage("Test", "Pressed Create folder menu item.");
         }
 
@@ -244,7 +264,7 @@ namespace Enigma.Wpf.ViewModels
                         // check if user is a file owner
                         if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
                         {
-                            navigator.ShowMessage("Error", "You can't delete file.");
+                            navigator.ShowMessage("Error", "You can't delete this file.");
                         }
                         else
                         {
@@ -285,11 +305,7 @@ namespace Enigma.Wpf.ViewModels
             {
                 try
                 {
-                    if (userCertificateExpired)
-                    {
-                        throw new Exception("You cannot share any new files beacuse your certificate has expired.");
-                    }
-                    else if (!obj.IsAccessGranted())
+                    if (!obj.IsAccessGranted())
                     {
                         throw new Exception("You cannot share this file because you don't have access to it.");
                     }
@@ -331,7 +347,7 @@ namespace Enigma.Wpf.ViewModels
             }
             else if (obj.IsAccessGranted())
             {
-                var form = new ImportFormViewModel(navigator);
+                var form = new ExportFormViewModel(navigator);
 
                 form.OnSubmit += (ExportFormData data) =>
                 {
@@ -339,9 +355,9 @@ namespace Enigma.Wpf.ViewModels
                     {
                         enigmaEfs.Download(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), data.path, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        navigator.ShowMessage("Error", e.Message);
+                        navigator.ShowMessage("Error", ex.Message);
                     }
                 };
 
@@ -378,7 +394,6 @@ namespace Enigma.Wpf.ViewModels
                 try
                 {
                     enigmaEfs.OpenFile(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.PublicKey);
-                    // handle .txt files
                 }
                 catch (Exception ex)
                 {

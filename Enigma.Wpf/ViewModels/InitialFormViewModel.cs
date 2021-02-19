@@ -157,9 +157,9 @@ namespace Enigma.Wpf.ViewModels
                         passBox.Clear();
                         Username = "";
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        navigator.ShowMessage("Error", e.Message);
+                        navigator.ShowMessage("Error", ex.Message);
                     }
                     //navigator.GoToControl(new MainAppViewModel(navigator)); <- remove this!?
                 }
