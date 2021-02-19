@@ -307,7 +307,7 @@ namespace Enigma.Wpf.ViewModels
             //navigator.ShowMessage("Test", "Pressed share item menu item.");
             var form = new ShareFileFormViewModel(navigator);
 
-            form.OnSubmit += (string user) =>
+            form.OnSubmit += (ShareFormData data) =>
             {
                 try
                 {
@@ -318,13 +318,15 @@ namespace Enigma.Wpf.ViewModels
 
                     if (obj.Type == FileSystemItemType.File)
                     {
-                        var fileForSharing = rootDir + addressBarText + "\\" + obj.GetEncryptedFileName();
+                        var path = addressBarText.StartsWith("\\Shared") ? rootDir + addressBarText : rootDir + "\\" + enigmaEfs.currentUser.Username + addressBarText;
+                        var fileForSharing = path + "\\" + obj.GetEncryptedFileName();
+
                         if (File.Exists(fileForSharing))
                         {
                             var userInfo = usersDb.GetUser(user);
                             if (userInfo.Locked == 1)
                             {
-                                throw new Exception(string.Format("You can't share you file with {0} because his account is locked.", user));
+                                throw new Exception(string.Format("You can't share you file with {0} because his account is locked.", data.User));
                             }
 
                             if (userInfo.Revoked == 0 && Convert.ToDateTime(userInfo.CertificateExpirationDate) < DateTime.Now)
@@ -333,7 +335,7 @@ namespace Enigma.Wpf.ViewModels
                             }
                             else
                             {
-                                throw new Exception(string.Format("You can't share your file with {0} because his certificate isn't valid anymore.", user));
+                                throw new Exception(string.Format("You can't share your file with {0} because his certificate isn't valid anymore.", data.User));
                             }
                         }
                         else
@@ -384,7 +386,7 @@ namespace Enigma.Wpf.ViewModels
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     navigator.ShowMessage("Error", ex.Message);
                 }
