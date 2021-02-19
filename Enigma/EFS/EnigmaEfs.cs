@@ -130,10 +130,7 @@ namespace Enigma.EFS
         /// <returns>Encrypted name of the file.</returns>
         public string Upload(OriginalFile originalFile, string pathOnEfs, string algorithmNameSignature, string hashAlgorithmName)
         {
-            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
-            {
-                throw new Exception("Your certificate has expired. You cannot import any new files.");
-            }
+            CertificateCheck("You cannot import any new files.");
 
             string encryptedName;
 
@@ -211,11 +208,6 @@ namespace Enigma.EFS
         /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
         public void Update(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
         {
-            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
-            {
-                throw new Exception("Your certificate has expired. You cannot update files.");
-            }
-
             var fileSize = new FileInfo(pathOnFs).Length;
 
             if (fileSize > 2_000_000_000)
@@ -251,6 +243,8 @@ namespace Enigma.EFS
         /// <param name="updateFile">Updated, unencrypted file.</param>
         public void Update(string pathOnEfs, OriginalFile updateFile)
         {
+            CertificateCheck("You cannot update files.");
+
             if (updateFile.FileSize > 2_000_000_000)
             {
                 throw new Exception("File can't be larger than 2 GB.");
@@ -279,6 +273,22 @@ namespace Enigma.EFS
             else
             {
                 throw new Exception("Insufficient storage available. File can't be updated.");
+            }
+        }
+
+        /// <summary>
+        /// Checks if user's certificate has expired or if it's been revoked.
+        /// </summary>
+        /// <param name="msg"></param>
+        private void CertificateCheck(string msg)
+        {
+            if (Convert.ToDateTime(currentUser.CertificateExpirationDate) < DateTime.Now)
+            {
+                throw new Exception(string.Format("Your certificate has expired. {0}", msg));
+            }
+            else if (currentUser.Revoked)
+            {
+                throw new Exception(string.Format("Your certificate has been revoked. {0}", msg));
             }
         }
 
