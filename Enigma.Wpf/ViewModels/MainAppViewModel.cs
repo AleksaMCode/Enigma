@@ -163,10 +163,16 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleAccountDeletion()
         {
-            // problem with Shared file deletion?
+            // Delete user's files.
             if (Directory.Exists(rootDir + "\\" + enigmaEfs.currentUser.Username))
             {
                 Directory.Delete(rootDir + "\\" + enigmaEfs.currentUser.Username, true);
+            }
+
+            // Delete user's share files.
+            if (Directory.Exists(enigmaEfs.sharedDir))
+            {
+                enigmaEfs.DeleteUsersShareFiles(enigmaEfs.sharedDir);
             }
 
             // Remove user from user database.
