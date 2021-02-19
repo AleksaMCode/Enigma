@@ -147,6 +147,32 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
+        /// Gets Id values of all the users that can view this file.
+        /// </summary>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <returns><see cref="List{int}"/> of users id values.</returns>
+        public List<int> GetSharedUsersId(int loggedInUserId)
+        {
+            if (OwnerId == loggedInUserId)
+            {
+                var idList = new List<int>(Users.Count);
+                foreach (var user in Users)
+                {
+                    if (user.Key != loggedInUserId)
+                    {
+                        idList.Add(user.Key);
+                    }
+                }
+
+                return idList;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Gets users decrypted Key used for symmetric encryption/decryption of the file.
         /// </summary>
         /// <param name="userId">Unique user identifier from the database.</param>
