@@ -198,7 +198,7 @@ namespace Enigma.CryptedFileParser
         {
             try
             {
-                // Exception will be thrown if the hashing algoritm is MD2, MD4 or RIPEMD.
+                // Exception will be thrown if the hashing algoritm is MD2, MD4, RIPEMD or SHA224.
                 var hashAlgo = AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
                 ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).CreateSignature(data, hashAlgo);
             }
