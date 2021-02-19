@@ -391,22 +391,44 @@ namespace Enigma.Wpf.ViewModels
         {
             if (obj.Type == FileSystemItemType.File)
             {
-                var form = new FileUpdateFormViewModel(navigator);
-
-                form.OnSubmit += (string filePath) =>
+                if (obj.Name.Contains(".txt"))
                 {
-                    try
-                    {
-                        enigmaEfs.Update(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), filePath, enigmaEfs.userPrivateKey);
-                        // handle .txt update
-                    }
-                    catch (Exception ex)
-                    {
-                        navigator.ShowMessage("Error", ex.Message);
-                    }
-                };
+                    var form = new TxtFileUpdateFormViewModel(navigator);
 
-                navigator.OpenFlyoutPanel(form);
+                    form.OnSubmit += (string text) =>
+                    {
+                        try
+                        {
+                            // submit + cancel buttons
+                            enigmaEfs.EditTxtFile(text, pathOnEfs, obj.Name);
+                        }
+                        catch (Exception ex)
+                        {
+                            navigator.ShowMessage("Error", ex.Message);
+                        }
+                    };
+
+                    navigator.OpenFlyoutPanel(form);
+                }
+                else
+                {
+                    var form = new FileUpdateFormViewModel(navigator);
+
+                    form.OnSubmit += (string filePath) =>
+                    {
+                        try
+                        {
+                            enigmaEfs.Update(rootDir + addressBarText + "\\" + obj.GetEncryptedFileName(), filePath, enigmaEfs.userPrivateKey);
+                            // handle .txt update
+                        }
+                        catch (Exception ex)
+                        {
+                            navigator.ShowMessage("Error", ex.Message);
+                        }
+                    };
+
+                    navigator.OpenFlyoutPanel(form);
+                }
             }
             else
             {
