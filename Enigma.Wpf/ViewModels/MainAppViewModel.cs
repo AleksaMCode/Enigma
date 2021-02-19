@@ -367,6 +367,8 @@ namespace Enigma.Wpf.ViewModels
             navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + welcomeMessage);
         }
 
+        public ICommand ReadCommand => new RelayCommand(HandleReadFile);
+
         private void HandleReadFile(FileSystemItem obj)
         {
             if (obj.Type == FileSystemItemType.File)
@@ -386,6 +388,8 @@ namespace Enigma.Wpf.ViewModels
                 navigator.ShowMessage("Error", "You can only read files.");
             }
         }
+
+        public ICommand UpdateCommand => new RelayCommand(HandleFileUpdate);
 
         private void HandleFileUpdate(FileSystemItem obj)
         {
