@@ -193,6 +193,17 @@ namespace Enigma.EFS
         }
 
         /// <summary>
+        /// Downloads selected encrypted file. File is first decrypted after which is stored in memory.
+        /// </summary>
+        /// <param name="pathOnEfs">The name of the file to downloaded.</param>
+        /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
+        public OriginalFile DownloadInMemory(string pathOnEfs, RSAParameters ownerPublicKey)
+        {
+            return new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0])
+                .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, userPrivateKey, ownerPublicKey);
+        }
+
+        /// <summary>
         /// Updates selected encrypted file with a specified unencrypted file from file system. Original file name will be unchanged.
         /// </summary>
         /// <param name="pathOnEfs">The name of the file to update.</param>
