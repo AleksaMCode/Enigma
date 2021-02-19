@@ -322,16 +322,28 @@ namespace Enigma.Wpf.ViewModels
                         if (File.Exists(fileForSharing))
                         {
                             var userInfo = usersDb.GetUser(user);
-                            enigmaEfs.Share(fileForSharing, enigmaEfs.currentUser.Id, userInfo.Id, userInfo.PublicKey);
+                            if (userInfo.Locked == 1)
+                            {
+                                throw new Exception(string.Format("You can't share you file with {0} because his account is locked.", user));
+                            }
+
+                            if (userInfo.Revoked == 0 && Convert.ToDateTime(userInfo.CertificateExpirationDate) < DateTime.Now)
+                            {
+                                enigmaEfs.Share(fileForSharing, enigmaEfs.currentUser.Id, userInfo.Id, userInfo.PublicKey);
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("You can't share your file with {0} because his certificate isn't valid anymore.", user));
+                            }
                         }
                         else
                         {
-                            navigator.ShowMessage("Error", string.Format("File {0} is missing.", obj.Name));
+                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
                         }
                     }
                     else
                     {
-                        navigator.ShowMessage("Error", "You can only share files.");
+                        throw new Exception("You can only share files.");
                     }
                 }
                 catch (Exception ex)
