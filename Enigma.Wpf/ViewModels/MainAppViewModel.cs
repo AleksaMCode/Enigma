@@ -134,6 +134,11 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
+        private void ExitEnigma()
+        {
+            enigmaEfs.RemoveTempFiles();
+        }
+
         public ICommand LogOutCommand => new RelayCommand(HandleLogOut);
 
         private void HandleLogOut()
