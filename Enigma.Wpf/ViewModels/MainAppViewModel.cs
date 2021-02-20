@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Security.Cryptography;
@@ -31,7 +32,9 @@ namespace Enigma.Wpf.ViewModels
         private readonly string rootDir;
 
         private string addressBarText;
-        private string previousDir = null;
+        private Stack<string> backDir = new Stack<string>();
+        private Stack<string> forwardDir = new Stack<string>();
+        // private string previousDir = null;
 
         public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir)
         {
@@ -78,13 +81,13 @@ namespace Enigma.Wpf.ViewModels
             //navigator.ShowMessage("Test", "Pressed back button.");
 
             // if current dir isn't root
-            if (addressBarText != "\\")
+            if (addressBarText != "\\") // or previousDir.Count != 0
             {
-                SetCurrentItems(GetPreviousDirPath());
-
-                var tempDir = previousDir;
-                previousDir = addressBarText;
+                var tempDir = backDir.Pop();
+                forwardDir.Push(addressBarText);
                 addressBarText = tempDir;
+
+                SetCurrentItems(GetDirPath());
             }
         }
 
@@ -93,29 +96,31 @@ namespace Enigma.Wpf.ViewModels
         private void HandleForwardButton()
         {
             //navigator.ShowMessage("Test", "Pressed forward button.");
-            if (previousDir != null)
+            if (forwardDir.Count != 0)
             {
-                SetCurrentItems(GetPreviousDirPath());
+                backDir.Push(addressBarText);
+                addressBarText = forwardDir.Pop();
 
-                var tempDir = previousDir;
-                previousDir = addressBarText;
-                addressBarText = tempDir;
+                SetCurrentItems(GetDirPath());
             }
         }
 
         public ICommand UpCommand => new RelayCommand(HandleUpButton);
 
-        // change this to home button
         private void HandleUpButton()
         {
             //navigator.ShowMessage("Test", "Pressed up button.");
             if (addressBarText != "\\")
             {
-                SetCurrentItems(GetDirPath());
-
-                var tempDir = previousDir;
-                previousDir = addressBarText;
+                var tempDir = backDir.Pop();
+                forwardDir.Clear();
                 addressBarText = tempDir;
+
+                SetCurrentItems(GetDirPath());
+            }
+            else
+            {
+                forwardDir.Clear();
             }
         }
 
@@ -640,25 +645,25 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        private string GetPreviousDirPath()
-        {
-            var path = rootDir;
+        //private string GetPreviousDirPath()
+        //{
+        //    var path = rootDir;
 
-            if (addressBarText.StartsWith("\\Shared"))
-            {
-                path += previousDir;
-            }
-            if (addressBarText == "\\")
-            {
-                path += enigmaEfs.currentUser.Username;
-            }
-            else // if previousDir is set to subdirectory insede of the user's directory 
-            {
-                path += "\\" + enigmaEfs.currentUser.Username + previousDir;
-            }
+        //    if (addressBarText.StartsWith("\\Shared"))
+        //    {
+        //        path += previousDir;
+        //    }
+        //    if (addressBarText == "\\")
+        //    {
+        //        path += enigmaEfs.currentUser.Username;
+        //    }
+        //    else // if previousDir is set to subdirectory insede of the user's directory 
+        //    {
+        //        path += "\\" + enigmaEfs.currentUser.Username + previousDir;
+        //    }
 
-            return path;
-        }
+        //    return path;
+        //}
 
         private string GetDirPath()
         {
