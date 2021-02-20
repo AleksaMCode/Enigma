@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Security.Cryptography;
 using System.Windows.Input;
 using Enigma.EFS;
 using Enigma.Enums;
@@ -21,7 +20,7 @@ namespace Enigma.Wpf.ViewModels
     {
         private readonly INavigator navigator;
         private ObservableCollection<FileSystemItem> currentItems;
-        private readonly FileSystemItem shared;
+        private FileSystemItem shared;
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
         private readonly bool userCertificateExpired;
@@ -41,7 +40,7 @@ namespace Enigma.Wpf.ViewModels
             navigator = mainWindow;
             usersDb = db;
             enigmaEfs = new EnigmaEfs(user, rootDir);
-            shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
+            //shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
             CurrentItems.Add(shared);
             this.rootDir = rootDir;
             userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) > DateTime.Now;
@@ -131,6 +130,7 @@ namespace Enigma.Wpf.ViewModels
             // Shared folder is always visible except when "visiting" Shared folder.
             if (!path.StartsWith("\\Shared"))
             {
+                shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
                 CurrentItems.Add(shared);
             }
 
