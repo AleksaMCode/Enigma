@@ -47,6 +47,11 @@ namespace Enigma.Models
         /// <param name="usbKey">Set to true if user want to have an private USB key, otherwise it's set to false.</param>
         public void Register(ref string username, string password, string certificateFilePath, bool usbKey)
         {
+            if(username.Length > 25)
+            {
+                throw new Exception("Usernames can't have more than 25 characters.");
+            }
+
             if (password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
