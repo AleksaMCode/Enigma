@@ -261,9 +261,15 @@ namespace Enigma.Wpf.ViewModels
                 try
                 {
                     var path = GetDirPath();
-                    if ()
+                    if (Directory.Exists(path))
+                    {
                         var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
-                    SetCurrentItems(path);
+                        SetCurrentItems(path);
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                    }
                 }
                 catch (Exception ex)
                 {
