@@ -112,6 +112,11 @@ namespace Enigma.CryptedFileParser
         {
             var offset = 0;
             ((StandardInformation)Headers[0]).ParseStandardInformation(encryptedFile, offset);
+
+            // update id of the user who is accessing the file
+            ((StandardInformation)Headers[0]).ReadTime = DateTime.Now;
+            ((StandardInformation)Headers[0]).RTimeUserId = (uint)userId;
+
             offset += (int)((StandardInformation)Headers[0]).GetSaveLength();
 
             ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(encryptedFile, ref offset);
@@ -193,7 +198,7 @@ namespace Enigma.CryptedFileParser
         {
             try
             {
-                // Exception will be thrown if the hashing algoritm is MD2, MD4 or RIPEMD.
+                // Exception will be thrown if the hashing algoritm is MD2, MD4, RIPEMD or SHA224.
                 var hashAlgo = AlgorithmUtility.GetHashAlgoFromNameSignature(((SecurityDescriptor)Headers[1]).HashAlgorithmName);
                 ((SecurityDescriptor)Headers[1]).Signature = new RsaAlgorithm(userPrivateKey).CreateSignature(data, hashAlgo);
             }
@@ -289,7 +294,33 @@ namespace Enigma.CryptedFileParser
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
         /// <param name="userId">Unique user identifier from the database.</param>
         /// <returns>Updated encrypted file.</returns>
-        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId)
+        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId, out int numberOfSharedUsers)
+        {
+            UnshareHelper(encryptedFile, loggedInUserId);
+
+            // unshare a file with a specific user
+            numberOfSharedUsers = ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
+
+            return Flush();
+        }
+
+        /// <summary>
+        /// Unshare a file with all shred users on EnigmaEfs.
+        /// </summary>
+        /// <param name="encryptedFile">Encrypted file in its raw form.</param>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <returns></returns>
+        public byte[] Unshare(byte[] encryptedFile, int loggedInUserId)
+        {
+            UnshareHelper(encryptedFile, loggedInUserId);
+
+            // unshare a file with a all users
+            ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId);
+
+            return Flush();
+        }
+
+        private void UnshareHelper(byte[] encryptedFile, int loggedInUserId)
         {
             var offset = 0;
 
@@ -298,11 +329,6 @@ namespace Enigma.CryptedFileParser
 
             ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(encryptedFile, ref offset);
             ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
-
-            // unshare a file with a user
-            ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
-
-            return Flush();
         }
 
         /// <summary>

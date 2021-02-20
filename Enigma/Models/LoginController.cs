@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Enigma.AlgorithmLibrary.Algorithms;
+using Enigma.PrivateKeyParsers;
 using Enigma.UserDbManager;
 
 namespace Enigma.Models
@@ -30,42 +33,47 @@ namespace Enigma.Models
         /// <summary>
         /// First part of 2FA.
         /// </summary>
-        /// <param name="username">Users username.</param>
-        /// <param name="password">Users password.</param>
-        /// <param name="userDatabasePath">Path to users database stored in config file.</param>
-        /// <param name="db">Enigmas user database.</param>
-        /// <param name="userDbInfo">User information.</param>
-        /// <returns>Logged in user information.</returns>
-        public UserInformation LoginPartOne(string username, string password, string userDatabasePath, out UserDatabase db, out User userDbInfo)
+        /// <param name="username">User's username.</param>
+        /// <param name="password">User's password.</param>
+        /// <param name="usersDb">Enigma's user database.</param>
+        /// <param name="enigmaEfsRoot">Root path to Enigma's Efs.</param>
+        /// <returns>Logged-in user's information.</returns>
+        public User LoginPartOne(string username, string password, string enigmaEfsRoot, UserDatabase usersDb)
         {
-            var dataComp = new UserDatabase(userDatabasePath, pepperPath);
+            var user = usersDb.GetUser(username);
 
-            var user = dataComp.GetUser(username);
-
-            // if user has entered his mistyped his password three times
-            if (user != null && user.LoginAttempt == 3)
+            if (user.Locked == 1)
             {
-                // delete all users files
-                // problem deleting shared file ? 
-                if (Directory.Exists(@"D:\EnigmaEFS\" + username))
-                {
-                    Directory.Delete(@"D:\EnigmaEFS\" + username, true);
-                    dataComp.LockUser(user);
-                }
                 throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
             // if user has entered correct password
-            if (user != null && user.IsPasswordValid(password, dataComp.Pepper))
+            if (user != null && user.IsPasswordValid(password, usersDb.Pepper))
             {
-                db = dataComp;
-                userDbInfo = user;
-                return new UserInformation(user);
+                return user;
             }
-            // if user has entered incorrect password
+            // if user has entered an incorrect password
             else
             {
-                dataComp.LoginAttemptIncrement(user);
+                usersDb.LoginAttemptIncrement(user);
+
+                // if user has mistyped his password three times
+                if (user != null && user.LoginAttempt == 3)
+                {
+                    // delete all users files
+                    if (Directory.Exists(enigmaEfsRoot + "\\" + username))
+                    {
+                        Directory.Delete(enigmaEfsRoot + "\\" + username, true);
+                    }
+                    if (Directory.Exists(enigmaEfsRoot + "\\Shared"))
+                    {
+                        DeleteSharedFiles(enigmaEfsRoot + "\\Shared", user.Id);
+                    }
+
+                    usersDb.LockUser(user);
+                    throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
+                }
+
                 throw new Exception(string.Format("Invalid username or password. {0} attempt(s) left", 3 - user.LoginAttempt));
             }
         }
@@ -75,13 +83,14 @@ namespace Enigma.Models
         /// </summary>
         /// <param name="user">User information.</param>
         /// <param name="certificate">User <see cref="X509Certificate2"/> public certificate in raw form.</param>
-        public void LoginPartTwo(UserInformation user, byte[] certificate, UserDatabase db, User userDbInfo)
+        /// <param name="usersDb"></param>
+        public void LoginPartTwo(User user, byte[] certificate, UserDatabase usersDb)
         {
             var userCert = new X509Certificate2(certificate);
             var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
 
             // compare user public RSA key from x509 public certificate with a public RSA key that was stored when user first registered
-            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, user.PublicKey))
+            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, RsaAlgorithm.ImportPublicKey(Encoding.ASCII.GetString(user.PublicKey))))
             {
                 throw new Exception("Wrong certificate used.");
             }
@@ -92,12 +101,12 @@ namespace Enigma.Models
             }
 
             // update user last login time and reset atttemp count
-            db.UpdateLoginTime(userDbInfo, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+            usersDb.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
 
             // reset login attempt if necessary
-            if (userDbInfo.LoginAttempt != 0)
+            if (user.LoginAttempt != 0)
             {
-                db.ResetLoginAttempts(userDbInfo);
+                usersDb.ResetLoginAttempts(user);
             }
 
             //if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
@@ -105,10 +114,12 @@ namespace Enigma.Models
             //    throw new Exception(errorMsg);
             //}
 
-            //if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
-            //{
-            //    throw new Exception("Certificate has been revoked.");
-            //}
+            // Check if the certificate has been revoked and set Revoked value if necessary.
+            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+            {
+                usersDb.SetCertificateRevokeStatus(user);
+                //throw new Exception("Certificate has been revoked.");
+            }
         }
 
         //public void LoginPartTwo(string privateKeyPath, string password, UserInformation user)
@@ -125,6 +136,118 @@ namespace Enigma.Models
         //    {
         //        throw new Exception("The given private key does not match this user's certificate.");
         //    }
-        //}    
+        //}
+
+        /// <summary>
+        /// Gets users private RSA key from encryped user's key.
+        /// </summary>
+        /// <param name="privateKeyPath">Path to the user's encrypted RSA key haystack.</param>
+        /// <param name="password">Users private RSA key password.</param>
+        /// <returns>Users private RSA key.</returns>
+        public RSAParameters GetPrivateKey(string privateKeyPath, string password)
+        {
+            var keyRaw = DecryptTheUserKey(File.ReadAllBytes(privateKeyPath), password);
+            return new KeyFileParser(keyRaw).GetParameters();
+            //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
+        }
+
+        public RSAParameters GetPrivateKey(byte[] privateKey, string password)
+        {
+            var keyRaw  = DecryptTheUserKey(privateKey, password);
+            return new KeyFileParser(keyRaw).GetParameters();
+            //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
+        }
+
+        /// <summary>
+        /// Checks if the private RSA key password is correct.
+        /// </summary>
+        /// <param name="password">Users private RSA key password.</param>
+        /// <param name="salt">Salt used to create  entered password hash.</param>
+        /// <param name="passwordDigest">Passwords hash.</param>
+        /// <returns>true if passwords match, otherwise false.</returns>
+        private bool CheckKeyPassword(byte[] password, byte[] salt, byte[] passwordDigest)
+        {
+            var currentPasswordDigest = SHA256.Create().ComputeHash(password.Concat(salt).ToArray());
+
+            return currentPasswordDigest.SequenceEqual(passwordDigest);
+        }
+
+        /// <summary>
+        /// Finds and decrypts users private RSA key.
+        /// </summary>
+        /// <param name="keyRawEncrypted">User RSA key haystack.</param>
+        /// <param name="password">Users private RSA key password.</param>
+        /// <returns>Users RSA private key in raw form.</returns>
+        private byte[] DecryptTheUserKey(byte[] keyRawEncrypted, string password)
+        {
+            var passwordBytes = Encoding.ASCII.GetBytes(password);
+            var startLocation = BitConverter.ToInt32(keyRawEncrypted, 0);
+            var needleSize = BitConverter.ToInt32(keyRawEncrypted, 4);
+
+            var salt = new byte[16];
+            var needle = new byte[needleSize];
+            var passwordDigest = new byte[256 / 8];
+
+            Buffer.BlockCopy(keyRawEncrypted, 8, salt, 0, 16);
+            Buffer.BlockCopy(keyRawEncrypted, 24, passwordDigest, 0, 32);
+
+            if (!CheckKeyPassword(passwordBytes, salt, passwordDigest))
+            {
+                throw new Exception("Invalid password.");
+            }
+
+            Buffer.BlockCopy(keyRawEncrypted, startLocation, needle, 0, needleSize);
+
+            var hash = SHA512.Create().ComputeHash(passwordBytes);
+            var key = new byte[32];
+            var iv = new byte[16];
+
+            Buffer.BlockCopy(hash, 0, key, 0, 32);
+            Buffer.BlockCopy(hash, 32, iv, 0, 16);
+
+            return new AesAlgorithm(key, iv, "OFB").Decrypt(needle);
+        }
+
+
+        /// <summary>
+        /// Deletes all files user has shared with others.
+        /// </summary>
+        /// <param name="path">Path to the shared folder.</param>
+        /// <param name="userId">Id of the user whose shared files are beeing deleted.</param>
+        private void DeleteSharedFiles(string path, int userId)
+        {
+            try
+            {
+                foreach (var filePath in Directory.GetFiles(path))
+                {
+                    if (userId == GetFileOwnerId(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+                foreach (var newDir in Directory.GetDirectories(path))
+                {
+                    DeleteSharedFiles(newDir, userId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Parses only 4 bytes of data that represents owner id. First 16 bytes are skipped, while the next 4 bytes are converted to an <see cref="int"/>.
+        /// </summary>
+        /// <param name="path">Full path to the file.</param>
+        /// <returns>File's owner id.</returns>
+        private int GetFileOwnerId(string path)
+        {
+            var ownerId = new byte[4];
+            using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
+            reader.BaseStream.Seek(16, SeekOrigin.Begin);
+            reader.Read(ownerId, 0, 4);
+            return BitConverter.ToInt32(ownerId, 0);
+        }
     }
 }

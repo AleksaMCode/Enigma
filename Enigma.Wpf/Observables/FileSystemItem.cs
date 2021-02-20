@@ -45,7 +45,7 @@ namespace Enigma.Wpf.Observables
 
         public bool IsAccessGranted()
         {
-            return efsObject.Name != null;
+            return efsObject.Name != GetEncryptedFileName();
         }
 
         public string GetEncryptedFileName()

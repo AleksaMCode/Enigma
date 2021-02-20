@@ -106,9 +106,10 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Unshare a file after sharing it with other specific user on EnigmaEfs.
         /// </summary>
-        /// <param name="userId">Unique user identifier from the database.</param>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
-        public void UnshareFile(int loggedInUserId, int userId)
+        /// <param name="userId">Unique user identifier from the database.</param>
+        /// <returns>Number of users that have access to a file.</returns>
+        public int UnshareFile(int loggedInUserId, int userId)
         {
             if (OwnerId == loggedInUserId)
             {
@@ -120,6 +121,54 @@ namespace Enigma.EFS.Attributes
             else
             {
                 throw new Exception("Only file owner can unshare this file.");
+            }
+
+            return Users.Count;
+        }
+
+        /// <summary>
+        /// Unshare a file with other users.
+        /// </summary>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        public void UnshareFile(int loggedInUserId)
+        {
+            if (OwnerId == loggedInUserId && Users.Count != 1)
+            {
+                var ownerEncryptedFek = Users[0];
+                Users = new Dictionary<int, byte[]>
+                {
+                    { loggedInUserId, ownerEncryptedFek }
+                };
+            }
+            else
+            {
+                throw new Exception("Only file owner can unshare this file.");
+            }
+        }
+
+        /// <summary>
+        /// Gets Id values of all the users that can view this file.
+        /// </summary>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <returns><see cref="List{int}"/> of users id values.</returns>
+        public List<int> GetSharedUsersId(int loggedInUserId)
+        {
+            if (OwnerId == loggedInUserId)
+            {
+                var idList = new List<int>(Users.Count);
+                foreach (var user in Users)
+                {
+                    if (user.Key != loggedInUserId)
+                    {
+                        idList.Add(user.Key);
+                    }
+                }
+
+                return idList;
+            }
+            else
+            {
+                return null;
             }
         }
 

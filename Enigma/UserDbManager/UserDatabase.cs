@@ -50,6 +50,16 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
+        /// Gets a specific user's Id using user's username.
+        /// </summary>
+        /// <param name="username">Username of the user whos id is retrieved from database.</param>
+        /// <returns>User's Id.</returns>
+        public int getUserId(string username)
+        {
+            return context.Users.Where(u => u.Username == username).SingleOrDefault().Id;
+        }
+
+        /// <summary>
         /// Adds a new user to users database, while performing password hashing and hardening.
         /// </summary>
         /// <param name="username">User username.</param>
@@ -94,7 +104,8 @@ namespace Enigma.UserDbManager
                 LoginAttempt = 0,
                 UsbKey = usbKey ? 1 : 0,
                 Locked = 0,
-                CertificateExpirationDate = userCert.GetExpirationDateString()
+                CertificateExpirationDate = userCert.GetExpirationDateString(),
+                Revoked = 0
             };
 
             context.Users.Add(toAdd);
@@ -115,10 +126,20 @@ namespace Enigma.UserDbManager
         /// <summary>
         /// Locks user account.
         /// </summary>
-        /// <param name="user">User whos account needs to be locked.</param>
+        /// <param name="user">User whose account needs to be locked.</param>
         public void LockUser(User user)
         {
             user.Locked = 1;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Sets user's certificate revoke status to true (1).
+        /// </summary>
+        /// <param name="user">User whose certificate revoke status needs to be set to true (1).</param>
+        public void SetCertificateRevokeStatus(User user)
+        {
+            user.Revoked = 1;
             context.SaveChanges();
         }
 
@@ -146,10 +167,13 @@ namespace Enigma.UserDbManager
         /// Updates user password. Users are prevented from reusing their last password.
         /// </summary>
         /// <param name="user">User whose password needs to be updated.</param>
-        /// <param name="password">Users new password.</param>
-        public void ChangePassword(User user, string password)
+        /// <param name="newPassword">Users new password.</param>
+        /// <param name="oldPassword">Users old password.</param>
+        public void ChangePassword(User user, string newPassword, string oldPassword)
         {
-            var passBytes = Encoding.ASCII.GetBytes(password);
+            CheckOldPassword(user.PassHash, user.Salt, Encoding.ASCII.GetBytes(oldPassword));
+
+            var passBytes = Encoding.ASCII.GetBytes(newPassword);
 
             var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
 
@@ -173,6 +197,27 @@ namespace Enigma.UserDbManager
 
             user.PassHash = passHash;
             context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Compares the old password with the entered password.
+        /// </summary>
+        /// <param name="userPasswordHash">User's current password hash.</param>
+        /// <param name="passwordSalt">User's current password salt.</param>
+        /// <param name="enteredPassword">Users entered password.</param>
+        /// <returns>true if the passwords match; otherwise <see cref="Exception"/> is thrown.</returns>
+        private bool CheckOldPassword(byte[] userPasswordHash, byte[] passwordSalt, byte[] enteredPassword)
+        {
+            var passAndPepperHash = SHA256.Create().ComputeHash(enteredPassword.Concat(Pepper).ToArray());
+
+            byte[] passHash;
+
+            using (var pbkdf2HasherOld = new Rfc2898DeriveBytes(passAndPepperHash, passwordSalt, 80_000, HashAlgorithmName.SHA256))
+            {
+                passHash = pbkdf2HasherOld.GetBytes(256 / 8);
+            }
+
+            return !passHash.SequenceEqual(userPasswordHash) ? throw new Exception("You have entered a wrong password.") : true;
         }
 
         /// <summary>
@@ -223,12 +268,29 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
-        /// Get every user from the database.
+        /// Gets every user from the database.
         /// </summary>
         /// <returns>All users from database.</returns>
         public IEnumerable<User> GetAllUsers()
         {
             return context.Users.AsEnumerable();
+        }
+
+        /// <summary>
+        /// Gets every username from the database.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetAllUsernames()
+        {
+            var users = context.Users.AsEnumerable();
+            var usernames = new List<string>(users.Count());
+
+            foreach (var user in users)
+            {
+                usernames.Add(user.Username);
+            }
+
+            return usernames;
         }
     }
 }

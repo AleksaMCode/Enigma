@@ -69,6 +69,11 @@ namespace Enigma.UserDbManager
         public string CertificateExpirationDate { get; set; }
 
         /// <summary>
+        /// Value used to denote that the user's certificate has been revoked. Set to false (0) by default or to true (1) is user account has been locked.
+        /// </summary>
+        public int Revoked { get; set; }
+
+        /// <summary>
         /// Checks if the entered user password matches the hash stored in the database.
         /// </summary>
         /// <param name="password">Entered user password.</param>

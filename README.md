@@ -14,12 +14,17 @@
     - [Login](#login)
       - [Login attempt limit](#login-attempt-limit)
       - [Nuclear switch](#nuclear-switch)
-    - [File encryption](#file-encryption)
-    - [File decryption](#file-decryption)
+    - [Add file](#add-file)
+    - [Create and add new <code>.txt</code> file](#create-and-add-new-txt-file)
+    - [Remove file](#remove-file)
     - [File sharing](#file-sharing)
+    - [File unsharing](#file-unsharing)
     - [File updating](#file-updating)
+    - [<code>.txt</code> file updating](#txt-file-updating)
     - [File reading](#file-reading)
   - [Encrypted file](#encrypted-file)
+    - [File encryption](#file-encryption)
+    - [File decryption](#file-decryption)
     - [File naming](#file-naming)
     - [Enigma EFS Encrypted File Attribute Types](#enigma-efs-encrypted-file-attribute-types)
       - [Layout of the Standard Information](#layout-of-the-standard-information)
@@ -92,22 +97,44 @@
 #### Nuclear switch
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, users account is locked preventing him to login to Enigmas EFS. Only an admin can unlock an user account. Unlocking process is followed with a mandatory user password change.</p>
 
-### File encryption
-<p align="justify">Files are encrypted using one of the available symmetric algorithms. After user pics symmetric algorithm, hash algorithm, key size and a block cipher mode of operation file is than encrypted. First the file headers are generated, after which the original file is signed and encrypted (in that order).</p>
+### Add file
+<p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported.</p>
+
+### Create and add new <code>.txt</code> file
+<p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using build-in application text editor.</p>
+
+### Remove file
+<p align="justify">Users can simply delete their files without any restrictions.</p>
+
+### File sharing
+<p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
+
+### File unsharing
+<p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised, file then overwrites the old file.</p>
+
+### File updating
+<p align="justify">User can simply update already existing encrypted file with a new file. User can use a modified version of the old file or an entirely new file. However, file's type must remain the same when updating an encrypted file. Once the data containing the actual file is updated, file's read and altered time as well as the file signature is updated. File update also includes a change of the file's IV while the Key remains the same.</p>
 
 > **_NOTE:_**
 > 
-> Symmetric algorithm name, hash algorithm name and IV value are not encrypted because my research has led me to believe that their exposure won't weaken <b>Enigma</b>'s security.  
+> Filename will be changed since the file's IV is also changed.
 
-### File decryption
-<p align="justify">Encrypted files are decrypted using a stored encypted Key, IV and a encryption algorithm name stored inside of files Security Descriptor header. Encrypted Key is first decrypted using a user's private RSA key after which it's used for file decryption. After file decryption, a signature is then checked to see if files integrity has been compromised.</p>
-
-### File sharing
-<p align="justify">Every user can share his file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file Key is encrypted using a shared user's public RSA key after which it's stored inside files Security Descriptor header.</p>
-
-### File updating
+### <code>.txt</code> file updating
+<p align="justify">User can update <code>.txt</code> files stored on <b>Enigma EFS</b> by using build-in application text editor. This update requires file to be decrypted first before allowing user to change context of the <code>.txt</code> file.</p>
 
 ### File reading
+<p align="justify">User can view encrypted files that are stored on <b>Enigma EFS</b>. File is first decrypted and stored on FS in temp directory. Method used for file reading checks for the existence of environment variables in the following order and uses the first path found:
+<ol>
+ <li>The path specified by the TMP environment variable.</li>
+ <li>The path specified by the TEMP environment variable.</li>
+ <li>The path specified by the USERPROFILE environment variable.</li>
+ <li>The Windows directory.</li>
+</ol>
+After writing a new temp file named "Enigma-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.extension (e.q. Enigma-382c74c3-721d-4f34-80e5-57657b6cbc27.pdf for a <code>.pdf</code> file), file is then opened using a default application on the system for the chosen file type.</p>
+
+> **_NOTE:_**
+> 
+> Every temporary file is deleted once the <b>Enigma</b> application is closed.
 
 ## Encrypted file
 <p align="justify"><b>Enigma EFS</b> views each encrypted file as a set of file attributes. File elements such as its name, its security information, and even its data are file attributes. Each attribute is identified by an attribute type code stored as an <code>enum</code>.</p>
@@ -121,8 +148,23 @@ public enum AttributeType : uint
     DATA = 0x80,
 } 
 ```
+
+### File encryption
+<p align="justify">Files are encrypted using one of the available symmetric algorithms. After user pics symmetric algorithm, hash algorithm, key size and a block cipher mode of operation file is than encrypted. First the file headers are generated, after which the original file is signed and encrypted (in that order).</p>
+
+> **_NOTE:_**
+> 
+> Symmetric algorithm name, hash algorithm name and IV value are not encrypted because my research has led me to believe that their exposure won't weaken <b>Enigma</b>'s security.  
+
+### File decryption
+<p align="justify">Encrypted files are decrypted using a stored encypted Key, IV and a encryption algorithm name stored inside of file's Security Descriptor header. Encrypted Key is first decrypted using a user's private RSA key after which it's used for file decryption. After file decryption, a file signature is checked to see if the file's integrity has been compromised.</p>
+
+> **_NOTE:_**
+> 
+> Every time file is decrypted its read time is updated.
+
 ### File naming
-<p align="justify">Every file name is encrypted using a AES algorithm in OFB mode with IV and Key stored in file header. After encryption file name is <a href="https://en.wikipedia.org/wiki/Base64">Base64</a> encoded.</p>
+<p align="justify">Every filename is encrypted using a AES algorithm in OFB mode with IV and Key stored in file header. After encryption, filename is <a href="https://en.wikipedia.org/wiki/Base64">Base64</a> encoded.</p>
 
 > **_Windows file naming restrictions_**
 > 
@@ -134,7 +176,7 @@ Since the Base64 encoded name can contain forbidden name symbol forward slash, '
 Attribute Type | Attribute Name | Description
 --- | --- | ---
 0x10 | Standard Information | Information such as creation time, modified time and read time.
-0x50 | Security Descriptor | Information such as symmetric algorithm name, hash algorithm name, IV value, encrypted Key value, Owner Id and RSA Signature data.
+0x50 | Security Descriptor | <p align="justify">Information such as symmetric algorithm name, hash algorithm name, IV value, encrypted Key value, Owner Id and RSA Signature data.</p>
 0x80 | Data | Encrypted file data.
 
 #### Layout of the Standard Information
@@ -161,7 +203,7 @@ Offset | Size<br>(bytes) | Description
 0x017 | 1 | IV length
 0x018 | 8 or 16 | IV
 0x028 | 4 | Owner Id
-0x02c | 4 | Number of users that have access to the file<br>(max. 4 users) - e.q. only a file owner has access to the file
+0x02c | 4 | <p align="justify">Number of users that have access to the file (max. 4 users)<br> e.q. only a file owner has access to the file</p>
 0x030 | 4 | User Id
 0x034 | 4 | Encrypted Key Length
 0x038 | 256, 384 or 512 | Encrypted Key<br>(e.q. 256 when user has 2048 bits RSA key)

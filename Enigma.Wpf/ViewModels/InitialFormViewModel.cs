@@ -2,9 +2,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Enigma.EFS.MFA;
 using Enigma.Models;
 using Enigma.UserDbManager;
 using Enigma.Wpf.Attributes.Validation;
@@ -121,7 +124,7 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => UserCertificateFilePath, ref userCertificateFilePath, value/*path*/);
         }
 
-        private void HandleLogin(PasswordBox passBox)
+        private async void HandleLogin(PasswordBox passBox)
         {
             try
             {
@@ -130,25 +133,45 @@ namespace Enigma.Wpf.ViewModels
                     var password = passBox.Password;
 
                     var login2fa = new LoginController(pepperPath);
-                    var user = login2fa.LoginPartOne(Username, password, userDatabasePath, out var db, out var userDbInfo);
-                    login2fa.LoginPartTwo(user, File.ReadAllBytes(UserCertificateFilePath), db, userDbInfo);
-                    //login2fa.LoginPartTwo(user,/*raw certificate*/);
+                    
+                    var userDb = new UserDatabase(userDatabasePath, pepperPath);
+                    var user = login2fa.LoginPartOne(username, password, enigmaEfsRoot, userDb);
+                    
+                    login2fa.LoginPartTwo(user, File.ReadAllBytes(userCertificateFilePath), userDb);
 
-                    var keyForm = new PrivateKeyFormViewModel(navigator, true);
+                    var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
+                    byte[] key = null;
+
+                    if(user.UsbKey == 1)
+                    {
+                        navigator.ShowProgressBox("Waiting for USB...");
+                        var driveDet = new DriveDetection();
+                        key = await driveDet.ReadDataFromDriveAsync(20);
+                        navigator.HideProgressBox();
+                    }
 
                     keyForm.OnSubmit += data =>
                     {
-                        if (data.KeyPassword == "123")
+                        if(user.UsbKey == 1)
                         {
-                            // on successful login
-                            navigator.GoToControl(new MainAppViewModel(navigator, user, db, default, null));
+                            var userInfo = new UserInformation(user)
+                            {
+                                PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
+                            };
+
+                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
                         }
                         else
                         {
-                            navigator.ShowMessage("Error", "Wrong RSA password.");
-                        }
-                    };
+                            var userInfo = new UserInformation(user)
+                            {
+                                PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
+                            };
 
+                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                        } 
+                    };
+                    
                     navigator.OpenFlyoutPanel(keyForm);
                 }
                 else
@@ -194,9 +217,9 @@ namespace Enigma.Wpf.ViewModels
                         passBox.Clear();
                         Username = "";
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        navigator.ShowMessage("Error", e.Message);
+                        navigator.ShowMessage("Error", ex.Message);
                     }
                     //navigator.GoToControl(new MainAppViewModel(navigator)); <- remove this!?
                 }

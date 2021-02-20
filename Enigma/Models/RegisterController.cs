@@ -47,6 +47,11 @@ namespace Enigma.Models
         /// <param name="usbKey">Set to true if user want to have an private USB key, otherwise it's set to false.</param>
         public void Register(ref string username, string password, string certificateFilePath, bool usbKey)
         {
+            if (username.Length > 25)
+            {
+                throw new Exception("Usernames can't have more than 25 characters.");
+            }
+
             if (password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
@@ -104,7 +109,8 @@ namespace Enigma.Models
         /// </summary>
         /// <param name="privateKeyPath">Path to users private key.</param>
         /// <param name="password">User chosen password which is used to create KEY and IV that are used for AES encryption.</param>
-        public void EncryptUserKey(string privateKeyPath, string password)
+        /// <param name="deleteOriginal"><see cref="bool"/> value used to determine if the original, unencrypted, RSA key will be deleted.</param>
+        public void EncryptUserKey(string privateKeyPath, string password, bool deleteOriginal = false)
         {
             var passwordBytes = Encoding.ASCII.GetBytes(password);
             var keyRaw = File.ReadAllBytes(privateKeyPath);
@@ -121,12 +127,17 @@ namespace Enigma.Models
 
             HideMyNeedle(privateKeyPath, new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
 
-            // data scrambling
-            new RNGCryptoServiceProvider().GetBytes(iv);
-            new RNGCryptoServiceProvider().GetBytes(key);
-            new RNGCryptoServiceProvider().GetBytes(hash);
-            new RNGCryptoServiceProvider().GetBytes(keyRaw);
-            new RNGCryptoServiceProvider().GetBytes(passwordBytes);
+            if(deleteOriginal)
+            {
+                File.Delete(privateKeyPath);
+            }
+
+            //// data scrambling
+            //new RNGCryptoServiceProvider().GetBytes(iv);
+            //new RNGCryptoServiceProvider().GetBytes(key);
+            //new RNGCryptoServiceProvider().GetBytes(hash);
+            //new RNGCryptoServiceProvider().GetBytes(keyRaw);
+            //new RNGCryptoServiceProvider().GetBytes(passwordBytes);
         }
 
 
@@ -154,36 +165,36 @@ namespace Enigma.Models
                 var haystack = new byte[haystackSize];
                 new RNGCryptoServiceProvider().GetBytes(haystack);
 
-                startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length); // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
+                startLocation = csprng.Next(4 + 4 + 16 + 32, haystackSize - needle.Length);     // 4 for startLocation (int) + 4 for haystackSize (int) + 16 for salt + 32 for passwordDigest
 
                 var startLocationBytes = BitConverter.GetBytes(startLocation);
 
                 //if (BitConverter.IsLittleEndian)
                 //    Array.Reverse(startLocationBytes);
 
-                Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4); // copy startLocation
+                Buffer.BlockCopy(startLocationBytes, 0, haystack, 0, 4);                        // copy startLocation
 
                 var needleSize = BitConverter.GetBytes(needle.Length);
 
                 //if (BitConverter.IsLittleEndian)
                 //    Array.Reverse(haystackSizeBytes);
 
-                Buffer.BlockCopy(needleSize, 0, haystack, 4, 4); // copy needleSize
+                Buffer.BlockCopy(needleSize, 0, haystack, 4, 4);                                // copy needleSize
 
-                Buffer.BlockCopy(salt, 0, haystack, 8, 16); // copy salt
+                Buffer.BlockCopy(salt, 0, haystack, 8, 16);                                     // copy salt
 
-                Buffer.BlockCopy(passwordDigest, 0, haystack, 24, 32); // copy passwordDigest
+                Buffer.BlockCopy(passwordDigest, 0, haystack, 24, 32);                          // copy passwordDigest
 
-                Buffer.BlockCopy(needle, 0, haystack, startLocation, needle.Length); // copy the needle (encrypted key)
+                Buffer.BlockCopy(needle, 0, haystack, startLocation, needle.Length);            // copy the needle (encrypted key)
 
                 using var stream = new FileStream(path, FileMode.Create);
                 using var writter = new BinaryWriter(stream);
                 writter.Write(haystack);
 
-                // data scrambling
-                new RNGCryptoServiceProvider().GetBytes(salt);
-                new RNGCryptoServiceProvider().GetBytes(haystack);
-                new RNGCryptoServiceProvider().GetBytes(passwordDigest);
+                //// data scrambling
+                //new RNGCryptoServiceProvider().GetBytes(salt);
+                //new RNGCryptoServiceProvider().GetBytes(haystack);
+                //new RNGCryptoServiceProvider().GetBytes(passwordDigest);
             }
             else
             {

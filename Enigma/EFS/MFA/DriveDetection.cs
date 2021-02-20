@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Enigma.EFS.MFA
 {
@@ -41,11 +43,27 @@ namespace Enigma.EFS.MFA
             }
         }
 
-        public bool ReadDataFromDrive(ref byte[] data)
+        public async Task<byte[]> ReadDataFromDriveAsync(int timeOut)
         {
-            while (!Directory.Exists(nextDriveLetter + ":"))
+            var isTimedOut = false;
+            await Task.Run(async () =>
             {
-                ;
+                var waitCounter = 0;
+                while(!Directory.Exists(nextDriveLetter + ":"))
+                {
+                    await Task.Delay(500);
+                    waitCounter++;
+                    if(waitCounter >= 2*timeOut)
+                    {
+                        isTimedOut = true;
+                        break;
+                    }
+                }
+            });
+
+            if (isTimedOut)
+            {
+                return null;
             }
 
             drives.Add(nextDriveLetter);
@@ -57,12 +75,12 @@ namespace Enigma.EFS.MFA
             {
                 path += ":\\" + "key.bin";
 
-                data = File.Exists(path)
+                var data = File.Exists(path)
                     ? File.ReadAllBytes(path)
                     : throw new Exception("Usb key has been compromised or wrong usb has been inserted.");
 
                 SetNextDriveLetter();
-                return true;
+                return data;
             }
             else
             {
