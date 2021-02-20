@@ -42,7 +42,7 @@ namespace Enigma.EFS.MFA
             }
         }
 
-        public async Task<byte[]> ReadDataFromDriveAsync(int timeOut)
+        public async Task<byte[]> ReadDataFromDriveAsync(int timeOut, string keyName)
         {
             var isTimedOut = false;
             await Task.Run(async () =>
@@ -68,7 +68,7 @@ namespace Enigma.EFS.MFA
             drives.Add(nextDriveLetter);
 
             // read a file to memory
-            var path = nextDriveLetter + ":\\" + "key.bin";
+            var path = nextDriveLetter + ":\\" + keyName;
 
             if (Directory.GetFiles(nextDriveLetter + ":").Length == 1)
             {

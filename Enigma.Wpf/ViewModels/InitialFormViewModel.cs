@@ -63,7 +63,7 @@ namespace Enigma.Wpf.ViewModels
             navigator = mainWindowViewModel;
 
             // parse config file
-            var configInfo = File.ReadAllLines(rootFilesPath + "Enigma.config");
+            var configInfo = File.ReadAllLines(rootFilesPath + "EnigmaEFS.config");
             enigmaEfsRoot = configInfo[0].Split('\t')[1];
             pepperPath = rootFilesPath + configInfo[1].Split('\t')[1];
             userDatabasePath = rootFilesPath + configInfo[2].Split('\t')[1];
@@ -144,7 +144,7 @@ namespace Enigma.Wpf.ViewModels
                     {
                         navigator.ShowProgressBox("Waiting for USB...");
                         var driveDet = new DriveDetection();
-                        key = await driveDet.ReadDataFromDriveAsync(20);
+                        key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
                         navigator.HideProgressBox();
                     }
 
@@ -183,7 +183,7 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        private void HandleRegister(PasswordBox passBox)
+        private async void HandleRegister(PasswordBox passBox)
         {
             try
             {
@@ -193,22 +193,25 @@ namespace Enigma.Wpf.ViewModels
                     {
                         var password = passBox.Password;
                         var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath);
-                        register.Register(ref username, passBox.Password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                        register.Register(ref username, password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
-                        /* then create private key of file based on what user chose, something like:
-
-                        if(PrivateKeySignupOption == PrivateKeyOption.USB) {
+                        if (PrivateKeySignupOption == PrivateKeyOption.USB)
+                        {
                             navigator.ShowProgressBox("Waiting for USB...");
-                            var usbTimeout = new TimeSpan(0, 0, 20);
-                            await EnigmaLibrary.RegisterWithUsbAsync(username, password, usbTimeout);
+                            var driveDet = new DriveDetection();
+                            await driveDet.ReadDataFromDriveAsync(20, "key.pem");
                             navigator.HideProgressBox();
-                        } else {
-                            navigator.ShowProgressBox("Registering...");
-                            // make user choose file
-                            await EnigmaLibrary.RegisterWithKeyAsync(username, password, file);
-                            navigator.HideProgressBox();
+
+                            var keyPassForm = new PrivateKeyFormViewModel(navigator);
+                            keyPassForm.OnSubmit += data => register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
+                            navigator.OpenFlyoutPanel(keyPassForm);
                         }
-                        */
+                        else
+                        {
+                            var keyPassForm = new PrivateKeyFormViewModel(navigator, true);
+                            keyPassForm.OnSubmit += data => register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
+                            navigator.OpenFlyoutPanel(keyPassForm);
+                        }
 
                         // maybe after successful registration just show a message ?
                         navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
