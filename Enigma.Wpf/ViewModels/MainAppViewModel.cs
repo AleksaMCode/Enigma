@@ -261,7 +261,8 @@ namespace Enigma.Wpf.ViewModels
                 try
                 {
                     var path = GetDirPath();
-                    var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.AlgorithmIdentifier, data.HashIdentifier);
+                    if ()
+                        var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
                     SetCurrentItems(path);
                 }
                 catch (Exception ex)
@@ -284,8 +285,15 @@ namespace Enigma.Wpf.ViewModels
                 try
                 {
                     var path = GetDirPath();
-                    Directory.CreateDirectory(path + "\\" + dirName);
-                    SetCurrentItems(path);
+                    if (Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path + "\\" + dirName);
+                        SetCurrentItems(path);
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -307,18 +315,23 @@ namespace Enigma.Wpf.ViewModels
             {
                 var path = GetDirPath();
 
+                if (!Directory.Exists(path))
+                {
+                    throw new Exception(string.Format("Directory {0} is missing.", path));
+                }
+
                 if (obj.Type != FileSystemItemType.File)
                 {
                     if (obj.Type == FileSystemItemType.Folder)
                     {
-                        if (Directory.Exists(path + "\\" + obj.Name))
+                        if (File.Exists(path + "\\" + obj.Name))
                         {
                             enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
                             SetCurrentItems(path);
                         }
                         else
                         {
-                            throw new Exception(string.Format("Directory {0} is missing.", obj.Name));
+                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
                         }
                     }
                     else
