@@ -82,9 +82,9 @@ namespace Enigma.Models
         }
 
         /// <summary>
-        /// Gets users private RSA key.
+        /// Gets users private RSA key from encryped user's key.
         /// </summary>
-        /// <param name="privateKeyPath">Path to the users RSA key haystack.</param>
+        /// <param name="privateKeyPath">Path to the user's encrypted RSA key haystack.</param>
         /// <param name="password">Users private RSA key password.</param>
         /// <returns>Users private RSA key.</returns>
         public RSAParameters GetPrivateKey(string privateKeyPath, string password)
