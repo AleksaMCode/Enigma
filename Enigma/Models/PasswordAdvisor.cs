@@ -195,47 +195,47 @@ namespace Enigma.Models
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.AsciiPrintableChars, passwordLength), 2);
             }
-            // Case sensitive alphanumeric (a–z, A–Z, 0–9) 
+            // Case sensitive alphanumeric (aâ€“z, Aâ€“Z, 0â€“9) 
             else if (lowerCaseCount > 0 && upperCaseCount > 0 && numericCount > 0 && nonAlphaCount == 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseSensitiveAlphanumeric, passwordLength), 2);
             }
-            // Case sensitive Latin alphabet (a–z, A–Z) + NonAlphaChars
+            // Case sensitive Latin alphabet (aâ€“z, Aâ€“Z) + NonAlphaChars
             else if (lowerCaseCount > 0 && upperCaseCount > 0 && numericCount == 0 && nonAlphaCount > 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseSensitiveLatinLetters + (int)PasswordPoolSize.NonAlphanumericChars, passwordLength), 2);
             }
-            // Case sensitive Latin alphabet (a–z, A–Z)
+            // Case sensitive Latin alphabet (aâ€“z, Aâ€“Z)
             else if (lowerCaseCount > 0 && upperCaseCount > 0 && numericCount == 0 && nonAlphaCount == 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseSensitiveLatinLetters, passwordLength), 2);
             }
-            // Case insensitive Latin alphabet (a–z or A–Z) 	
+            // Case insensitive Latin alphabet (aâ€“z or Aâ€“Z) 	
             else if ((lowerCaseCount == 0 || upperCaseCount == 0) && numericCount == 0 && nonAlphaCount == 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseInsensitiveLatinLetters, passwordLength), 2);
             }
-            // Case insensitive alphanumeric (a–z or A–Z, 0–9)
+            // Case insensitive alphanumeric (aâ€“z or Aâ€“Z, 0â€“9)
             else if ((lowerCaseCount == 0 || upperCaseCount == 0) && numericCount > 0 && nonAlphaCount == 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseInsensitiveAlphanumeric, passwordLength), 2);
             }
-            // Case insensitive alphanumeric (a–z or A–Z, 0–9) + NonAlphaChars
+            // Case insensitive alphanumeric (aâ€“z or Aâ€“Z, 0â€“9) + NonAlphaChars
             else if ((lowerCaseCount == 0 || upperCaseCount == 0) && numericCount == 0 && nonAlphaCount > 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseInsensitiveLatinLetters + (int)PasswordPoolSize.NonAlphanumericChars, passwordLength), 2);
             }
-            // Case insensitive alphanumeric (a–z or A–Z, 0–9) + Arabic numerals (0–9) + NonAlphaChars
+            // Case insensitive alphanumeric (aâ€“z or Aâ€“Z, 0â€“9) + Arabic numerals (0â€“9) + NonAlphaChars
             else if ((lowerCaseCount == 0 || upperCaseCount == 0) && numericCount > 0 && nonAlphaCount > 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.CaseInsensitiveLatinLetters + (int)PasswordPoolSize.ArabicNumbers + (int)PasswordPoolSize.NonAlphanumericChars, passwordLength), 2);
             }
-            // Arabic numerals (0–9) + NonAlphaChars
+            // Arabic numerals (0â€“9) + NonAlphaChars
             else if (lowerCaseCount == 0 && upperCaseCount == 0 && numericCount > 0 && nonAlphaCount > 0)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.ArabicNumbers + (int)PasswordPoolSize.NonAlphanumericChars, passwordLength), 2);
             }
-            // Arabic numerals (0–9)
+            // Arabic numerals (0â€“9)
             else if (numericCount == passwordLength)
             {
                 return Math.Log(Math.Pow((int)PasswordPoolSize.ArabicNumbers, passwordLength), 2);

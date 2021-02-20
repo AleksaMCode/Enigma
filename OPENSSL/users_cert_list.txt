@@ -1,9 +1,17 @@
-N	Name			CA		bits	state			key usage				crl		RSA pass
-1.	Aleksa Aleksic		root_ca		2048	not_expired		correct_keyUsage			not_revoked	ieatburgersonfriday
-2.	Marko Markovic		root_ca		2048	not_expired		correct_keyUsage			not_revoked	rainfallonwednesday
-3.	Janko Jankovic		root_ca		2048	not_expired		correct_keyUsage			not_revoked	voldemorthadcreated7horcruxes
-4.	Stefan Stefic		root_ca		2048	not_expired		correct_keyUsage			revoked		
-5.	Luka Lukic		root_ca		2048	expired			correct_keyUsage			not_revoked
-6.	Vlaja Vlajic		root_ca		1024	not_expired		correct_keyUsage			not_revoked
-7.	Nikola Nikolic		root_ca		2048	not_expired		incorrect_keyUsage(encipherOnly)	not_revoked
-8.	Jovan Jovic		root_ca_2	2048	not_expired		correct_keyUsage			not_revoked
+N	Name			CA		CA_status	bits	state			key usage				crl		RSA pass
+1.	Aleksa Aleksic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked	ieatburgersonfriday
+2.	Marko Markovic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked	rainfallonwednesday
+3.	Janko Jankovic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked	voldemorthadcreated7horcruxes
+4.	Stefan Stefic		root_ca		expired		2048	not_expired		correct_keyUsage			revoked		
+5.	Luka Lukic		root_ca		expired		2048	expired			correct_keyUsage			not_revoked
+6.	Vlaja Vlajic		root_ca		expired		1024	not_expired		correct_keyUsage			not_revoked
+7.	Nikola Nikolic		root_ca		expired		2048	not_expired		incorrect_keyUsage(encipherOnly)	not_revoked
+8.	Jovan Jovic		root_ca_2	expired		2048	not_expired		correct_keyUsage			not_revoked
+
+1.	Aleksa Aleksic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked	ieatburgersonfriday
+2.	Marko Markovic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked	rainfallonwednesday
+3.	Janko Jankovic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked	voldemorthadcreated7horcruxes
+4.	Stefan Stefic		root_ca		expired		2048	not_expired		correct_keyUsage			revoked		
+5.	Luka Lukic		root_ca		expired		2048	not_expired		correct_keyUsage			not_revoked
+6.	Vlaja Vlajic		root_ca		expired		1024	expired			correct_keyUsage			not_revoked
+7.	Nikola Nikolic		root_ca		expired		2048	soon_expired		incorrect_keyUsage(encipherOnly)	not_revoked

@@ -24,11 +24,6 @@ namespace Enigma.Wpf.ViewModels
         private PrivateKeyOption privateKeySignupOption;
 
         /// <summary>
-        /// Path to users certificate on FS;
-        /// </summary>
-        private string userCertificateFilePath;
-
-        /// <summary>
         /// Root path on FS where all the important program files are stored.
         /// </summary>
         private readonly string rootFilesPath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\";
@@ -115,13 +110,6 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => PrivateKeySignupOption, ref privateKeySignupOption, value);
         }
 
-        [Required(ErrorMessage = "User Certificate is required for login.")]
-        public string UserCertificateFilePath
-        {
-            get => userCertificateFilePath;
-            set => Set(() => UserCertificateFilePath, ref userCertificateFilePath, value/*path*/);
-        }
-
         private async void HandleLogin(PasswordBox passBox)
         {
             try
@@ -131,16 +119,16 @@ namespace Enigma.Wpf.ViewModels
                     var password = passBox.Password;
 
                     var login2fa = new LoginController(pepperPath);
-                    
+
                     var userDb = new UserDatabase(userDatabasePath, pepperPath);
                     var user = login2fa.LoginPartOne(username, password, enigmaEfsRoot, userDb);
-                    
-                    login2fa.LoginPartTwo(user, File.ReadAllBytes(userCertificateFilePath), userDb);
+
+                    login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb);
 
                     var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
                     byte[] key = null;
 
-                    if(user.UsbKey == 1)
+                    if (user.UsbKey == 1)
                     {
                         navigator.ShowProgressBox("Waiting for USB...");
                         var driveDet = new DriveDetection();
@@ -150,7 +138,7 @@ namespace Enigma.Wpf.ViewModels
 
                     keyForm.OnSubmit += data =>
                     {
-                        if(user.UsbKey == 1)
+                        if (user.UsbKey == 1)
                         {
                             var userInfo = new UserInformation(user)
                             {
@@ -167,9 +155,9 @@ namespace Enigma.Wpf.ViewModels
                             };
 
                             navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
-                        } 
+                        }
                     };
-                    
+
                     navigator.OpenFlyoutPanel(keyForm);
                 }
                 else
@@ -193,7 +181,7 @@ namespace Enigma.Wpf.ViewModels
                     {
                         var password = passBox.Password;
                         var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath);
-                        register.Register(ref username, password, UserCertificateFilePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                        register.Register(ref username, password, CertificatePath);
 
                         if (PrivateKeySignupOption == PrivateKeyOption.USB)
                         {
@@ -203,18 +191,27 @@ namespace Enigma.Wpf.ViewModels
                             navigator.HideProgressBox();
 
                             var keyPassForm = new PrivateKeyFormViewModel(navigator);
-                            keyPassForm.OnSubmit += data => register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
+                            keyPassForm.OnSubmit += data =>
+                            {
+                                register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
+                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
+                                register.UpdateDatabase(ref username, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                            };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }
                         else
                         {
                             var keyPassForm = new PrivateKeyFormViewModel(navigator, true);
-                            keyPassForm.OnSubmit += data => register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
+                            keyPassForm.OnSubmit += data =>
+                            {
+                                register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
+                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
+                                register.UpdateDatabase(ref username, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                            };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }
 
                         // maybe after successful registration just show a message ?
-                        navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
                         passBox.Clear();
                         Username = "";
                     }

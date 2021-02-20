@@ -44,8 +44,7 @@ namespace Enigma.Models
         /// <param name="username">Users account username.</param>
         /// <param name="password">Users password.</param>
         /// <param name="certificateFilePath">Path on FS to users certificate.</param>
-        /// <param name="usbKey">Set to true if user want to have an private USB key, otherwise it's set to false.</param>
-        public void Register(ref string username, string password, string certificateFilePath, bool usbKey)
+        public void Register(ref string username, string password, string certificateFilePath)
         {
             if (username.Length > 25)
             {
@@ -63,7 +62,7 @@ namespace Enigma.Models
             username += "#" + csprng.Next(1_000, 9_999).ToString();
 
             // Check if a password used some of the most common passwords discovered in various data breaches.
-            if (!PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
+            if (PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
@@ -99,7 +98,17 @@ namespace Enigma.Models
             {
                 throw new Exception("Certificate must have 'digitalSignature' and 'keyEncipherment' set as it's key usage.");
             }
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username">Users account username.</param>
+        /// <param name="password">Users password.</param>
+        /// <param name="certificateFilePath">Path on FS to users certificate.</param>
+        /// <param name="usbKey">Set to true if user want to have an private USB key, otherwise it's set to false.</param>
+        public void UpdateDatabase(ref string username, string password, string certificateFilePath, bool usbKey)
+        {
             // Add a new user to Users.db.
             data.AddUser(username, password, File.ReadAllBytes(certificateFilePath), usbKey);
         }
