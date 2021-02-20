@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.UserDbManager;
 
@@ -30,17 +31,14 @@ namespace Enigma.Models
         /// <summary>
         /// First part of 2FA.
         /// </summary>
-        /// <param name="username">Users username.</param>
-        /// <param name="password">Users password.</param>
-        /// <param name="userDatabasePath">Path to users database stored in config file.</param>
-        /// <param name="db">Enigmas user database.</param>
-        /// <param name="userDbInfo">User information.</param>
-        /// <returns>Logged in user information.</returns>
-        public UserInformation LoginPartOne(string username, string password, string enigmaEfsRoot, string userDatabasePath, out UserDatabase db, out User userDbInfo)
+        /// <param name="username">User's username.</param>
+        /// <param name="password">User's password.</param>
+        /// <param name="usersDb">Enigma's user database.</param>
+        /// <param name="enigmaEfsRoot">Root path to Enigma's Efs.</param>
+        /// <returns>Logged-in user's information.</returns>
+        public User LoginPartOne(string username, string password, string enigmaEfsRoot, UserDatabase usersDb)
         {
-            var dataComp = new UserDatabase(userDatabasePath, pepperPath);
-
-            var user = dataComp.GetUser(username);
+            var user = usersDb.GetUser(username);
 
             if (user.Locked == 1)
             {
@@ -48,16 +46,14 @@ namespace Enigma.Models
             }
 
             // if user has entered correct password
-            if (user != null && user.IsPasswordValid(password, dataComp.Pepper))
+            if (user != null && user.IsPasswordValid(password, usersDb.Pepper))
             {
-                db = dataComp;
-                userDbInfo = user;
-                return new UserInformation(user);
+                return user;
             }
             // if user has entered an incorrect password
             else
             {
-                dataComp.LoginAttemptIncrement(user);
+                usersDb.LoginAttemptIncrement(user);
 
                 // if user has mistyped his password three times
                 if (user != null && user.LoginAttempt == 3)
@@ -72,7 +68,7 @@ namespace Enigma.Models
                         DeleteSharedFiles(enigmaEfsRoot + "\\Shared", user.Id);
                     }
 
-                    dataComp.LockUser(user);
+                    usersDb.LockUser(user);
                     throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
                 }
 
@@ -85,13 +81,14 @@ namespace Enigma.Models
         /// </summary>
         /// <param name="user">User information.</param>
         /// <param name="certificate">User <see cref="X509Certificate2"/> public certificate in raw form.</param>
-        public void LoginPartTwo(UserInformation user, byte[] certificate, UserDatabase db, User userDbInfo)
+        /// <param name="usersDb"></param>
+        public void LoginPartTwo(User user, byte[] certificate, UserDatabase usersDb)
         {
             var userCert = new X509Certificate2(certificate);
             var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
 
             // compare user public RSA key from x509 public certificate with a public RSA key that was stored when user first registered
-            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, user.PublicKey))
+            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, RsaAlgorithm.ImportPublicKey(Encoding.ASCII.GetString(user.PublicKey))))
             {
                 throw new Exception("Wrong certificate used.");
             }
@@ -102,12 +99,12 @@ namespace Enigma.Models
             }
 
             // update user last login time and reset atttemp count
-            db.UpdateLoginTime(userDbInfo, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+            usersDb.UpdateLoginTime(user, DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
 
             // reset login attempt if necessary
-            if (userDbInfo.LoginAttempt != 0)
+            if (user.LoginAttempt != 0)
             {
-                db.ResetLoginAttempts(userDbInfo);
+                usersDb.ResetLoginAttempts(user);
             }
 
             //if (CertificateValidator.VerifyCertificate(userCert, out var errorMsg, false) == false)
@@ -118,7 +115,7 @@ namespace Enigma.Models
             // Check if the certificate has been revoked and set Revoked value if necessary.
             if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
             {
-                db.SetCertificateRevokeStatus(userDbInfo);
+                usersDb.SetCertificateRevokeStatus(user);
                 //throw new Exception("Certificate has been revoked.");
             }
         }
