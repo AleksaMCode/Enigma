@@ -36,12 +36,12 @@ namespace Enigma.Wpf.ViewModels
         private Stack<string> forwardDir = new Stack<string>();
         // private string previousDir = null;
 
-        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, RSAParameters userPrivateKey, string rootDir)
+        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, string rootDir)
         {
             navigator = mainWindow;
             usersDb = db;
-            enigmaEfs = new EnigmaEfs(user, rootDir, userPrivateKey);
-            shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, userPrivateKey));
+            enigmaEfs = new EnigmaEfs(user, rootDir);
+            shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
             CurrentItems.Add(shared);
             this.rootDir = rootDir;
             userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) > DateTime.Now;
@@ -139,7 +139,7 @@ namespace Enigma.Wpf.ViewModels
             //    shared
             // };
 
-            var userDir = new EfsDirectory(/* rootDir + "\\" + */ path, enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey);
+            var userDir = new EfsDirectory(/* rootDir + "\\" + */ path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
             foreach (var efsObject in userDir.objects)
             {
                 CurrentItems.Add(new FileSystemItem(efsObject));
@@ -578,7 +578,7 @@ namespace Enigma.Wpf.ViewModels
 
                 if (File.Exists(path))
                 {
-                    enigmaEfs.OpenFile(path);
+                    enigmaEfs.OpenFile(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
                 }
                 else
                 {
@@ -653,7 +653,7 @@ namespace Enigma.Wpf.ViewModels
                             var path = GetDirPath();
                             if (Directory.Exists(path))
                             {
-                                enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName());
+                                enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
                                 SetCurrentItems(path);
                             }
                             else
