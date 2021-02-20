@@ -204,8 +204,8 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="pathOnEfs">The name of the file to update.</param>
         /// <param name="pathOnFs">Path on the file system where the update file is stored.</param>
-        /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
-        public void Update(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
+        /// <param name="originalFileExt">Allowed file type used for file update..</param>
+        public void Update(string pathOnEfs, string pathOnFs, string originalFileExt)
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
@@ -223,8 +223,8 @@ namespace Enigma.EFS
 
             //var userPrivateKey = currentUser.GetPrivateKey(privateKeyPath, password);
 
-            var originalFileExt = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0])
-                .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.PrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
+            //var originalFileExt = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0])
+            //    .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.PrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
 
             // update method restriction
             if (originalFileExt != fullFileName.Split('.')[1])

@@ -659,7 +659,7 @@ namespace Enigma.Wpf.ViewModels
                             var path = GetDirPath();
                             if (Directory.Exists(path))
                             {
-                                enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
+                                enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), obj.Name.Split('.')[1]);
                                 SetCurrentItems(path);
                             }
                             else
