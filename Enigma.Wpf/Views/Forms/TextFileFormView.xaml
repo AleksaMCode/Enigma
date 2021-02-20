@@ -14,7 +14,10 @@
     </UserControl.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
-            <RowDefinition />
+            <RowDefinition
+                Height="*"
+                MinHeight="400"
+                MaxHeight="600" />
             <RowDefinition Height="{Binding IsNew, Converter={StaticResource BTGLConverter}, ConverterParameter=10}" />
             <RowDefinition Height="{Binding IsNew, Converter={StaticResource BTGLConverter}, ConverterParameter=30}" />
             <RowDefinition Height="10" />
@@ -27,7 +30,13 @@
             <ColumnDefinition Width="150" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <TextBox Grid.ColumnSpan="5" Text="{Binding Text}" />
+        <TextBox
+            Grid.ColumnSpan="5"
+            MaxHeight="600"
+            AcceptsReturn="True"
+            Text="{Binding Text}"
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Visible" />
 
         <Grid Grid.Row="2" Grid.ColumnSpan="5">
             <Grid.ColumnDefinitions>
