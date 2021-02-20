@@ -126,11 +126,18 @@ namespace Enigma.Wpf.ViewModels
 
         private void SetCurrentItems(string path)
         {
-            // Shared folder is always visible.
-            CurrentItems = new ObservableCollection<FileSystemItem>
+            CurrentItems.Clear();
+
+            // Shared folder is always visible except when "visiting" Shared folder.
+            if (!path.StartsWith("\\Shared"))
             {
-                shared
-            };
+                CurrentItems.Add(shared);
+            }
+
+            // CurrentItems = new ObservableCollection<FileSystemItem>
+            // {
+            //    shared
+            // };
 
             var userDir = new EfsDirectory(/* rootDir + "\\" + */ path, enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey);
             foreach (var efsObject in userDir.objects)
@@ -634,8 +641,9 @@ namespace Enigma.Wpf.ViewModels
         {
             if (obj.Type is FileSystemItemType.Folder or FileSystemItemType.SharedFolder)
             {
-                previousDir = addressBarText;
-                AddressBarText += obj.Name;
+                backDir.Push(addressBarText);
+                addressBarText += "\\" + obj.Name;
+
                 SetCurrentItems(GetDirPath());
             }
             else // default action for files = read files ?
