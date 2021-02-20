@@ -225,11 +225,18 @@ namespace Enigma.Wpf.ViewModels
                     var path = GetDirPath();
                     if (Directory.Exists(data.InputFilePath))
                     {
-                        var encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
-                        // currentItems.Add(new FileSystemItem(
-                        //    new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
-                        //    File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
-                        SetCurrentItems(path);
+                        if (File.Exists(data.InputFilePath))
+                        {
+                            var encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
+                            // currentItems.Add(new FileSystemItem(
+                            //    new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
+                            //    File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
+                            SetCurrentItems(path);
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("File {0} is missing.", data.InputFilePath.Substring(0, data.InputFilePath.LastIndexOf("\\"))));
+                        }
                     }
                     else
                     {
@@ -384,16 +391,16 @@ namespace Enigma.Wpf.ViewModels
 
                             if (userInfo.Locked == 1)
                             {
-                                throw new Exception(string.Format("You can't share you file with {0} because his account is locked.", sharedUser));
+                                throw new Exception(string.Format("You can't share you file with {0} because this account is locked.", sharedUser));
                             }
 
                             if (userInfo.Revoked == 0 && !userCertificateExpired)
                             {
-                                enigmaEfs.Share(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id, new UserInformation(userInfo));
+                                enigmaEfs.Share(path + "\\" + obj.GetEncryptedFileName(), new UserInformation(userInfo));
                             }
                             else
                             {
-                                throw new Exception(string.Format("You can't share your file with {0} because his certificate isn't valid anymore.", sharedUser));
+                                throw new Exception(string.Format("You can't share your file with {0} because this user's certificate isn't valid anymore.", sharedUser));
                             }
 
                             SetCurrentItems(path);
@@ -444,11 +451,11 @@ namespace Enigma.Wpf.ViewModels
                         {
                             if (data.UnshareAll)
                             {
-                                enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName(), enigmaEfs.currentUser.Id);
+                                enigmaEfs.Unshare(path + "\\" + obj.GetEncryptedFileName());
                             }
                             else
                             {
-                                enigmaEfs.Unshare(path, enigmaEfs.currentUser.Id, usersDb.getUserId(data.SharedUser));
+                                enigmaEfs.Unshare(path, usersDb.getUserId(data.SharedUser));
                             }
 
                             SetCurrentItems(path);
@@ -498,7 +505,17 @@ namespace Enigma.Wpf.ViewModels
                     try
                     {
                         var path = GetDirPath() + "\\" + obj.GetEncryptedFileName();
-                        enigmaEfs.Download(path, exportPath, enigmaEfs.currentUser.PublicKey, enigmaEfs.userPrivateKey);
+
+                        if (!File.Exists(path))
+                        {
+                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                        }
+                        if (!Directory.Exists(path))
+                        {
+                            throw new Exception(string.Format("Directory {0} is missing.", exportPath));
+                        }
+
+                        enigmaEfs.Download(path, exportPath, enigmaEfs);
                     }
                     catch (Exception ex)
                     {
@@ -548,7 +565,7 @@ namespace Enigma.Wpf.ViewModels
 
                 if (File.Exists(path))
                 {
-                    enigmaEfs.OpenFile(path, enigmaEfs.currentUser.PublicKey);
+                    enigmaEfs.OpenFile(path);
                 }
                 else
                 {
@@ -589,8 +606,15 @@ namespace Enigma.Wpf.ViewModels
                         try
                         {
                             var path = GetDirPath();
-                            enigmaEfs.EditTxtFile(text, path + "\\" + obj.GetEncryptedFileName(), obj.Name);
-                            SetCurrentItems(path);
+                            if (Directory.Exists(path))
+                            {
+                                enigmaEfs.EditTxtFile(text, path + "\\" + obj.GetEncryptedFileName(), obj.Name);
+                                SetCurrentItems(path);
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("Directory {0} is missing.", path));
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -614,8 +638,15 @@ namespace Enigma.Wpf.ViewModels
                         try
                         {
                             var path = GetDirPath();
-                            enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), enigmaEfs.userPrivateKey);
-                            SetCurrentItems(path);
+                            if (Directory.Exists(path))
+                            {
+                                enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName());
+                                SetCurrentItems(path);
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("Directory {0} is missing.", path));
+                            }
                         }
                         catch (Exception ex)
                         {
