@@ -113,6 +113,8 @@
     <Compile Include="ViewModels\Forms\ImportFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\PrivateKeyFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\ShareFormViewModel.cs" />
+    <Compile Include="ViewModels\Forms\SimpleStringFormViewModel.cs" />
+    <Compile Include="ViewModels\Forms\TextFileFormViewModel.cs" />
     <Compile Include="ViewModels\InitialFormViewModel.cs" />
     <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
@@ -125,6 +127,12 @@
     </Compile>
     <Compile Include="Views\Forms\ShareFormView.xaml.cs">
       <DependentUpon>ShareFormView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Forms\SimpleStringFormView.xaml.cs">
+      <DependentUpon>SimpleStringFormView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Forms\TextFileFormView.xaml.cs">
+      <DependentUpon>TextFileFormView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InitialForm.xaml.cs">
       <DependentUpon>InitialForm.xaml</DependentUpon>
@@ -145,6 +153,14 @@
     </Page>
     <Page Include="Views\Forms\PrivateKeyFormView.xaml" />
     <Page Include="Views\Forms\ShareFormView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Forms\SimpleStringFormView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Forms\TextFileFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

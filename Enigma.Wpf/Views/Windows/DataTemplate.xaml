@@ -28,4 +28,11 @@
     <DataTemplate DataType="{x:Type formViewModels:PrivateKeyFormViewModel}">
         <forms:PrivateKeyFormView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type formViewModels:SimpleStringFormViewModel}">
+        <forms:SimpleStringFormView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type formViewModels:TextFileFormViewModel}">
+        <forms:TextFileFormView />
+    </DataTemplate>
+
 </ResourceDictionary>

@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Enigma.EFS;
 using Enigma.Models;
 using Enigma.UserDbManager;
 using Enigma.Wpf.Enums;
+using Enigma.Wpf.Forms.Data;
 using Enigma.Wpf.Interfaces;
 using Enigma.Wpf.Observables;
 using Enigma.Wpf.ViewModels.Forms;
@@ -159,7 +162,7 @@ namespace Enigma.Wpf.ViewModels
             navigator.GoToPreviousControl();
         }
 
-        private void HandlePasswordChange()
+        /*private void HandlePasswordChange()
         {
             var form = new ChangePasswordFormViewModel(navigator);
 
@@ -181,7 +184,7 @@ namespace Enigma.Wpf.ViewModels
             };
 
             navigator.OpenFlyoutPanel(form);
-        }
+        }*/
 
         private void HandleAccountDeletion()
         {
@@ -253,7 +256,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleCreateTxtFile()
         {
-            var form = new TxtFileCreateFormViewModel(navigator);
+            var form = new TextFileFormViewModel(navigator);
 
             form.OnSubmit += (TxtFormData data) =>
             {
@@ -262,8 +265,13 @@ namespace Enigma.Wpf.ViewModels
                     var path = GetDirPath();
                     if (Directory.Exists(path))
                     {
-                        var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
-                        SetCurrentItems(path);
+                        var nameForm = new SimpleStringFormViewModel(navigator, "File name:");
+
+                        nameForm.OnSubmit += name =>
+                        {
+                            var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, name, data.AlgorithmIdentifier, data.HashIdentifier);
+                            SetCurrentItems(path);
+                        };
                     }
                     else
                     {
@@ -283,7 +291,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleCreateFolder()
         {
-            var form = new CreateFolderFormViewModel(navigator);
+            var form = new SimpleStringFormViewModel(navigator, "Folder name:");
 
             form.OnSubmit += (string dirName) =>
             {
@@ -307,7 +315,6 @@ namespace Enigma.Wpf.ViewModels
             };
 
             navigator.OpenFlyoutPanel(form);
-            //navigator.ShowMessage("Test", "Pressed Create folder menu item.");
         }
 
         public ICommand DeleteItemCommand => new RelayCommand<FileSystemItem>(HandleDeleteItem);
@@ -379,9 +386,9 @@ namespace Enigma.Wpf.ViewModels
             //navigator.ShowMessage("Test", "Pressed delete item menu item.");
         }
 
-        public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
+        //public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
 
-        private void HandleShareItem(FileSystemItem obj)
+        /*private void HandleShareItem(FileSystemItem obj)
         {
             //navigator.ShowMessage("Test", "Pressed share item menu item.");
             try
@@ -440,9 +447,9 @@ namespace Enigma.Wpf.ViewModels
             {
                 navigator.ShowMessage("Error", ex.Message);
             }
-        }
+        }*/
 
-        public ICommand UnshareItemCommand => new RelayCommand<FileSystemItem>(HandleUnshareItem);
+        /*public ICommand UnshareItemCommand => new RelayCommand<FileSystemItem>(HandleUnshareItem);
 
         private void HandleUnshareItem(FileSystemItem obj)
         {
@@ -495,7 +502,7 @@ namespace Enigma.Wpf.ViewModels
             {
                 navigator.ShowMessage("Error", ex.Message);
             }
-        }
+        }*/
 
         public ICommand ExportItemCommand => new RelayCommand<FileSystemItem>(HandleExportItem);
 
@@ -516,32 +523,45 @@ namespace Enigma.Wpf.ViewModels
                     throw new Exception(string.Format("File {0} is missing.", obj.Name));
                 }
 
-                var form = new ExportFormViewModel(navigator);
-
-                form.OnSubmit += (string exportPath) =>
+                string exportPath = null;
+                using var fileChooseDialog = new OpenFileDialog
                 {
-                    try
-                    {
-                        var path = GetDirPath() + "\\" + obj.GetEncryptedFileName();
-
-                        if (!File.Exists(path))
-                        {
-                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
-                        }
-                        if (!Directory.Exists(path))
-                        {
-                            throw new Exception(string.Format("Directory {0} is missing.", exportPath));
-                        }
-
-                        enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
-                    }
-                    catch (Exception ex)
-                    {
-                        navigator.ShowMessage("Error", ex.Message);
-                    }
+                    ValidateNames = true,
+                    CheckFileExists = true,
+                    CheckPathExists = true
                 };
 
-                navigator.OpenFlyoutPanel(form);
+                var x = fileChooseDialog.ShowDialog();
+
+                if (x == DialogResult.OK)
+                {
+                    exportPath = fileChooseDialog.FileName;
+                }
+                else
+                {
+                    return;
+                }
+
+                try
+                {
+                    var path = GetDirPath() + "\\" + obj.GetEncryptedFileName();
+
+                    if (!File.Exists(path))
+                    {
+                        throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                    }
+                    if (!Directory.Exists(path))
+                    {
+                        throw new Exception(string.Format("Directory {0} is missing.", exportPath));
+                    }
+
+                    enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
+                }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+
             }
             catch (Exception ex)
             {
@@ -563,8 +583,6 @@ namespace Enigma.Wpf.ViewModels
 
             navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + welcomeMessage);
         }
-
-        public ICommand ReadCommand => new RelayCommand(HandleReadFile);
 
         private void HandleReadFile(FileSystemItem obj)
         {
@@ -596,7 +614,7 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        public ICommand UpdateCommand => new RelayCommand(HandleFileUpdate);
+        public ICommand UpdateCommand => new RelayCommand<FileSystemItem>(HandleFileUpdate);
 
         private void HandleFileUpdate(FileSystemItem obj)
         {
@@ -617,16 +635,33 @@ namespace Enigma.Wpf.ViewModels
 
                 if (obj.Name.EndsWith(".txt"))
                 {
-                    var form = new TxtFileUpdateFormViewModel(navigator);
+                    var path = GetDirPath();
 
-                    form.OnSubmit += (string text) =>
+                    if (!Directory.Exists(path))
+                    {
+                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                    }
+
+                    path += "\\" + obj.GetEncryptedFileName();
+
+                    if (!File.Exists(path))
+                    {
+                        throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                    }
+
+
+                    var decryptedFile = enigmaEfs.DownloadInMemory(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
+
+                    var form = new TextFileFormViewModel(navigator, true, Encoding.ASCII.GetString(decryptedFile.FileContent));
+
+                    form.OnSubmit += textData =>
                     {
                         try
                         {
                             var path = GetDirPath();
                             if (Directory.Exists(path))
                             {
-                                enigmaEfs.EditTxtFile(text, path + "\\" + obj.GetEncryptedFileName(), obj.Name);
+                                enigmaEfs.EditTxtFile(textData.Text, path + "\\" + obj.GetEncryptedFileName(), obj.Name);
                                 SetCurrentItems(path);
                             }
                             else
@@ -638,46 +673,48 @@ namespace Enigma.Wpf.ViewModels
                         {
                             navigator.ShowMessage("Error", ex.Message);
                         }
-                    };
-
-                    // return to main window
-                    form.OnCancel += () =>
-                    {
                     };
 
                     navigator.OpenFlyoutPanel(form);
                 }
                 else // any file other than .txt
                 {
-                    var form = new FileUpdateFormViewModel(navigator);
-
-                    form.OnSubmit += (string filePath) =>
+                    string filePath = null;
+                    using var fileChooseDialog = new OpenFileDialog
                     {
-                        try
-                        {
-                            var path = GetDirPath();
-                            if (Directory.Exists(path))
-                            {
-                                enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), obj.Name.Split('.')[1]);
-                                SetCurrentItems(path);
-                            }
-                            else
-                            {
-                                throw new Exception(string.Format("Directory {0} is missing.", path));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            navigator.ShowMessage("Error", ex.Message);
-                        }
+                        ValidateNames = true,
+                        CheckFileExists = true,
+                        CheckPathExists = true
                     };
 
-                    // return to main window
-                    form.OnCancel += () =>
-                    {
-                    };
+                    var x = fileChooseDialog.ShowDialog();
 
-                    navigator.OpenFlyoutPanel(form);
+                    if (x == DialogResult.OK)
+                    {
+                        filePath = fileChooseDialog.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        var path = GetDirPath();
+                        if (Directory.Exists(path))
+                        {
+                            enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), obj.Name.Split('.')[1]);
+                            SetCurrentItems(path);
+                        }
+                        else
+                        {
+                            throw new Exception(string.Format("Directory {0} is missing.", path));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        navigator.ShowMessage("Error", ex.Message);
+                    }
                 }
             }
             catch (Exception ex)

@@ -1,0 +1,144 @@
+<UserControl
+    x:Class="Enigma.Wpf.Views.Forms.TextFileFormView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Enigma.Wpf.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Enigma.Wpf.Views.Forms"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:BoolToGridLengthConverter x:Key="BTGLConverter" />
+    </UserControl.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="{Binding IsNew, Converter={StaticResource BTGLConverter}, ConverterParameter=10}" />
+            <RowDefinition Height="{Binding IsNew, Converter={StaticResource BTGLConverter}, ConverterParameter=30}" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.ColumnSpan="5" Text="{Binding Text}" />
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition MinWidth="100" />
+
+                <ColumnDefinition Width="15" />
+
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition MinWidth="100" />
+
+                <ColumnDefinition Width="15" />
+
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition MinWidth="100" />
+
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                Algorithm:
+            </Label>
+            <ComboBox
+                Grid.Row="2"
+                Grid.Column="3"
+                MinWidth="100"
+                VerticalContentAlignment="Center"
+                SelectedValue="{Binding AlgorithmValue, Mode=OneWayToSource}"
+                SelectedValuePath="Content">
+                <ComboBoxItem>AES-128</ComboBoxItem>
+                <ComboBoxItem>AES-192</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">AES-256</ComboBoxItem>
+                <ComboBoxItem>CAMLL-128</ComboBoxItem>
+                <ComboBoxItem>CAMLL-192</ComboBoxItem>
+                <ComboBoxItem>CAMLL-256</ComboBoxItem>
+                <ComboBoxItem>2FISH-128</ComboBoxItem>
+                <ComboBoxItem>2FISH-192</ComboBoxItem>
+                <ComboBoxItem>2FISH-256</ComboBoxItem>
+                <ComboBoxItem>3DES-192</ComboBoxItem>
+            </ComboBox>
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="5"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Mode:"
+                IsEnabled="True" />
+            <ComboBox
+                Grid.Row="2"
+                Grid.Column="7"
+                MinWidth="100"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                IsEnabled="True"
+                SelectedValue="{Binding ModeValue, Mode=OneWayToSource}"
+                SelectedValuePath="Content">
+                <ComboBoxItem IsSelected="True">ECB</ComboBoxItem>
+                <ComboBoxItem>CBC</ComboBoxItem>
+                <ComboBoxItem>CFB</ComboBoxItem>
+                <ComboBoxItem>OFB</ComboBoxItem>
+            </ComboBox>
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="9"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                Hash:
+            </Label>
+            <ComboBox
+                Grid.Row="2"
+                Grid.Column="11"
+                MinWidth="100"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                SelectedValue="{Binding HashValue, Mode=OneWayToSource}"
+                SelectedValuePath="Content">
+                <ComboBoxItem>MD2</ComboBoxItem>
+                <ComboBoxItem>MD4</ComboBoxItem>
+                <ComboBoxItem>MD5</ComboBoxItem>
+                <ComboBoxItem>SHA1</ComboBoxItem>
+                <ComboBoxItem>SHA224</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">SHA256</ComboBoxItem>
+                <ComboBoxItem>SHA384</ComboBoxItem>
+                <ComboBoxItem>SHA512</ComboBoxItem>
+                <ComboBoxItem>RIPEMD128</ComboBoxItem>
+                <ComboBoxItem>RIPEMD160</ComboBoxItem>
+                <ComboBoxItem>RIPEMD256</ComboBoxItem>
+            </ComboBox>
+        </Grid>
+        <Button
+            Grid.Row="4"
+            Grid.Column="1"
+            Command="{Binding SaveCommand}">
+            Save
+        </Button>
+        <Button
+            Grid.Row="4"
+            Grid.Column="3"
+            Command="{Binding CancelCommand}">
+            Cancel
+        </Button>
+    </Grid>
+</UserControl>
