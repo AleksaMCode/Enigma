@@ -528,7 +528,7 @@ namespace Enigma.Wpf.ViewModels
                             throw new Exception(string.Format("Directory {0} is missing.", exportPath));
                         }
 
-                        enigmaEfs.Download(path, exportPath, enigmaEfs);
+                        enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
                     }
                     catch (Exception ex)
                     {

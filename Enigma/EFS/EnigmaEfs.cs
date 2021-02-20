@@ -168,10 +168,11 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="pathOnEfs">The name of the file to downloaded.</param>
         /// <param name="pathOnFs">Path on the file system where the file will be stored.</param>
-        public void Download(string pathOnEfs, string pathOnFs)
+        /// <param name="ownerPublicKey">Public RSA key from the file owner used to check files signature.</param>
+        public void Download(string pathOnEfs, string pathOnFs, RSAParameters ownerPublicKey)
         {
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
-            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.PrivateKey, currentUser.PublicKey);
+            var originalFile = encryptedFile.Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.PrivateKey, ownerPublicKey);
 
             if (CanItBeStored(originalFile.FileContent.Length, pathOnFs.Substring(0, 2)))
             {
