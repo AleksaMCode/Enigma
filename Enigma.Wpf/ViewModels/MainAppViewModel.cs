@@ -43,21 +43,11 @@ namespace Enigma.Wpf.ViewModels
             usersDb = db;
             enigmaEfs = new EnigmaEfs(user, rootDir);
             //shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
-            CurrentItems.Add(shared);
+            //CurrentItems.Add(shared);
             this.rootDir = rootDir;
             userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) > DateTime.Now;
 
             SetCurrentItems(enigmaEfs.currentUser.Username);
-
-            //CurrentItems = new ObservableCollection<FileSystemItem>
-            //{
-            //    shared,
-            //    new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "ImportantDocuments" },
-            //    new FileSystemItem { Type = Enums.FileSystemItemType.Folder, Name = "BankAccounts" },
-            //    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "bookToSave.pdf" },
-            //    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "secrets.txt" },
-            //    new FileSystemItem { Type = Enums.FileSystemItemType.File, Name = "passwords.txt" },
-            //};
             AddressBarText = "\\";
         }
 
