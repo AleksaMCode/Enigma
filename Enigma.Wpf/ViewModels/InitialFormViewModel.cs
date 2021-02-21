@@ -89,14 +89,14 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "Username is required for login.")]
+        [Required(ErrorMessage = "Username is required field.")]
         public string Username
         {
             get => username;
             set => Set(() => Username, ref username, value);
         }
 
-        [Required(ErrorMessage = "Certificate is required for login.")]
+        [Required(ErrorMessage = "Certificate is required field.")]
         [FileExists]
         public string CertificatePath
         {
@@ -117,6 +117,11 @@ namespace Enigma.Wpf.ViewModels
                 if (IsValid())
                 {
                     var password = passBox.Password;
+
+                    if (password == "")
+                    {
+                        throw new Exception("Password is required field.");
+                    }
 
                     var login2fa = new LoginController(pepperPath);
 
@@ -140,21 +145,37 @@ namespace Enigma.Wpf.ViewModels
                     {
                         if (user.UsbKey == 1)
                         {
-                            var userInfo = new UserInformation(user)
+                            UserInformation userInfo;
+                            try
                             {
-                                PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
-                            };
+                                userInfo = new UserInformation(user)
+                                {
+                                    PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
+                                };
 
-                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                                navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                            }
+                            catch (Exception ex)
+                            {
+                                navigator.ShowMessage("Error", ex.Message);
+                            }
                         }
                         else
                         {
-                            var userInfo = new UserInformation(user)
+                            UserInformation userInfo;
+                            try
                             {
-                                PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
-                            };
+                                userInfo = new UserInformation(user)
+                                {
+                                    PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
+                                };
 
-                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                                navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                            }
+                            catch (Exception ex)
+                            {
+                                navigator.ShowMessage("Error", ex.Message);
+                            }
                         }
                     };
 

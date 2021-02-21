@@ -21,7 +21,7 @@ namespace Enigma.Wpf.ViewModels
     public class MainAppViewModel : ViewModelBase
     {
         private readonly INavigator navigator;
-        private ObservableCollection<FileSystemItem> currentItems;
+        private ObservableCollection<FileSystemItem> currentItems = null;
         private FileSystemItem shared;
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
@@ -45,10 +45,10 @@ namespace Enigma.Wpf.ViewModels
             //shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
             //CurrentItems.Add(shared);
             this.rootDir = rootDir;
-            userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) > DateTime.Now;
+            userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) < DateTime.Now;
 
-            SetCurrentItems(enigmaEfs.currentUser.Username);
             AddressBarText = "\\";
+            SetCurrentItems(GetDirPath());
         }
 
         public string AddressBarText
@@ -117,10 +117,14 @@ namespace Enigma.Wpf.ViewModels
 
         private void SetCurrentItems(string path)
         {
+            if (currentItems == null)
+            {
+                CurrentItems = new ObservableCollection<FileSystemItem>();
+            }
             CurrentItems.Clear();
 
             // Shared folder is always visible except when "visiting" Shared folder.
-            if (!path.StartsWith("\\Shared"))
+            if (!addressBarText.StartsWith("\\Shared"))
             {
                 shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
                 CurrentItems.Add(shared);
@@ -220,9 +224,6 @@ namespace Enigma.Wpf.ViewModels
                         if (File.Exists(data.InputFilePath))
                         {
                             var encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
-                            // currentItems.Add(new FileSystemItem(
-                            //    new EfsFile(data.InputFilePath.Substring(data.InputFilePath.LastIndexOf('\\') + 1),
-                            //    File.ReadAllBytes(rootDir + addressBarText + encrypedName), enigmaEfs.currentUser.Id, enigmaEfs.userPrivateKey)));
                             SetCurrentItems(path);
                         }
                         else
@@ -718,7 +719,7 @@ namespace Enigma.Wpf.ViewModels
             if (obj.Type is FileSystemItemType.Folder or FileSystemItemType.SharedFolder)
             {
                 backDir.Push(addressBarText);
-                addressBarText += "\\" + obj.Name;
+                addressBarText += addressBarText == "\\" ? obj.Name : "\\" + obj.Name;
 
                 SetCurrentItems(GetDirPath());
             }
@@ -729,26 +730,6 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        //private string GetPreviousDirPath()
-        //{
-        //    var path = rootDir;
-
-        //    if (addressBarText.StartsWith("\\Shared"))
-        //    {
-        //        path += previousDir;
-        //    }
-        //    if (addressBarText == "\\")
-        //    {
-        //        path += enigmaEfs.currentUser.Username;
-        //    }
-        //    else // if previousDir is set to subdirectory insede of the user's directory 
-        //    {
-        //        path += "\\" + enigmaEfs.currentUser.Username + previousDir;
-        //    }
-
-        //    return path;
-        //}
-
         private string GetDirPath()
         {
             var path = rootDir;
@@ -757,9 +738,9 @@ namespace Enigma.Wpf.ViewModels
             {
                 path += addressBarText;
             }
-            if (addressBarText == "\\")
+            else if (addressBarText == "\\")
             {
-                path += enigmaEfs.currentUser.Username;
+                path += "\\" + enigmaEfs.currentUser.Username;
             }
             else // if addressBarText is set to subdirectory inside of the user's directory 
             {

@@ -42,13 +42,19 @@ namespace Enigma.Models
         {
             var user = usersDb.GetUser(username);
 
+            // if wrong username is entered
+            if(user == null)
+            {
+                throw new Exception("Invalid username or password.");
+            }
+
             if (user.Locked == 1)
             {
                 throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
             }
 
             // if user has entered correct password
-            if (user != null && user.IsPasswordValid(password, usersDb.Pepper))
+            if (user.IsPasswordValid(password, usersDb.Pepper))
             {
                 return user;
             }
