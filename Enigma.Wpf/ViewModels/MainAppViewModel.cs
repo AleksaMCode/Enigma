@@ -714,6 +714,20 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
+        public ICommand CreateTextFileCommand => new RelayCommand(HandleCreateTextFile);
+
+        private void HandleCreateTextFile()
+        {
+            
+        }
+
+        public ICommand UpdateItemCommand => new RelayCommand<FileSystemItem>(HandleUpdateItem);
+
+        private void HandleUpdateItem(FileSystemItem obj)
+        {
+            
+        }
+
         private void HandleDefaultAction(FileSystemItem obj)
         {
             if (obj.Type is FileSystemItemType.Folder or FileSystemItemType.SharedFolder)
