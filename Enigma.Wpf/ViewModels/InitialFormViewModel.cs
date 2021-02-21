@@ -181,7 +181,9 @@ namespace Enigma.Wpf.ViewModels
                     {
                         var password = passBox.Password;
                         var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath);
-                        register.Register(ref username, password, CertificatePath);
+
+                        var fullUsername = username;
+                        register.Register(ref fullUsername, password, CertificatePath);
 
                         if (PrivateKeySignupOption == PrivateKeyOption.USB)
                         {
@@ -194,8 +196,8 @@ namespace Enigma.Wpf.ViewModels
                             keyPassForm.OnSubmit += data =>
                             {
                                 register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
-                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
-                                register.UpdateDatabase(ref username, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", fullUsername));
+                                register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
                             };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }
@@ -205,8 +207,8 @@ namespace Enigma.Wpf.ViewModels
                             keyPassForm.OnSubmit += data =>
                             {
                                 register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
-                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", username));
-                                register.UpdateDatabase(ref username, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", fullUsername));
+                                register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
                             };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }

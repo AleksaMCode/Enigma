@@ -37,9 +37,9 @@ namespace Enigma.UserDbManager
         public byte[] PublicCertificate { get; set; }*/
 
         /// <summary>
-        /// Users public RSA key stored in raw form as <see cref="byte"/>[].
+        /// Users public RSA key stored in raw form as xml <see cref="string"/>[].
         /// </summary>
-        public byte[] PublicKey { get; set; }
+        public string PublicKey { get; set; }
 
         /// <summary>
         /// Last login time.

@@ -90,7 +90,7 @@ namespace Enigma.Models
             var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
 
             // compare user public RSA key from x509 public certificate with a public RSA key that was stored when user first registered
-            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, RsaAlgorithm.ImportPublicKey(Encoding.ASCII.GetString(user.PublicKey))))
+            if (!RsaAlgorithm.CompareKeys(publicKeyFromCertificate, RsaAlgorithm.ExportParametersFromXmlString(user.PublicKey, false)))
             {
                 throw new Exception("Wrong certificate used.");
             }
@@ -153,7 +153,7 @@ namespace Enigma.Models
 
         public RSAParameters GetPrivateKey(byte[] privateKey, string password)
         {
-            var keyRaw  = DecryptTheUserKey(privateKey, password);
+            var keyRaw = DecryptTheUserKey(privateKey, password);
             return new KeyFileParser(keyRaw).GetParameters();
             //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
         }

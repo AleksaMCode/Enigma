@@ -36,34 +36,25 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         }
 
         /// <summary>
-        /// Import OpenSSH PEM public RSA key <see cref="string"/> into <see cref="RSAParameters"/>.
-        /// <param name="publicKeyInPem">User public RSA key in PEM format.</param>
-        /// <returns>Imported RSA public key.</returns>
+        /// Export RSA key from XML <see cref="string"/> form to <see cref="RSAParameters"/>.
         /// </summary>
-        public static RSAParameters ImportPublicKey(string publicKeyInPem)
+        /// <param name="publicKeyInXml">The XML string containing <see cref="System.Security.Cryptography.RSA key"/> information.</param>
+        /// <param name="includePrivateParameters">true to include private parameters; otherwise, false.</param>
+        /// <returns>The parameters for <see cref="System.Security.Cryptography.RSA"/>.</returns>
+        public static RSAParameters ExportParametersFromXmlString(string publicKeyInXml, bool includePrivateParameters)
         {
-            var pr = new PemReader(new StringReader(publicKeyInPem));
-            var publicKey = (AsymmetricKeyParameter)pr.ReadObject();
+            var rsa = RSA.Create();
+            rsa.FromXmlString(publicKeyInXml);
 
-            return DotNetUtilities.ToRSAParameters((RsaKeyParameters)publicKey);
-        }
-
-        /// <summary>
-        /// Import OPENSSH PEM private key <see cref="byte"/>[] into <see cref="RSAParameters"/>.
-        /// </summary>
-        /// <param name="privatePemRawKey">User private RSA PEM key in raw form.</param>
-        /// <returns>Imported RSA private key.</returns>
-        public static RSAParameters ImportPrivateKey(byte[] privatePemRawKey)
-        {
-            var pr = new PemReader(new StringReader(Encoding.ASCII.GetString(privatePemRawKey)));
-            var keyPair = (AsymmetricCipherKeyPair)pr.ReadObject();
-            return DotNetUtilities.ToRSAParameters((RsaPrivateCrtKeyParameters)keyPair.Private);
+            return rsa.ExportParameters(includePrivateParameters);
         }
 
         /// <summary>
         /// Compares public RSA key with a private RSA key by encrypting/decrypting random 16 bytes of data.
         /// This method is slower than <see cref="CompareKeys(RSAParameters, RSAParameters)"/> method.
         /// </summary>
+        /// <param name="publicKey">Public RSA key parameters.</param>
+        /// <param name="privateKey">Private RSA key parameters.</param>
         /// <returns>true if the keys match, otherwise false.</returns>
         public static bool AreKeysMatched(RSAParameters publicKey, RSAParameters privateKey)
         {
@@ -86,9 +77,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// When comparing private and public keys, this method is faster than <see cref="AreKeysMatched(RSAParameters, RSAParameters)"/> method.
         /// </summary>
         /// <returns>true if the keys match, otherwise false.</returns>
-        public static bool CompareKeys(RSAParameters publicKey, RSAParameters privateKey)
+        public static bool CompareKeys(RSAParameters firstKey, RSAParameters secondKey)
         {
-            return publicKey.Modulus.SequenceEqual(privateKey.Modulus) && publicKey.Exponent.SequenceEqual(privateKey.Exponent);
+            return firstKey.Modulus.SequenceEqual(secondKey.Modulus) && firstKey.Exponent.SequenceEqual(secondKey.Exponent);
         }
 
         /// <summary>

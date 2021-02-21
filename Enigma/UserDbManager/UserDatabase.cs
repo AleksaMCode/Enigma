@@ -99,7 +99,7 @@ namespace Enigma.UserDbManager
                 Username = username,
                 Salt = salt,
                 PassHash = passHash,
-                PublicKey = userCert.GetPublicKey(),
+                PublicKey = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ToXmlString(false),
                 LastLogin = dateTime,
                 LoginAttempt = 0,
                 UsbKey = usbKey ? 1 : 0,
