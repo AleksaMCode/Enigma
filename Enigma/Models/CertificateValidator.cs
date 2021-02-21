@@ -16,12 +16,14 @@ namespace Enigma.Models
         /// Checks if the certificate has expired and it also checks if it is issued by a proper root certificate if the <paramref name="checkRoot"/> is set to true.
         /// </summary>
         /// <param name="certificateToValidate">Certificate that is checked.</param>
+        /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
         /// <param name="error">String describing error.</param>
         /// <param name="checkRoot">If set to <see cref="true"/> true, <see cref="VerifyCertificate(X509Certificate2, out string, bool)"/>  will check if certificate is issued by a proper root certificate. </param>
         /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise false.</returns>
-        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, out string error, bool checkRoot)
+        public static bool VerifyCertificate(X509Certificate2 certificateToValidate, string caTrustListPath, out string error, bool checkRoot)
         {
-            var authority = new X509Certificate2(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\ca.pem");    // root certificate that this application trusts
+            // root certificate that this application trusts
+            var authority = new X509Certificate2(caTrustListPath);
 
             error = null;
 

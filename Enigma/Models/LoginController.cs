@@ -5,12 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Enigma.AlgorithmLibrary.Algorithms;
-using Enigma.PrivateKeyParsers;
 using Enigma.UserDbManager;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
 
 namespace Enigma.Models
 {

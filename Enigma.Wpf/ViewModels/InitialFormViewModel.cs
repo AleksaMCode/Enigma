@@ -26,7 +26,7 @@ namespace Enigma.Wpf.ViewModels
         /// <summary>
         /// Root path on FS where all the important program files are stored.
         /// </summary>
-        private readonly string rootFilesPath = @"C:\Users\Aleksa\source\repos\Enigma\Enigma\";
+        private readonly string rootFilesPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + @"\Enigma\"; /*@"C:\Users\Aleksa\source\repos\Enigma\Enigma\";*/
 
         /// <summary>
         /// Root path of Enigma EFS.
@@ -53,6 +53,11 @@ namespace Enigma.Wpf.ViewModels
         /// </summary>
         private readonly string dicewareWordsPath;
 
+        /// <summary>
+        /// CA Trust List path on FS.
+        /// </summary>
+        private readonly string caTrustListPath;
+
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
             navigator = mainWindowViewModel;
@@ -64,6 +69,7 @@ namespace Enigma.Wpf.ViewModels
             userDatabasePath = rootFilesPath + configInfo[2].Split('\t')[1];
             commonPasswordsPath = rootFilesPath + configInfo[3].Split('\t')[1];
             dicewareWordsPath = rootFilesPath + configInfo[4].Split('\t')[1];
+            caTrustListPath += Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[5].Split('\t')[1];
         }
 
         public ICommand LoginCommand => new RelayCommand<PasswordBox>(HandleLogin);
@@ -89,14 +95,14 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        [Required(ErrorMessage = "Username is required field.")]
+        [Required(ErrorMessage = "Username is a required field.")]
         public string Username
         {
             get => username;
             set => Set(() => Username, ref username, value);
         }
 
-        [Required(ErrorMessage = "Certificate is required field.")]
+        [Required(ErrorMessage = "Certificate is a required field.")]
         [FileExists]
         public string CertificatePath
         {
@@ -120,7 +126,7 @@ namespace Enigma.Wpf.ViewModels
 
                     if (password == "")
                     {
-                        throw new Exception("Password is required field.");
+                        throw new Exception("Password is a required field.");
                     }
 
                     var login2fa = new LoginController(pepperPath);
@@ -204,7 +210,7 @@ namespace Enigma.Wpf.ViewModels
                         var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath);
 
                         var fullUsername = username;
-                        register.Register(ref fullUsername, password, CertificatePath);
+                        register.Register(ref fullUsername, caTrustListPath, password, CertificatePath);
 
                         if (PrivateKeySignupOption == PrivateKeyOption.USB)
                         {

@@ -44,7 +44,8 @@ namespace Enigma.Models
         /// <param name="username">Users account username.</param>
         /// <param name="password">Users password.</param>
         /// <param name="certificateFilePath">Path on FS to users certificate.</param>
-        public void Register(ref string username, string password, string certificateFilePath)
+        /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
+        public void Register(ref string username, string password, string certificateFilePath, string caTrustListPath)
         {
             if (username.Length > 25)
             {
@@ -82,7 +83,7 @@ namespace Enigma.Models
             }
 
             // Checks if the certificate has expired and if it is issued by a proper root certificate.
-            if (CertificateValidator.VerifyCertificate(cert, out var errorMsg, true) == false)
+            if (CertificateValidator.VerifyCertificate(cert, caTrustListPath, out var errorMsg, true) == false)
             {
                 throw new Exception(errorMsg);
             }
