@@ -245,7 +245,9 @@ namespace Enigma.Wpf.ViewModels
             navigator.OpenFlyoutPanel(form);
         }
 
-        private void HandleCreateTxtFile()
+        public ICommand CreateTextFileCommand => new RelayCommand(HandleCreateTextFile);
+
+        private void HandleCreateTextFile()
         {
             var form = new TextFileFormViewModel(navigator);
 
@@ -605,9 +607,9 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        public ICommand UpdateCommand => new RelayCommand<FileSystemItem>(HandleFileUpdate);
+        public ICommand UpdateItemCommand => new RelayCommand<FileSystemItem>(HandleUpdateItem);
 
-        private void HandleFileUpdate(FileSystemItem obj)
+        private void HandleUpdateItem(FileSystemItem obj)
         {
             try
             {
@@ -714,19 +716,6 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        public ICommand CreateTextFileCommand => new RelayCommand(HandleCreateTextFile);
-
-        private void HandleCreateTextFile()
-        {
-            
-        }
-
-        public ICommand UpdateItemCommand => new RelayCommand<FileSystemItem>(HandleUpdateItem);
-
-        private void HandleUpdateItem(FileSystemItem obj)
-        {
-            
-        }
 
         private void HandleDefaultAction(FileSystemItem obj)
         {

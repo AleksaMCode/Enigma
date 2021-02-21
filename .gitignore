@@ -22,6 +22,9 @@ key.bin
 # Encrypted RSA keys
 private_encrypted/
 
+# Others
+PrivateKeyParsers
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

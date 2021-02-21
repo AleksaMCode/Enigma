@@ -49,6 +49,22 @@ namespace Enigma.AlgorithmLibrary.Algorithms
             return rsa.ExportParameters(includePrivateParameters);
         }
 
+        public static RSAParameters ExportParametersFromPemKey(string keyInPemForm, bool includePrivateParameters)
+        {
+            if (includePrivateParameters)
+            {
+                var keyPair = (AsymmetricCipherKeyPair)new PemReader(new StringReader(keyInPemForm)).ReadObject();
+
+                return DotNetUtilities.ToRSAParameters((RsaPrivateCrtKeyParameters)keyPair.Private);
+            }
+            else // only public parameters
+            {
+                var publicKey = (AsymmetricKeyParameter)new PemReader(new StringReader(keyInPemForm)).ReadObject();
+
+                return DotNetUtilities.ToRSAParameters((RsaKeyParameters)publicKey);
+            }
+        }
+
         /// <summary>
         /// Compares public RSA key with a private RSA key by encrypting/decrypting random 16 bytes of data.
         /// This method is slower than <see cref="CompareKeys(RSAParameters, RSAParameters)"/> method.
@@ -202,7 +218,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// <returns>true if the signature is valid, otherwise false.</returns>
         public bool VerifySignature(byte[] data, ISigner hashAlgo, byte[] signature)
         {
-            // Convert .NETs RSAParameters to Bouncy Castles RsaKeyParameters
+            // Convert .NETs RSAParameters to Bouncy Castle's RsaKeyParameters.
             var key = new RsaKeyParameters(false, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
 
             hashAlgo.Init(false, key);

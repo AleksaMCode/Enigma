@@ -111,9 +111,6 @@
     <Compile Include="Models\ProgressReporter.cs" />
     <Compile Include="Models\RegisterController.cs" />
     <Compile Include="Models\UserInformation.cs" />
-    <Compile Include="PrivateKeyParsers\ASNParser.cs" />
-    <Compile Include="PrivateKeyParsers\InvalidKeyFileException.cs" />
-    <Compile Include="PrivateKeyParsers\KeyFileParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserDbManager\SQLiteConfiguration.cs" />
     <Compile Include="UserDbManager\User.cs" />

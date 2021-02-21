@@ -7,6 +7,10 @@ using System.Text;
 using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.PrivateKeyParsers;
 using Enigma.UserDbManager;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
 
 namespace Enigma.Models
 {
@@ -147,21 +151,21 @@ namespace Enigma.Models
         /// <summary>
         /// Gets users private RSA key from encryped user's key.
         /// </summary>
-        /// <param name="privateKeyPath">Path to the user's encrypted RSA key haystack.</param>
+        /// <param name="encryptedPrivateKeyPath">Path to the user's encrypted RSA key haystack.</param>
         /// <param name="password">Users private RSA key password.</param>
         /// <returns>Users private RSA key.</returns>
-        public RSAParameters GetPrivateKey(string privateKeyPath, string password)
+        public RSAParameters GetPrivateKey(string encryptedPrivateKeyPath, string password)
         {
-            var keyRaw = DecryptTheUserKey(File.ReadAllBytes(privateKeyPath), password);
-            return new KeyFileParser(keyRaw).GetParameters();
-            //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
+            var keyRaw = DecryptTheUserKey(File.ReadAllBytes(encryptedPrivateKeyPath), password);
+
+            return RsaAlgorithm.ExportParametersFromPemKey(Encoding.ASCII.GetString(keyRaw), true);
         }
 
-        public RSAParameters GetPrivateKey(byte[] privateKey, string password)
+        public RSAParameters GetPrivateKey(byte[] encryptedPrivateKey, string password)
         {
-            var keyRaw = DecryptTheUserKey(privateKey, password);
-            return new KeyFileParser(keyRaw).GetParameters();
-            //return RsaAlgorithm.ImportPrivateKey(keyRaw); // with this I can remove PrivateKeyParser folder !
+            var keyRaw = DecryptTheUserKey(encryptedPrivateKey, password);
+
+            return RsaAlgorithm.ExportParametersFromPemKey(Encoding.ASCII.GetString(keyRaw), true);
         }
 
         /// <summary>
@@ -199,7 +203,7 @@ namespace Enigma.Models
 
             if (!CheckKeyPassword(passwordBytes, salt, passwordDigest))
             {
-                throw new Exception("Invalid password.");
+                throw new Exception("Invalid password. Key parsing was unsuccessful. MFA failed.");
             }
 
             Buffer.BlockCopy(keyRawEncrypted, startLocation, needle, 0, needleSize);
@@ -253,6 +257,7 @@ namespace Enigma.Models
             using var reader = new BinaryReader(new FileStream(path, FileMode.Open));
             reader.BaseStream.Seek(16, SeekOrigin.Begin);
             reader.Read(ownerId, 0, 4);
+
             return BitConverter.ToInt32(ownerId, 0);
         }
     }
