@@ -73,7 +73,7 @@ namespace Enigma.Models
         }
 
         /// <summary>
-        /// Check if certificate has been revoked.
+        /// Checks if certificate has been revoked.
         /// </summary>
         /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <param name="crlListPath">Path on FS to CRL directory.</param>
@@ -126,7 +126,7 @@ namespace Enigma.Models
         }
 
         /// <summary>
-        /// Check if certificate key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>.
+        /// Checks if certificate key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>.
         /// </summary>
         /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <returns>true if the key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>, otherwise false.</returns>
