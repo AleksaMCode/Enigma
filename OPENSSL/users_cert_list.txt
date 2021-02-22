@@ -1,17 +1,23 @@
 N	Name			CA		CA_status	cert		key		bits	state			key usage				crl		RSA pass
+--	-----------------	--------	------		-------		-----------	----	-----------------	-------------------------------		-----------	------------------------------
  1.	Aleksa Aleksic		ca-exp.pem	expired		s1.pem		priv_1.key	2048	not_expired		correct_keyUsage			not_revoked	ieatburgersonfriday
  2.	Marko Markovic		ca-exp.pem	expired		s2.pem		priv_2.key	2048	not_expired		correct_keyUsage			not_revoked	rainfallonwednesday
  3.	Janko Jankovic		ca-exp.pem	expired		s3.pem		priv_3.key	2048	not_expired		correct_keyUsage			not_revoked	voldemorthadcreated7horcruxes
  4.	Stefan Stefic		ca-exp.pem	expired		s4.pem		priv_4.key	2048	not_expired		correct_keyUsage			revoked		
  5.	Luka Lukic		ca-exp.pem	expired		s5.pem		priv_5.key	2048	expired			correct_keyUsage			not_revoked
  6.	Vlaja Vlajic		ca-exp.pem	expired		s6.pem		priv_6.key	1024	not_expired		correct_keyUsage			not_revoked
- 7.	Nikola Nikolic		ca-exp.pem	expired		s7.pem		priv_7.key	2048	not_expired		incorrect_keyUsage(encipherOnly)	not_revoked
+ 7.	Nikola Nikolic		ca-exp.pem	expired		s7.pem		priv_7.key	2048	not_expired		incorrect_keyUsage(KeyEncipherment)	not_revoked
  8.	Jovan Jovic		(other)		expired		s8.pem		priv_8.key	2048	not_expired		correct_keyUsage			not_revoked
 
- 9.	Aleksa Aleksic		ca.pem		valid		c1.pem		priv_1.key	2048	not_expired		correct_keyUsage			not_revoked	ieatburgersonfriday
-10.	Marko Markovic		ca.pem		valid		c1.pem		priv_2.key	2048	not_expired		correct_keyUsage			not_revoked	rainfallonwednesday
-11.	Janko Jankovic		ca.pem		valid		c1.pem		priv_3.key	2048	not_expired		correct_keyUsage			not_revoked	voldemorthadcreated7horcruxes
-12.	Stefan Stefic		ca.pem		valid		c1.pem		priv_4.key	2048	not_expired		correct_keyUsage			revoked		
-13.	Luka Lukic		ca.pem		valid		c1.pem		priv_5.key	2048	not_expired		correct_keyUsage			not_revoked
-14.	Vlaja Vlajic		ca.pem		valid		c1.pem		priv_6.key	1024	expired			correct_keyUsage			not_revoked
-15.	Nikola Nikolic		ca.pem		valid		c1.pem		priv_7.key	2048	expired			incorrect_keyUsage(encipherOnly)	not_revoked	howtoexitthematrix
+N	Name			Password		CA		CA_status	cert		key		bits	state			key usage				crl		RSA pass
+--	-----------------	----------		--------	------		-------		-----------	----	-----------------	-------------------------------		-----------	------------------------------
+ 1.	Aleksa Aleksic		myRandomPass593		  ca.cer	valid		 c1.cer		 priv_1.key	2048	not_expired		correct_keyUsage			not_revoked	ieatburgersonfriday
+ 2.	Marko Markovic		myRandomPass253		  ca.cer	valid		 c2.cer		 priv_2.key	2048	not_expired		correct_keyUsage			not_revoked	rainfallonwednesday
+ 3.	Janko Jankovic		myRandomPass269		  ca.cer	valid		 c3.cer		 priv_3.key	2048	not_expired		correct_keyUsage			not_revoked	voldemorthadcreated7horcruxes
+ 4.	Stefan Stefic					  ca.cer	valid		 c4.cer		 priv_4.key	2048	not_expired		correct_keyUsage			    revoked
+ 5.	Luka Lukic		myRandomPass985		  ca.cer	valid		 c5.cer		 priv_5.key	2048	expired_after_reg.	correct_keyUsage			not_revoked	persona1non2grata3
+ 6.	Vlaja Vlajic					  ca.cer	valid		 c6.cer		 priv_6.key	1024	not_expired		correct_keyUsage			not_revoked
+ 7.	Nikola Nikolic					  ca.cer	valid		 c7.cer		 priv_7.key	2048	expired			correct_keyUsage			not_revoked
+ 8.	Jovan Jovic					 (other)	valid		 c8.cer		 priv_8.key	2048	not_expired		correct_keyUsage			not_revoked
+ 9.	Mirko Mirkovic					  ca.cer	valid		 c9.cer		 priv_9.key	2048	not_expired		incorrect_keyUsage(KeyEncipherment)	not_revoked
+10.	Igor Igic		myRandomPass105		  ca.cer	valid		c10.cer		priv_10.key	2048	not_expired		correct_keyUsage			not_revoked	howtoexitthematrix
