@@ -52,10 +52,12 @@
                             Grid.Column="2"
                             Grid.ColumnSpan="3"
                             Height="28"
-                            MinWidth="300"
+                            MinWidth="400"
+                            MaxWidth="400"
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left"
                             Text="{Binding Username, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
                         <Label
@@ -70,10 +72,12 @@
                             Grid.Column="2"
                             Grid.ColumnSpan="3"
                             Height="28"
-                            MinWidth="300"
+                            MinWidth="400"
+                            MaxWidth="400"
                             Margin="5,0"
                             Padding="3,0"
-                            VerticalContentAlignment="Center" />
+                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left" />
 
                         <Label Grid.Row="5" Grid.Column="1">Certificate:</Label>
                         <TextBox
@@ -81,10 +85,12 @@
                             Grid.Column="2"
                             Grid.ColumnSpan="2"
                             Height="28"
-                            MinWidth="300"
+                            MinWidth="310"
+                            MaxWidth="310"
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left"
                             IsReadOnly="True"
                             Text="{Binding CertificatePath}" />
                         <Button
@@ -147,10 +153,12 @@
                             Grid.Column="2"
                             Grid.ColumnSpan="3"
                             Height="28"
-                            MinWidth="300"
+                            MinWidth="400"
+                            MaxWidth="400"
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left"
                             Text="{Binding Username, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
 
                         <Label
@@ -165,10 +173,12 @@
                             Grid.ColumnSpan="3"
                             Grid.Column="2"
                             Height="28"
-                            MinWidth="300"
+                            MinWidth="400"
+                            MaxWidth="400"
                             Margin="5,0"
                             Padding="3,0"
-                            VerticalContentAlignment="Center" />
+                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left" />
 
                         <Label Grid.Row="5" Grid.Column="1">Certificate:</Label>
                         <TextBox
@@ -176,10 +186,12 @@
                             Grid.Column="2"
                             Grid.ColumnSpan="2"
                             Height="28"
-                            MinWidth="300"
+                            MinWidth="310"
+                            MaxWidth="310"
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
+                            HorizontalAlignment="left"
                             IsReadOnly="True"
                             Text="{Binding CertificatePath, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                         <Button

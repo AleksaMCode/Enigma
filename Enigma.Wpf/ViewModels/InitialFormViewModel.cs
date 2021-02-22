@@ -254,8 +254,10 @@ namespace Enigma.Wpf.ViewModels
                                 try
                                 {
                                     register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+
                                     // User's key is only made if the registering process (Db update) is successful.
                                     register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
+
                                     navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
                                 }
                                 catch (Exception ex)
@@ -275,8 +277,10 @@ namespace Enigma.Wpf.ViewModels
                                 try
                                 {
                                     register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+
                                     // User's key is only made if the registering process (Db update) is successful.
                                     register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
+
                                     navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
                                 }
                                 catch (Exception ex)
