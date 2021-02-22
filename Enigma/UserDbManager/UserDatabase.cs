@@ -105,7 +105,8 @@ namespace Enigma.UserDbManager
                 UsbKey = usbKey ? 1 : 0,
                 Locked = 0,
                 CertificateExpirationDate = userCert.GetExpirationDateString(),
-                Revoked = 0
+                Revoked = 0,
+                ForcePasswordChange = 0
             };
 
             context.Users.Add(toAdd);

@@ -74,6 +74,11 @@ namespace Enigma.UserDbManager
         public int Revoked { get; set; }
 
         /// <summary>
+        /// Value used to force user to change their password. Set to false (0) by default or to true (1) is user's password change is required.
+        /// </summary>
+        public int ForcePasswordChange { get; set; }
+
+        /// <summary>
         /// Checks if the entered user password matches the hash stored in the database.
         /// </summary>
         /// <param name="password">Entered user password.</param>

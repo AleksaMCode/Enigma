@@ -68,6 +68,11 @@ namespace Enigma.Models
         public bool Revoked => UserInfo.Revoked == 1;
 
         /// <summary>
+        /// Value used to force user to change their password. Set to false (0) by default or to true (1) is user's password change is required.
+        /// </summary>
+        public bool ForcePasswordChange => UserInfo.ForcePasswordChange == 1;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UserInformation"/> class with the users database information.
         /// </summary>
         /// <param name="user">Users database information.</param>

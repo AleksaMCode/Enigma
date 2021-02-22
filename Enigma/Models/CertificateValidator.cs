@@ -116,7 +116,7 @@ namespace Enigma.Models
                 }
 
                 var revokeStatus = crl.IsRevoked(DotNetUtilities.FromX509Certificate(certificateToValidate));
-                if (revokeStatus == true)
+                if (revokeStatus == false)
                 {
                     return false;
                 }
