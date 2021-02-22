@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -109,8 +110,26 @@ namespace Enigma.UserDbManager
                 ForcePasswordChange = 0
             };
 
-            context.Users.Add(toAdd);
-            context.SaveChanges();
+            try
+            {
+                context.Users.Add(toAdd);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                if (ex is System.Data.Entity.Infrastructure.DbUpdateException)
+                {
+                    var msg = ex.InnerException.InnerException.Message;
+                    if (msg.Contains("PublicKey"))
+                    {
+                        throw new Exception("Certificate  isn't unique. Please try registering again with a different certificate.");
+                    }
+                    else if (msg.Contains("PassHash") || msg.Contains("Salt"))
+                    {
+                        throw new Exception("Inner error occurred while creating a new account. Please try again.");
+                    }
+                }
+            }
         }
 
         /// <summary>

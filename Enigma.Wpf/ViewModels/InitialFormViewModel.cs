@@ -22,6 +22,7 @@ namespace Enigma.Wpf.ViewModels
         private string username;
         private string certificatePath;
         private PrivateKeyOption privateKeySignupOption;
+        private readonly string successfulMsg = "You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.";
 
         /// <summary>
         /// Root path on FS where all the important program files are stored.
@@ -171,6 +172,7 @@ namespace Enigma.Wpf.ViewModels
                             }
                             catch (Exception ex)
                             {
+                                passBox.Clear();
                                 navigator.ShowMessage("Error", ex.Message);
                             }
                         }
@@ -188,20 +190,26 @@ namespace Enigma.Wpf.ViewModels
                             }
                             catch (Exception ex)
                             {
+                                passBox.Clear();
                                 navigator.ShowMessage("Error", ex.Message);
                             }
                         }
                     };
 
+                    passBox.Clear();
+                    Username = CertificatePath = "";
+
                     navigator.OpenFlyoutPanel(keyForm);
                 }
                 else
                 {
+                    passBox.Clear();
                     navigator.ShowMessage("Error", ValidationErrors.First().ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
+                passBox.Clear();
                 navigator.ShowMessage("Error", ex.Message);
             }
         }
@@ -230,9 +238,19 @@ namespace Enigma.Wpf.ViewModels
                             var keyPassForm = new PrivateKeyFormViewModel(navigator);
                             keyPassForm.OnSubmit += data =>
                             {
-                                register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
-                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", fullUsername));
-                                register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                try
+                                {
+                                    register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                    // User's key is only made if the registering process (Db update) is successful.
+                                    register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
+                                    navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+                                }
+                                catch (Exception ex)
+                                {
+                                    passBox.Clear();
+                                    navigator.ShowMessage("Error", ex.Message);
+                                }
+
                             };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }
@@ -241,30 +259,41 @@ namespace Enigma.Wpf.ViewModels
                             var keyPassForm = new PrivateKeyFormViewModel(navigator, true);
                             keyPassForm.OnSubmit += data =>
                             {
-                                register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
-                                navigator.ShowMessage("Successful registration", string.Format("You have successfully registered. Your new username is: {0}\nPlease login to use Enigma EFS.", fullUsername));
-                                register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                try
+                                {
+                                    register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                    // User's key is only made if the registering process (Db update) is successful.
+                                    register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
+                                    navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+                                }
+                                catch (Exception ex)
+                                {
+                                    passBox.Clear();
+                                    navigator.ShowMessage("Error", ex.Message);
+                                }
                             };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }
 
-                        // maybe after successful registration just show a message ?
                         passBox.Clear();
-                        Username = "";
+                        Username = CertificatePath = "";
                     }
                     catch (Exception ex)
                     {
+                        passBox.Clear();
                         navigator.ShowMessage("Error", ex.Message);
                     }
                     //navigator.GoToControl(new MainAppViewModel(navigator)); <- remove this!?
                 }
                 else
                 {
+                    passBox.Clear();
                     navigator.ShowMessage("Error", ValidationErrors.First().ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
+                passBox.Clear();
                 navigator.ShowMessage("Error", ex.Message);
             }
         }

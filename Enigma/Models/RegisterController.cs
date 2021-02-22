@@ -46,7 +46,7 @@ namespace Enigma.Models
         /// <param name="commonPasswordsPath">Path to common password list on stored on FS.</param>
         /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
         /// <param name="crlListPath">Path on FS to CRL directory.</param>
-        public RegisterController(UserDatabase db, string commonPasswordsPath , string caTrustListPath, string crlListPath)
+        public RegisterController(UserDatabase db, string commonPasswordsPath, string caTrustListPath, string crlListPath)
         {
             data = db;
             this.commonPasswordsPath = commonPasswordsPath;
@@ -72,10 +72,25 @@ namespace Enigma.Models
                 throw new Exception("Password cannot contain your username.");
             }
 
-            // Add a random 4-digit number to every username
-            var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
-            csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
-            username += "#" + csprng.Next(1_000, 9_999).ToString();
+            // Probability of repetition of this do-while loop is low.
+            do
+            {
+                // Add a random 4-digit number to user's username.
+                var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
+                csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
+                var suffix = "#" + csprng.Next(1_000, 9_999).ToString();
+
+                // If username collision occurs, generate new 4-digit suffix.
+                if (data.GetUser(username + suffix) != null)
+                {
+                    continue;
+                }
+                else
+                {
+                    username += suffix;
+                    break;
+                }
+            } while (true);
 
             // Check if a password used some of the most common passwords discovered in various data breaches.
             if (PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
