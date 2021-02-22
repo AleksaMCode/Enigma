@@ -520,9 +520,7 @@ namespace Enigma.Wpf.ViewModels
                     CheckPathExists = true
                 };
 
-                var x = fileChooseDialog.ShowDialog();
-
-                if (x == DialogResult.OK)
+                if (fileChooseDialog.ShowDialog() == DialogResult.OK)
                 {
                     exportPath = fileChooseDialog.FileName;
                 }
@@ -675,9 +673,8 @@ namespace Enigma.Wpf.ViewModels
                         CheckPathExists = true
                     };
 
-                    var x = fileChooseDialog.ShowDialog();
 
-                    if (x == DialogResult.OK)
+                    if (fileChooseDialog.ShowDialog() == DialogResult.OK)
                     {
                         filePath = fileChooseDialog.FileName;
                     }

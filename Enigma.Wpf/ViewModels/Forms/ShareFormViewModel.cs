@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
-using System;
 
 namespace Enigma.Wpf.ViewModels.Forms
 {
