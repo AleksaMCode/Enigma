@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.EFS.MFA;
 using Enigma.Models;
 using Enigma.UserDbManager;
@@ -168,6 +169,12 @@ namespace Enigma.Wpf.ViewModels
                                     PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
                                 };
 
+                                // Compare private RSA key with saved public RSA key.
+                                if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey,userInfo.PrivateKey))
+                                {
+                                    throw new Exception("Wrong key used.");
+                                }
+
                                 navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
                             }
                             catch (Exception ex)
@@ -185,6 +192,12 @@ namespace Enigma.Wpf.ViewModels
                                 {
                                     PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
                                 };
+
+                                // Compare private RSA key with saved public RSA key.
+                                if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
+                                {
+                                    throw new Exception("Wrong key used.");
+                                }
 
                                 navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
                             }
