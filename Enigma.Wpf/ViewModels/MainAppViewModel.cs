@@ -69,8 +69,6 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleBackButton()
         {
-            //navigator.ShowMessage("Test", "Pressed back button.");
-
             // if current dir isn't root
             if (addressBarText != "\\") // or previousDir.Count != 0
             {
@@ -86,7 +84,6 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleForwardButton()
         {
-            //navigator.ShowMessage("Test", "Pressed forward button.");
             if (forwardDir.Count != 0)
             {
                 backDir.Push(addressBarText);
@@ -100,7 +97,6 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleUpButton()
         {
-            //navigator.ShowMessage("Test", "Pressed up button.");
             if (addressBarText != "\\")
             {
                 var tempDir = backDir.Pop();
@@ -115,12 +111,18 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
+        private void HandleRefreshButton()
+        {
+            SetCurrentItems(GetDirPath());
+        }
+
         private void SetCurrentItems(string path)
         {
             if (currentItems == null)
             {
                 CurrentItems = new ObservableCollection<FileSystemItem>();
             }
+
             CurrentItems.Clear();
 
             // Shared folder is always visible except when "visiting" Shared folder.
@@ -130,12 +132,7 @@ namespace Enigma.Wpf.ViewModels
                 CurrentItems.Add(shared);
             }
 
-            // CurrentItems = new ObservableCollection<FileSystemItem>
-            // {
-            //    shared
-            // };
-
-            var userDir = new EfsDirectory(/* rootDir + "\\" + */ path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
+            var userDir = new EfsDirectory(path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
             foreach (var efsObject in userDir.objects)
             {
                 CurrentItems.Add(new FileSystemItem(efsObject));
@@ -376,7 +373,6 @@ namespace Enigma.Wpf.ViewModels
             {
                 navigator.ShowMessage("Error", ex.Message);
             }
-            //navigator.ShowMessage("Test", "Pressed delete item menu item.");
         }
 
         //public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
@@ -560,7 +556,6 @@ namespace Enigma.Wpf.ViewModels
             {
                 navigator.ShowMessage("Error", ex.Message);
             }
-            //navigator.ShowMessage("Test", "Pressed export item menu item.");
         }
 
         public ICommand InitCommand => new RelayCommand(HandleInit);
@@ -716,7 +711,6 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-
         private void HandleDefaultAction(FileSystemItem obj)
         {
             if (obj.Type is FileSystemItemType.Folder or FileSystemItemType.SharedFolder)
@@ -729,7 +723,6 @@ namespace Enigma.Wpf.ViewModels
             else // default action for files = read files ?
             {
                 HandleReadFile(obj);
-                // navigator.ShowMessage("Test", "Default item action.");
             }
         }
 
