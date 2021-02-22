@@ -88,8 +88,10 @@ namespace Enigma.Models
         /// </summary>
         /// <param name="user">User information.</param>
         /// <param name="certificate">User <see cref="X509Certificate2"/> public certificate in raw form.</param>
-        /// <param name="usersDb"></param>
-        public void LoginPartTwo(User user, byte[] certificate, UserDatabase usersDb)
+        /// <param name="usersDb">Enigma's user database.</param>
+        /// <param name="crlListPath">Path on FS to CRL directory.</param>
+        /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
+        public void LoginPartTwo(User user, byte[] certificate, UserDatabase usersDb, string crlListPath, string caTrustListPath)
         {
             var userCert = new X509Certificate2(certificate);
             var publicKeyFromCertificate = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ExportParameters(false);
@@ -120,7 +122,7 @@ namespace Enigma.Models
             //}
 
             // Check if the certificate has been revoked and set Revoked value if necessary.
-            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert))
+            if (CertificateValidator.VerifyCertificateRevocationStatus(userCert, crlListPath, caTrustListPath))
             {
                 usersDb.SetCertificateRevokeStatus(user);
                 //throw new Exception("Certificate has been revoked.");

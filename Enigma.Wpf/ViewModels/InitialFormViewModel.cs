@@ -58,18 +58,26 @@ namespace Enigma.Wpf.ViewModels
         /// </summary>
         private readonly string caTrustListPath;
 
+
+        /// <summary>
+        /// CRL list directory path on FS.
+        /// </summary>
+        private readonly string crlListPath;
+
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
             navigator = mainWindowViewModel;
 
             // parse config file
             var configInfo = File.ReadAllLines(rootFilesPath + "EnigmaEFS.config");
+
             enigmaEfsRoot = configInfo[0].Split('\t')[1];
             pepperPath = rootFilesPath + configInfo[1].Split('\t')[1];
             userDatabasePath = rootFilesPath + configInfo[2].Split('\t')[1];
             commonPasswordsPath = rootFilesPath + configInfo[3].Split('\t')[1];
             dicewareWordsPath = rootFilesPath + configInfo[4].Split('\t')[1];
-            caTrustListPath += Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[5].Split('\t')[1];
+            caTrustListPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[5].Split('\t')[1];
+            crlListPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[6].Split('\t')[1];
         }
 
         public ICommand LoginCommand => new RelayCommand<PasswordBox>(HandleLogin);
@@ -134,7 +142,7 @@ namespace Enigma.Wpf.ViewModels
                     var userDb = new UserDatabase(userDatabasePath, pepperPath);
                     var user = login2fa.LoginPartOne(username, password, enigmaEfsRoot, userDb);
 
-                    login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb);
+                    login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
 
                     var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
                     byte[] key = null;
@@ -207,10 +215,10 @@ namespace Enigma.Wpf.ViewModels
                     try
                     {
                         var password = passBox.Password;
-                        var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath);
+                        var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath, caTrustListPath, crlListPath);
 
                         var fullUsername = username;
-                        register.Register(ref fullUsername, caTrustListPath, password, CertificatePath);
+                        register.Register(ref fullUsername, password, CertificatePath);
 
                         if (PrivateKeySignupOption == PrivateKeyOption.USB)
                         {

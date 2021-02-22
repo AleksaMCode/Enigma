@@ -27,15 +27,31 @@ namespace Enigma.Models
         /// </summary>
         private readonly string commonPasswordsPath;
 
+
+        /// <summary>
+        /// CA Trust List path on FS.
+        /// </summary>
+        private readonly string caTrustListPath;
+
+
+        /// <summary>
+        /// CRL list directory path on FS.
+        /// </summary>
+        private readonly string crlListPath;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RegisterController"/> class using a <see cref="UserDatabase"/> and a path to a common password list on FS.
         /// </summary>
         /// <param name="db">Enigmas user database.</param>
         /// <param name="commonPasswordsPath">Path to common password list on stored on FS.</param>
-        public RegisterController(UserDatabase db, string commonPasswordsPath)
+        /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
+        /// <param name="crlListPath">Path on FS to CRL directory.</param>
+        public RegisterController(UserDatabase db, string commonPasswordsPath , string caTrustListPath, string crlListPath)
         {
             data = db;
             this.commonPasswordsPath = commonPasswordsPath;
+            this.caTrustListPath = caTrustListPath;
+            this.crlListPath = crlListPath;
         }
 
         /// <summary>
@@ -44,8 +60,7 @@ namespace Enigma.Models
         /// <param name="username">Users account username.</param>
         /// <param name="password">Users password.</param>
         /// <param name="certificateFilePath">Path on FS to users certificate.</param>
-        /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
-        public void Register(ref string username, string password, string certificateFilePath, string caTrustListPath)
+        public void Register(ref string username, string password, string certificateFilePath)
         {
             if (username.Length > 25)
             {
@@ -89,7 +104,7 @@ namespace Enigma.Models
             }
 
             // Check if the certificate is revoked.
-            if (CertificateValidator.VerifyCertificateRevocationStatus(cert) == true)
+            if (CertificateValidator.VerifyCertificateRevocationStatus(cert, crlListPath, caTrustListPath) == true)
             {
                 throw new Exception("Certificate has been revoked.");
             }
@@ -137,7 +152,7 @@ namespace Enigma.Models
 
             HideMyNeedle(privateKeyPath, new AesAlgorithm(key, iv, "OFB").Encrypt(keyRaw), salt, passwordDigest);
 
-            if(deleteOriginal)
+            if (deleteOriginal)
             {
                 File.Delete(privateKeyPath);
             }

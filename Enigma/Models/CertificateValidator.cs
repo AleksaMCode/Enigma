@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
@@ -74,28 +75,60 @@ namespace Enigma.Models
         /// <summary>
         /// Check if certificate has been revoked.
         /// </summary>
-        /// <param name="certificateToValidate"> Certificate that is checked.</param>
+        /// <param name="certificateToValidate">Certificate that is checked.</param>
+        /// <param name="crlListPath">Path on FS to CRL directory.</param>
+        /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
         /// <returns>true if certificate has been revoked, otherwise false.</returns>
-        public static bool VerifyCertificateRevocationStatus(X509Certificate2 certificateToValidate)
+        public static bool VerifyCertificateRevocationStatus(X509Certificate2 certificateToValidate, string crlListPath, string caTrustListPath)
         {
+            var dir = new DirectoryInfo(crlListPath);
+            FileInfo[] crlList = null;
+
             try
             {
-                var buffer = File.ReadAllBytes(@"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\crl\list.crl");
+                crlList = dir.GetFiles("*.crl");
+            }
+            catch (Exception ex)
+            {
+                if (ex is DirectoryNotFoundException || ex is ArgumentNullException)
+                {
+                    throw new Exception("User certificate validation failed. CRL file is missing.");
+                }
+            }
+
+            foreach (var crlRaw in crlList)
+            {
+                var buffer = File.ReadAllBytes(crlListPath + "\\" + crlRaw.Name);
                 var crlParser = new X509CrlParser();
                 var crl = crlParser.ReadCrl(buffer);
 
-                return crl.IsRevoked(DotNetUtilities.FromX509Certificate(certificateToValidate));
+                try
+                {
+                    var rootCa = new X509Certificate2(caTrustListPath);
+                    var publicKey = ((RSACryptoServiceProvider)rootCa.PublicKey.Key).ExportParameters(false);
+
+                    // Check if the crl is issued by a proper root CA.
+                    crl.Verify(DotNetUtilities.GetRsaPublicKey(publicKey));
+                }
+                catch (Exception)
+                {
+                    throw new Exception("User certificate validation failed. CRL isn't issued by a proper root CA.");
+                }
+
+                var revokeStatus = crl.IsRevoked(DotNetUtilities.FromX509Certificate(certificateToValidate));
+                if (revokeStatus == true)
+                {
+                    return false;
+                }
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return true;
         }
 
         /// <summary>
         /// Check if certificate key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>.
         /// </summary>
-        /// <param name="certificateToValidate"> Certificate that is checked.</param>
+        /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <returns>true if the key usage is set to <see cref="X509KeyUsageFlags.DigitalSignature"/> and <see cref="X509KeyUsageFlags.KeyEncipherment"/>, otherwise false.</returns>
         public static bool VerifyKeyUsage(X509Certificate2 certificateToValidate)
         {
