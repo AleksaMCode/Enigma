@@ -30,7 +30,12 @@ namespace Enigma.Wpf.Observables
         /// </summary>
         private readonly IEfsStorageObject efsObject;
 
-        public FileSystemItem(IEfsStorageObject root, bool isItSharedRoot)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileSystemItem"/> class with the specified object.
+        /// </summary>
+        /// <param name="root">File's object value.</param>
+        /// <param name="isItSharedRoot">Flag used to distinguish between shared and regular directory.</param>
+        public FileSystemItem(IEfsStorageObject root, bool isItSharedRoot = false)
         {
             efsObject = root;
 
