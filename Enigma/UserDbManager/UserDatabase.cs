@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -11,6 +10,9 @@ namespace Enigma.UserDbManager
 {
     public class UserDatabase
     {
+        /// <summary>
+        /// Database user collection.
+        /// </summary>
         private readonly UsersContext context;
 
         /// <summary>
@@ -27,7 +29,6 @@ namespace Enigma.UserDbManager
         {
             context = new UsersContext(pathToDatabase);
             Pepper = Encoding.ASCII.GetBytes(File.ReadAllLines(pathToPepper)[0]);
-            //new RNGCryptoServiceProvider().GetBytes(Pepper); // this is wrong! TODO: store pepper somewhere on computer. Where?
         }
 
         /// <summary>
@@ -60,11 +61,16 @@ namespace Enigma.UserDbManager
             return context.Users.Where(u => u.Username == username).SingleOrDefault().Id;
         }
 
-        public List<string> GetUsernamesFromIds(List<int> usersId)
+        /// <summary>
+        /// Converts list of user id's to a list of user usernames.
+        /// </summary>
+        /// <param name="userIds">List of user Ids.</param>
+        /// <returns>List of usernames.</returns>
+        public List<string> GetUsernamesFromIds(List<int> userIds)
         {
-            var users = new List<string>(usersId.Count);
+            var users = new List<string>(userIds.Count);
 
-            foreach (var userId in usersId)
+            foreach (var userId in userIds)
             {
                 users.Add(GetUser(userId).Username);
             }
@@ -245,12 +251,12 @@ namespace Enigma.UserDbManager
         }
 
         /// <summary>
-        /// Compares the old password with the entered password.
+        /// Compares the password hash stored in database with the new hash computed from the entered password.
         /// </summary>
         /// <param name="userPasswordHash">User's current password hash.</param>
         /// <param name="passwordSalt">User's current password salt.</param>
         /// <param name="enteredPassword">Users entered password.</param>
-        /// <returns>true if the passwords match; otherwise <see cref="Exception"/> is thrown.</returns>
+        /// <returns>true if the password hashes match, otherwise <see cref="Exception"/> is thrown.</returns>
         private bool CheckOldPassword(byte[] userPasswordHash, byte[] passwordSalt, byte[] enteredPassword)
         {
             var passAndPepperHash = SHA256.Create().ComputeHash(enteredPassword.Concat(Pepper).ToArray());
@@ -272,43 +278,6 @@ namespace Enigma.UserDbManager
         public void RemoveUser(User user)
         {
             context.Users.Remove(user);
-            context.SaveChanges();
-        }
-
-        /// <summary>
-        /// Adds a new user to users database, while performing password hashing and hardening.
-        /// </summary>
-        [ObsoleteAttribute("This method is obsolete. Call AddUser instead.", true)]
-        public void AddUserOld(string username, string password, byte[] certificate, bool usbKey)
-        {
-            // check if the username is unique.
-            if (GetUser(username) != null)
-            {
-                throw new Exception(string.Format("Username '{0}' already exists.", username));
-            }
-
-            var passBytes = Encoding.ASCII.GetBytes(password);
-
-            var salt = new byte[16];
-            new RNGCryptoServiceProvider().GetBytes(salt);
-
-            var passAndPepperHash = SHA256.Create().ComputeHash(passBytes.Concat(Pepper).ToArray());
-
-            // from March 2019., NIST recommends 80,000 iterations
-            using var pbkdf2Hasher = new Rfc2898DeriveBytes(passAndPepperHash, salt, 80_000, HashAlgorithmName.SHA256);
-            var passHash = pbkdf2Hasher.GetBytes(256 / 8);
-
-
-            var toAdd = new User
-            {
-                Username = username,
-                //PublicCertificate = certificate,
-                Salt = salt,
-                PassHash = passHash,
-                UsbKey = usbKey ? 1 : 0
-            };
-
-            context.Users.Add(toAdd);
             context.SaveChanges();
         }
 
