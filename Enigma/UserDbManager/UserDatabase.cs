@@ -64,12 +64,25 @@ namespace Enigma.UserDbManager
         {
             var users = new List<string>(usersId.Count);
 
-            foreach(var userId in usersId)
+            foreach (var userId in usersId)
             {
                 users.Add(GetUser(userId).Username);
             }
 
             return users;
+        }
+
+        /// <summary>
+        /// Checks if any user uses given certificate.
+        /// </summary>
+        /// <param name="certificatePath">Path to user's certificate on FS.</param>
+        /// <returns>true if certificate is used by any of the users, otherwise false.</returns>
+        public bool IsCertificateUsed(string certificatePath)
+        {
+            var userCert = new X509Certificate2(File.ReadAllBytes(certificatePath));
+            var userCertPublicKey = ((RSACryptoServiceProvider)userCert.PublicKey.Key).ToXmlString(false);
+
+            return context.Users.Any(u => u.PublicKey.Equals(userCertPublicKey));
         }
 
         /// <summary>
