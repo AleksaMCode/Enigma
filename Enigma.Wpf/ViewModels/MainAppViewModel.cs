@@ -207,8 +207,6 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleImportFile()
         {
-            //navigator.ShowMessage("Test", "Pressed import file menu item.");
-
             var form = new ImportFormViewModel(navigator);
 
             form.OnSubmit += data =>
@@ -255,6 +253,7 @@ namespace Enigma.Wpf.ViewModels
                     var path = GetDirPath();
                     if (Directory.Exists(path))
                     {
+                        // problem with Simple String form
                         var nameForm = new SimpleStringFormViewModel(navigator, "File name:");
 
                         nameForm.OnSubmit += name =>
