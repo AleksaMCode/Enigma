@@ -9,7 +9,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 namespace Enigma.AlgorithmLibrary.Algorithms
 {
     /// <summary>
-    /// Wrapper for the .NET AesManaged class and the AES algorithm.
+    /// Wrapper for the .NET's <see cref="AesManaged"/> class and the AES algorithm.
     /// </summary>
     public class AesAlgorithm : IAlgorithm
     {
@@ -26,14 +26,14 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// <summary>
         /// Represents the secret key for the symmetric algorithm. For AES, the legal key sizes are 128, 192 and 256 bits.
         /// </summary>
-        public byte[] Key { get; set; }
+        public byte[] Key { set;  get; }
 
         /// <summary>
         /// Represents the initialization vector (IV) for the symmetric algorithm.
         /// IV is a fixed-size input to a cryptographic primitive used for encryption/decryption.
         /// AES specifies the 128-bit block size, so the IV is always set to 16 B.
         /// </summary>
-        public byte[] IV { get; set; }
+        private byte[] IV { get; set; }
 
         public byte[] AdditionalData => IV;
 

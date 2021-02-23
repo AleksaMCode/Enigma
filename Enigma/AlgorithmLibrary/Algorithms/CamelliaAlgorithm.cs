@@ -33,7 +33,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// IV is a fixed-size input to a cryptographic primitive used for encryption/decryption.
         /// Camellia specifies the 128-bit block size, so the IV is always set to 16 B.
         /// </summary>
-        public byte[] IV { get; set; }
+        private byte[] IV { get; set; }
 
         public byte[] AdditionalData => IV;
 
@@ -56,17 +56,10 @@ namespace Enigma.AlgorithmLibrary.Algorithms
                 throw new CryptoException("Key size is not valid. Twofish accepts 128-, 192-, and 256-bit keys.");
             }
 
-            ModeSignature = mode;
+            IV = new byte[16];   // 16 B = 128 b
+            new RNGCryptoServiceProvider().GetBytes(IV);
 
-            if (ModeSignature != "ECB")
-            {
-                IV = new byte[16];   // 16 B = 128 b
-                new RNGCryptoServiceProvider().GetBytes(IV);
-            }
-            else
-            {
-                IV = null;
-            }
+            ModeSignature = mode;
         }
 
         /// <summary>
@@ -180,9 +173,9 @@ namespace Enigma.AlgorithmLibrary.Algorithms
                 // array resizing is only needed when using CBC or ECB block cipher mode of operation
                 if (ModeSignature.Equals("CBC") || ModeSignature.Equals("ECB"))
                 {
-                    // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to
-                    // added padding. By simply cutting of the padding from end of the array, we overcome a mismatch problem when comparing to the original array.
-                    Array.Resize<byte>(ref decrypted, len); // potential problem with Array.Resize: new array created on a new memory location
+                    // When using PaddedBufferedBlockCipher encrypted byte array will be bigger than the original byte array due to added padding.
+                    // By simply cutting of the padding from end of the array, we overcome a mismatch problem when comparing to the original array.
+                    Array.Resize<byte>(ref decrypted, len); // potential problem with Array.Resize: new array is created on a new memory location
                 }
                 return decrypted;
             }

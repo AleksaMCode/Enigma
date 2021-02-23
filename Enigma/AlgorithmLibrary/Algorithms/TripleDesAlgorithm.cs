@@ -35,7 +35,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// IV is a fixed-size input to a cryptographic primitive used for encryption/decryption.
         /// The block size for TripleDES is 64 bits, so the IV is always set to 8 B.
         /// </summary>
-        public byte[] IV { get; set; }
+        private byte[] IV { get; set; }
 
         public byte[] AdditionalData => IV;
 
