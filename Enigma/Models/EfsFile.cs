@@ -7,7 +7,7 @@ using Enigma.EFS.Attributes;
 namespace Enigma.Models
 {
     /// <summary>
-    /// Represents Enigma encrypted files.
+    /// Represents Enigma's encrypted files.
     /// </summary>
     public class EfsFile : IEfsStorageObject
     {

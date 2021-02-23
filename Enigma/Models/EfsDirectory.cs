@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace Enigma.Models
 {
     /// <summary>
-    /// Represents Enigma Efs directories.
+    /// Represents Enigma's EFS directories.
     /// </summary>
     public class EfsDirectory : IEfsStorageObject
     {
@@ -14,7 +14,7 @@ namespace Enigma.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// List of encrypted files and Efs directories.
+        /// List of encrypted files and EFS directories.
         /// </summary>
         public List<IEfsStorageObject> objects = new List<IEfsStorageObject>();
 
