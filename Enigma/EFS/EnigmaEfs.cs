@@ -134,7 +134,7 @@ namespace Enigma.EFS
 
             string encryptedName;
 
-            if (originalFile.FileSize > 2_000_000_000)
+            if (originalFile.FileSize > 1_900_000_000)
             {
                 throw new Exception("File can't be larger than 2 GB.");
             }
@@ -210,7 +210,7 @@ namespace Enigma.EFS
         {
             var fileSize = new FileInfo(pathOnFs).Length;
 
-            if (fileSize > 2_000_000_000)
+            if (fileSize > 1_900_000_000)
             {
                 throw new Exception("File can't be larger than 2 GB.");
             }
