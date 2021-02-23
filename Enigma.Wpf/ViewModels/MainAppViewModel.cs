@@ -375,75 +375,50 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        //public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
+        public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
 
-        //private void HandleShareItem(FileSystemItem obj)
-        //{
-        //    try
-        //    {
-        //        if (obj.Type != FileSystemItemType.File)
-        //        {
-        //            throw new Exception("Folders can't be shared. Batch sharing is not supported.");
-        //        }
-        //        if (!obj.IsAccessGranted())
-        //        {
-        //            throw new Exception("You cannot share this file because you don't have access to it.");
-        //        }
+        private void HandleShareItem(FileSystemItem obj)
+        {
+            try
+            {
+                if (obj.Type != FileSystemItemType.File)
+                {
+                    throw new Exception("Folders can't be shared. Batch sharing is not supported.");
+                }
 
-        //        var path = GetDirPath();
+                if (!obj.IsAccessGranted())
+                {
+                    throw new Exception("You cannot share this file because you don't have access to it.");
+                }
 
-        //        if (!Directory.Exists(path))
-        //        {
-        //            throw new Exception(string.Format("Directory {0} is missing.", path));
-        //        }
+                var path = GetDirPath();
 
-        //        var sharedUsers = usersDb.GetUsernamesFromIds(enigmaEfs.GetSharedUsersId(enigmaEfs.currentUser.Id, path + obj.GetEncryptedFileName()));
+                if (!Directory.Exists(path))
+                {
+                    throw new Exception(string.Format("Directory {0} is missing.", path));
+                }
 
-        //        var form = new ShareFormViewModel(sharedUsers, usersDb.GetAllUsernames(), usersDb, enigmaEfs);
+                if (!File.Exists(path + "\\" + obj.GetEncryptedFileName()))
+                {
+                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                }
 
+                var sharedUsers = usersDb.GetUsernamesFromIds(enigmaEfs.GetSharedUsersId(enigmaEfs.currentUser.Id, path + "\\" + obj.GetEncryptedFileName()));
 
-        //        form.AddCommand =>
-        //        {
-        //            try
-        //            {
-        //                if (File.Exists(path + "\\" + obj.GetEncryptedFileName()))
-        //                {
-        //                    var userInfo = usersDb.GetUser(path);
+                if (userCertificateExpired)
+                {
+                    throw new Exception("You can't share files with others because your certificate isn't valid anymore.");
+                }
 
-        //                    if (userInfo.Locked == 1)
-        //                    {
-        //                        throw new Exception(string.Format("You can't share you file with {0} because this account is locked.", sharedUser));
-        //                    }
+                var form = new ShareFormViewModel(sharedUsers, usersDb.GetAllUsernames(), usersDb, enigmaEfs, path + "\\" + obj.GetEncryptedFileName());
 
-        //                    if (userInfo.Revoked == 0 && !userCertificateExpired)
-        //                    {
-        //                        enigmaEfs.Share(path + "\\" + obj.GetEncryptedFileName(), new UserInformation(userInfo));
-        //                    }
-        //                    else
-        //                    {
-        //                        throw new Exception(string.Format("You can't share your file with {0} because this user's certificate isn't valid anymore.", sharedUser));
-        //                    }
-
-        //                    SetCurrentItems(path);
-        //                }
-        //                else
-        //                {
-        //                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                navigator.ShowMessage("Error", ex.Message);
-        //            }
-        //        };
-
-        //        navigator.OpenFlyoutPanel(form);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        navigator.ShowMessage("Error", ex.Message);
-        //    }
-        //}
+                navigator.OpenFlyoutPanel(form);
+            }
+            catch (Exception ex)
+            {
+                navigator.ShowMessage("Error", ex.Message);
+            }
+        }
 
         /*public ICommand UnshareItemCommand => new RelayCommand<FileSystemItem>(HandleUnshareItem);
 
@@ -538,15 +513,18 @@ namespace Enigma.Wpf.ViewModels
 
                 try
                 {
-                    var path = GetDirPath() + "\\" + obj.GetEncryptedFileName();
+                    var path = GetDirPath();
+
+                    if (!Directory.Exists(path))
+                    {
+                        throw new Exception(string.Format("Directory {0} is missing.", exportPath));
+                    }
+
+                    path += "\\" + obj.GetEncryptedFileName();
 
                     if (!File.Exists(path))
                     {
                         throw new Exception(string.Format("File {0} is missing.", obj.Name));
-                    }
-                    if (!Directory.Exists(path))
-                    {
-                        throw new Exception(string.Format("Directory {0} is missing.", exportPath));
                     }
 
                     enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);

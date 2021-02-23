@@ -7,6 +7,8 @@ using GalaSoft.MvvmLight.Command;
 using Enigma.UserDbManager;
 using Enigma.EFS;
 using System;
+using Enigma.Models;
+using System.IO;
 
 namespace Enigma.Wpf.ViewModels.Forms
 {
@@ -14,8 +16,9 @@ namespace Enigma.Wpf.ViewModels.Forms
     {
         private string selectedSharedUser;
         private string selectedNotSharedUser;
-        private UserDatabase usersDb;
-        private EnigmaEfs enigmaEfs;
+        private readonly UserDatabase usersDb;
+        private readonly EnigmaEfs enigmaEfs;
+        private readonly string filePath;
 
         public ObservableCollection<string> SharedUsers { get; set; }
 
@@ -33,13 +36,14 @@ namespace Enigma.Wpf.ViewModels.Forms
             set => Set(() => SelectedNotSharedUser, ref selectedNotSharedUser, value);
         }
 
-        public ShareFormViewModel(IEnumerable<string> shared, IEnumerable<string> all, UserDatabase db, EnigmaEfs efs)
+        public ShareFormViewModel(IEnumerable<string> shared, IEnumerable<string> all, UserDatabase db, EnigmaEfs efs, string filePath)
         {
             SharedUsers = new ObservableCollection<string>(shared);
             NotSharedUsers = new ObservableCollection<string>(all.Where(x => !shared.Contains(x)));
 
             usersDb = db;
             enigmaEfs = efs;
+            this.filePath = filePath;
         }
 
         public ICommand AddCommand => new RelayCommand(HandleAddCommand);
@@ -53,6 +57,15 @@ namespace Enigma.Wpf.ViewModels.Forms
                 throw new Exception(string.Format("You can't share you file with {0} because this account is locked.", SelectedNotSharedUser));
             }
 
+            if (userInfo.Revoked != 0 || Convert.ToDateTime(userInfo.CertificateExpirationDate) > DateTime.Now)
+            {
+                enigmaEfs.Share(filePath, new UserInformation(userInfo));
+            }
+            else
+            {
+                throw new Exception(string.Format("You can't share your file with {0} because this user's certificate isn't valid anymore.", userInfo.Username));
+            }
+
             //put SelectedNotSharedUser in selected
             SharedUsers.Add(SelectedNotSharedUser);
             NotSharedUsers.Remove(SelectedNotSharedUser);
@@ -62,6 +75,8 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         private void HandleRemoveCommand()
         {
+            enigmaEfs.Unshare(filePath, usersDb.GetUserId(selectedSharedUser));
+
             NotSharedUsers.Add(SelectedSharedUser);
             SharedUsers.Remove(SelectedSharedUser);
         }
