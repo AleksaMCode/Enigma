@@ -128,14 +128,14 @@ namespace Enigma.Wpf.ViewModels
             // Shared folder is always visible except when "visiting" Shared folder.
             if (!addressBarText.StartsWith("\\Shared"))
             {
-                shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
+                shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
                 CurrentItems.Add(shared);
             }
 
             var userDir = new EfsDirectory(path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
             foreach (var efsObject in userDir.objects)
             {
-                CurrentItems.Add(new FileSystemItem(efsObject));
+                CurrentItems.Add(new FileSystemItem(efsObject, false));
             }
         }
 
@@ -216,7 +216,7 @@ namespace Enigma.Wpf.ViewModels
                 try
                 {
                     var path = GetDirPath();
-                    if (Directory.Exists(data.InputFilePath))
+                    if (Directory.Exists(Path.GetDirectoryName(data.InputFilePath)))
                     {
                         if (File.Exists(data.InputFilePath))
                         {

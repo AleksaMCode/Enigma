@@ -158,12 +158,13 @@ namespace Enigma.Wpf.ViewModels
                         navigator.ShowProgressBox("Waiting for USB...");
                         var driveDet = new DriveDetection();
                         key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
-                        navigator.HideProgressBox();
-                    }
 
-                    if (key == null)
-                    {
-                        throw new Exception("Error occured while reading user's encrypted RSA key.");
+                        if (key == null)
+                        {
+                            throw new Exception("Error occured while reading user's encrypted RSA key.");
+                        }
+
+                        navigator.HideProgressBox();
                     }
 
                     keyForm.OnSubmit += data =>

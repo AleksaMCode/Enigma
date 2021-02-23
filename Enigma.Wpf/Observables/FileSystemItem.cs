@@ -18,14 +18,21 @@ namespace Enigma.Wpf.Observables
 
         private IEfsStorageObject efsObject;
 
-        public FileSystemItem(IEfsStorageObject root)
+        public FileSystemItem(IEfsStorageObject root, bool isItSharedRoot)
         {
             efsObject = root;
 
             if (root.DirFlag)
             {
                 name = root.Name;
-                Type = FileSystemItemType.Folder;
+                if (isItSharedRoot == true)
+                {
+                    Type = FileSystemItemType.SharedFolder;
+                }
+                else
+                {
+                    Type = FileSystemItemType.Folder;
+                }
             }
             else
             {
@@ -39,8 +46,6 @@ namespace Enigma.Wpf.Observables
                     name = ((EfsFile)root).Name;
                 }
             }
-
-            Type = FileSystemItemType.Folder;
         }
 
         public bool IsAccessGranted()

@@ -162,10 +162,10 @@
                 IsEnabled="True"
                 SelectedValue="{Binding ModeValue, Mode=OneWayToSource}"
                 SelectedValuePath="Content">
-                <ComboBoxItem IsSelected="True">ECB</ComboBoxItem>
+                <ComboBoxItem>ECB</ComboBoxItem>
                 <ComboBoxItem>CBC</ComboBoxItem>
                 <ComboBoxItem>CFB</ComboBoxItem>
-                <ComboBoxItem>OFB</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">OFB</ComboBoxItem>
             </ComboBox>
         </Grid>
 
