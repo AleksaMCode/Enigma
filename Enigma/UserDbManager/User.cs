@@ -15,24 +15,24 @@ namespace Enigma.UserDbManager
         public int Id { get; set; }
 
         /// <summary>
-        /// Users chosen username.
+        /// User's chosen username.
         /// </summary>
         public string Username { get; set; }
 
         /// <summary>
-        /// Users password salt created using .NETs csprng <see cref="RNGCryptoServiceProvider"/>.
+        /// User's password salt created using .NETs csprng <see cref="RNGCryptoServiceProvider"/>.
         /// NIST guidelines require that passwords be salted with at least 32 bits of data and hashed with
         /// a one-way key derivation function such as Password-Based Key Derivation Function 2 (PBKDF2).
         /// </summary>
         public byte[] Salt { get; set; }
 
         /// <summary>
-        /// Users password hash created using PBKDF2 <see cref="Rfc2898DeriveBytes"/>.
+        /// User's password hash created using PBKDF2 <see cref="Rfc2898DeriveBytes"/>.
         /// </summary>
         public byte[] PassHash { get; set; }
 
         /*/// <summary>
-        /// Users certificate in PEM format stored in raw form as <see cref="byte"/>[].
+        /// User's certificate in PEM format stored in raw form as <see cref="byte"/>[].
         /// </summary>
         public byte[] PublicCertificate { get; set; }*/
 

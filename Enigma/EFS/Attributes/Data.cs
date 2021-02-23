@@ -9,6 +9,9 @@ namespace Enigma.EFS.Attributes
     /// </summary>
     public class Data : Attribute
     {
+        /// <summary>
+        /// Encrypted file's raw data.
+        /// </summary>
         public byte[] EncryptedData = null;
 
         /// <summary>
@@ -41,8 +44,8 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Creates decrypted data stored in <see cref="byte"/>[] using the specified symmetric algorithm.
         /// </summary>
-        /// <param name="algorithm">Algorithm used for encryption of the data.</param>
-        /// <returns></returns>
+        /// <param name="algorithm">Algorithm used for decryption of data.</param>
+        /// <returns>Decrypted data.</returns>
         public byte[] Decrypt(IAlgorithm algorithm)
         {
             return algorithm.Decrypt(EncryptedData);
@@ -51,6 +54,7 @@ namespace Enigma.EFS.Attributes
         /// <summary>
         /// Writting Data header to <see cref="byte"/>[].
         /// </summary>
+        /// <returns>Unparsed Data header.</returns>
         public byte[] UnparseData()
         {
             var dataHeader = new byte[GetSaveLength()];

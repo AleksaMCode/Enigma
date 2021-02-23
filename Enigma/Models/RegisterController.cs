@@ -13,7 +13,7 @@ using Org.BouncyCastle.Security;
 namespace Enigma.Models
 {
     /// <summary>
-    /// Allows to register new users to Enigma.
+    /// Allows to register new users to Enigma EFS.
     /// </summary>
     public class RegisterController
     {
@@ -132,7 +132,7 @@ namespace Enigma.Models
         }
 
         /// <summary>
-        /// 
+        /// Updates user database.
         /// </summary>
         /// <param name="username">Users account username.</param>
         /// <param name="password">Users password.</param>
@@ -258,12 +258,12 @@ namespace Enigma.Models
             {
                 for (var i = 0; i < 30; ++i)
                 {
-                    // ASCII printable characters are >= SPACE (0x20) and < DEL (0x7e)
+                    // ASCII printable characters are >= SPACE (0x20) and < DEL (0x7e).
                     passArray[i] = (char)csprng.Next(0x20, 0x7f);
                 }
 
                 password = new string(passArray);
-                passArray = Enumerable.Repeat('0', passArray.Length).ToArray(); // zeroization
+                //passArray = Enumerable.Repeat('0', passArray.Length).ToArray(); // zeroization
 
                 if (PasswordAdvisor.IsPasswordStrong(password, out var _, false))
                 {
@@ -288,7 +288,7 @@ namespace Enigma.Models
 
             for (var i = 0; i < size; ++i)
             {
-                // ASCII characters: >= SPACE (0x20) and < a (0x41)
+                // ASCII characters: >= SPACE (0x20) and < a (0x41).
                 delimiter[i] = (char)csprng.Next(0x20, 0x41);
             }
 
@@ -310,19 +310,19 @@ namespace Enigma.Models
 
             var maxNumberOfWords = csprng.Next(6, 10);
 
-            // loop only repeats if the generated passphrase has low entropy; this loop will never repeat because for the minimum of 6 words passphrase will have a good entropy
+            // Loop only repeats if the generated passphrase has low entropy; this loop will never repeat because for the minimum of 6 words passphrase will have a good entropy.
             while (true)
             {
                 var numberOfWords = 0;
                 string index;
                 passphrase = "";
 
-                // loop repeats until we create a passphrase with an appropriate number of words
+                // Loop repeats until we create a passphrase with an appropriate number of words.
                 do
                 {
                     var numberExist = false;
 
-                    // loop is used if the resulting 5-digit number isn't in the list
+                    // Loop is used if the resulting 5-digit number isn't in the list.
                     do
                     {
                         // five dice rolls
@@ -351,7 +351,7 @@ namespace Enigma.Models
                         }
                     } while (!numberExist);
 
-                    // add delimiter between words
+                    // Add delimiter between words.
                     if (numberOfWords != maxNumberOfWords - 1)
                     {
                         passphrase += delimiter;

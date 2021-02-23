@@ -3,14 +3,29 @@ using System.Collections.Generic;
 
 namespace Enigma.CryptedFileParser
 {
+    /// <summary>
+    /// Represents unencrypted file.
+    /// </summary>
     public class OriginalFile
     {
+        /// <summary>
+        /// Unencrypted file's raw data.
+        /// </summary>
         public byte[] FileContent { get; internal set; }
 
+        /// <summary>
+        /// Unencrypted file's name.
+        /// </summary>
         public string FileName { get; internal set; }
 
+        /// <summary>
+        /// Unencrypted file's size.
+        /// </summary>
         public string FileExtension { get; internal set; }
 
+        /// <summary>
+        /// Size of the unencrypted file in bytes.
+        /// </summary>
         public int FileSize => FileContent.Length;
 
         /// <summary>
@@ -20,8 +35,8 @@ namespace Enigma.CryptedFileParser
 
         public OriginalFile(byte[] fileContent, string fileName)
         {
-            // tokens[0] = file_name
-            // tokens[1] = file_extension
+            //              0           1
+            // tokens [ file_name, file_extension ]
             var tokens = fileName.Split('.');
 
             if (ExtensionCheck(tokens[1]))

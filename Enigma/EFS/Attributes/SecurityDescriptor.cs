@@ -15,7 +15,7 @@ namespace Enigma.EFS.Attributes
     public class SecurityDescriptor : Attribute
     {
         /// <summary>
-        /// Algorithms full name, containing algorithm name, key size and mode of operation separated with '<b>-</b>'. e.q. AES-256-CBC
+        /// Algorithm's full name, containing algorithm name, key size and mode of operation separated with '<b>-</b>'. e.q. AES-256-CBC
         /// </summary>
         public string AlgorithmNameSignature { get; set; }
 
@@ -147,10 +147,10 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
-        /// Gets Id values of all the users that can view this file.
+        /// Gets Id values of all the users that can view chosen file.
         /// </summary>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
-        /// <returns><see cref="List{int}"/> of users id values.</returns>
+        /// <returns>List of user's id values.</returns>
         public List<int> GetSharedUsersId(int loggedInUserId)
         {
             if (OwnerId == loggedInUserId)
@@ -173,7 +173,7 @@ namespace Enigma.EFS.Attributes
         }
 
         /// <summary>
-        /// Gets users decrypted Key used for symmetric encryption/decryption of the file.
+        /// Gets user's decrypted Key used for symmetric encryption/decryption of the file.
         /// </summary>
         /// <param name="userId">Unique user identifier from the database.</param>
         /// <param name="userPrivatKey">Users private RSA key used for decryption of encrypted FEK data.</param>

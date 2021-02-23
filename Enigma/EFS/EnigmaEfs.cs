@@ -21,7 +21,7 @@ namespace Enigma.EFS
         public readonly string sharedDir;
 
         /// <summary>
-        /// Information about the currently logged in user.
+        /// Information about the currently logged-in user.
         /// </summary>
         public readonly UserInformation currentUser;
 
@@ -70,7 +70,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Check if the sufficient storage space is available to store a new file.
+        /// Checks if the sufficient storage space is available to store a new file.
         /// </summary>
         /// <param name="size">Size of the file that is being uplaoded to EFS.</param>
         /// <returns>true if file can be stored on EFS, otherwise it returns false.</returns>
@@ -80,7 +80,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Check if the sufficient storage space on specified drive is available to store a new file.
+        /// Checks if the sufficient storage space on specified drive is available to store a new file.
         /// </summary>
         /// <param name="size">Size of the file that is being downloaded to file system.</param>
         /// <param name="driveName">Name of the drive where file will be stored.</param>
@@ -293,7 +293,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Share a file with other specific user on EnigmaEfs.
+        /// Shares a file with other specific user on EnigmaEfs.
         /// </summary>
         /// <param name="pathOnEfs">The name of the shared file.</param>
         /// <param name="shareUser">User you are sharing a file with.</param>
@@ -321,7 +321,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Unshare a file with specific user on EnigmaEfs.
+        /// Unshares a file with specific user on EnigmaEfs.
         /// </summary>
         /// <param name="pathOnEfs">The name of the shared file.</param>
         /// <param name="userId">Unique user identifier from the database.</param>
@@ -352,7 +352,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Unshare a file with all shared users on EnigmaEfs.
+        /// Unshares a file with all shared users on EnigmaEfs.
         /// </summary>
         /// <param name="pathOnEfs"></param>
         public void Unshare(string pathOnEfs)
@@ -507,7 +507,7 @@ namespace Enigma.EFS
         }
 
         /// <summary>
-        /// Removes all temporary files created while reading encrypted files. This method is called when application is closed.
+        /// Removes all temporary files created while reading encrypted files. This method is called when application is closed or when user logs out.
         /// </summary>
         public void RemoveTempFiles()
         {

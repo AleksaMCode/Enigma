@@ -10,7 +10,7 @@ using Org.BouncyCastle.Crypto;
 namespace Enigma.CryptedFileParser
 {
     /// <summary>
-    /// Represents Enigmas EFS encrypted file.
+    /// Represents Enigma EFS encrypted file.
     /// </summary>
     public class EncryptedFile
     {
@@ -130,7 +130,8 @@ namespace Enigma.CryptedFileParser
             byte[] fileContent;
 
             // Try to decrypt encrypted file. Exception will be thrown if Key, Iv or algorithm signature is changed.
-            // Unauthorised algorithm change doesn't always have to trigger this exception and file decryption will be successful. Such file will fail signature check test below.
+            // Unauthorised algorithm change doesn't always have to trigger this exception and file decryption will be successful.
+            // Such file will fail signature check test below.
             try
             {
                 fileContent = ((Data)Headers[2]).Decrypt(AlgorithmUtility.GetAlgorithmFromNameSignature(((SecurityDescriptor)Headers[1]).AlgorithmNameSignature, fileKey, ((SecurityDescriptor)Headers[1]).IV));
@@ -306,11 +307,11 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Unshare a file with all shred users on EnigmaEfs.
+        /// Unshare a file with all shared users on Enigma EFS.
         /// </summary>
         /// <param name="encryptedFile">Encrypted file in its raw form.</param>
         /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
-        /// <returns></returns>
+        /// <returns>Updated encrypted file.</returns>
         public byte[] Unshare(byte[] encryptedFile, int loggedInUserId)
         {
             ParseEncryptedFile(encryptedFile);
@@ -321,6 +322,10 @@ namespace Enigma.CryptedFileParser
             return Flush();
         }
 
+        /// <summary>
+        /// Parses the chosen encrypted file.
+        /// </summary>
+        /// <param name="encryptedFile">Encrypted file in its raw form.</param>
         public void ParseEncryptedFile(byte[] encryptedFile)
         {
             var offset = 0;
@@ -332,6 +337,11 @@ namespace Enigma.CryptedFileParser
             ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
         }
 
+        /// <summary>
+        /// Gets Id values of all the users that can view chosen file.
+        /// </summary>
+        /// <param name="loggedInUserId">Unique identifier of the logged-in user.</param>
+        /// <returns>List of user's id values.</returns>
         public List<int> GetSharedUsersId(int loggedInUserId)
         {
             return ((SecurityDescriptor)Headers[1]).GetSharedUsersId(loggedInUserId);
@@ -357,10 +367,10 @@ namespace Enigma.CryptedFileParser
         }
 
         /// <summary>
-        /// Returns file owners unique identifier.
+        /// Returns file's owner unique identifier.
         /// </summary>
         /// <param name="encryptedFile">Encrypted file in its raw form.</param>
-        /// <returns>Owners id.</returns>
+        /// <returns>Owner's id.</returns>
         public static int GetFileOwnerId(byte[] encryptedFile)
         {
             return (int)BitConverter.ToUInt32(encryptedFile, 16);
@@ -369,7 +379,7 @@ namespace Enigma.CryptedFileParser
         /// <summary>
         /// Creates encrypted files full name that contains encrypted file name and extension separated with '<b>.</b>'.
         /// </summary>
-        /// <returns>Encrypted files full name.</returns>
+        /// <returns>Encrypted file's full name.</returns>
         public string GetEncryptedFileFullName()
         {
             return EncryptedName + "." + FileExtension;
