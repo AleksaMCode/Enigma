@@ -48,11 +48,11 @@ namespace Enigma.EFS.MFA
             await Task.Run(async () =>
             {
                 var waitCounter = 0;
-                while(!Directory.Exists(nextDriveLetter + ":"))
+                while (!Directory.Exists(nextDriveLetter + ":"))
                 {
                     await Task.Delay(500);
                     waitCounter++;
-                    if(waitCounter >= 2*timeOut)
+                    if (waitCounter >= 2 * timeOut)
                     {
                         isTimedOut = true;
                         break;
@@ -60,7 +60,7 @@ namespace Enigma.EFS.MFA
                 }
             });
 
-            if (isTimedOut)
+            if (isTimedOut || Directory.GetFiles(nextDriveLetter + ":").Length != 1)
             {
                 return null;
             }

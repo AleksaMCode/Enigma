@@ -161,6 +161,11 @@ namespace Enigma.Wpf.ViewModels
                         navigator.HideProgressBox();
                     }
 
+                    if (key == null)
+                    {
+                        throw new Exception("Error occured while reading user's encrypted RSA key.");
+                    }
+
                     keyForm.OnSubmit += data =>
                     {
                         if (user.UsbKey == 1)
@@ -174,7 +179,7 @@ namespace Enigma.Wpf.ViewModels
                                 };
 
                                 // Compare private RSA key with saved public RSA key.
-                                if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey,userInfo.PrivateKey))
+                                if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
                                 {
                                     throw new Exception("Wrong key used.");
                                 }
@@ -249,7 +254,12 @@ namespace Enigma.Wpf.ViewModels
                         {
                             navigator.ShowProgressBox("Waiting for USB...");
                             var driveDet = new DriveDetection();
-                            await driveDet.ReadDataFromDriveAsync(20, "key.pem");
+
+                            if (await driveDet.ReadDataFromDriveAsync(20, "priv.key") == null)
+                            {
+                                throw new Exception("Error occured while reading user's encrypted RSA key.");
+                            }
+
                             navigator.HideProgressBox();
 
                             var keyPassForm = new PrivateKeyFormViewModel(navigator);
@@ -260,7 +270,7 @@ namespace Enigma.Wpf.ViewModels
                                     register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                                     // User's key is only made if the registering process (Db update) is successful.
-                                    register.EncryptUserKey(driveDet.nextDriveLetter + ":\\key.pem", data.KeyPassword, true);
+                                    register.EncryptUserKey(driveDet.nextDriveLetter + ":\\priv.key", data.KeyPassword, true);
 
                                     navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
                                 }
