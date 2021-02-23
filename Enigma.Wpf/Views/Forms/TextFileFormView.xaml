@@ -106,7 +106,7 @@
                 <ComboBoxItem IsSelected="True">ECB</ComboBoxItem>
                 <ComboBoxItem>CBC</ComboBoxItem>
                 <ComboBoxItem>CFB</ComboBoxItem>
-                <ComboBoxItem>OFB</ComboBoxItem>
+                <ComboBoxItem IsSelected="True">OFB</ComboBoxItem>
             </ComboBox>
 
             <Label
