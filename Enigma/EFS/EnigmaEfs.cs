@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -368,6 +369,14 @@ namespace Enigma.EFS
             {
                 throw new Exception("Insufficient storage available. File can't be updated.");
             }
+        }
+
+        public List<int> GetSharedUsersId(int loggedInUserId, string pathOnEfs)
+        {
+            var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
+            encryptedFile.ParseEncryptedFile(File.ReadAllBytes(pathOnEfs));
+
+            return encryptedFile.GetSharedUsersId(loggedInUserId);
         }
 
         /// <summary>

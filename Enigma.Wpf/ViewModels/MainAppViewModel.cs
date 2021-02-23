@@ -377,66 +377,73 @@ namespace Enigma.Wpf.ViewModels
 
         //public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
 
-        /*private void HandleShareItem(FileSystemItem obj)
-        {
-            //navigator.ShowMessage("Test", "Pressed share item menu item.");
-            try
-            {
-                if (obj.Type != FileSystemItemType.File)
-                {
-                    throw new Exception("Folders can't be shared. Batch sharing is not supported.");
-                }
-                if (!obj.IsAccessGranted())
-                {
-                    throw new Exception("You cannot share this file because you don't have access to it.");
-                }
+        //private void HandleShareItem(FileSystemItem obj)
+        //{
+        //    try
+        //    {
+        //        if (obj.Type != FileSystemItemType.File)
+        //        {
+        //            throw new Exception("Folders can't be shared. Batch sharing is not supported.");
+        //        }
+        //        if (!obj.IsAccessGranted())
+        //        {
+        //            throw new Exception("You cannot share this file because you don't have access to it.");
+        //        }
 
-                var form = new ShareFileFormViewModel(navigator);
+        //        var path = GetDirPath();
 
-                form.OnSubmit += (string sharedUser) =>
-                {
-                    try
-                    {
-                        var path = GetDirPath();
+        //        if (!Directory.Exists(path))
+        //        {
+        //            throw new Exception(string.Format("Directory {0} is missing.", path));
+        //        }
 
-                        if (File.Exists(path + "\\" + obj.GetEncryptedFileName()))
-                        {
-                            var userInfo = usersDb.GetUser(sharedUser);
+        //        var sharedUsers = usersDb.GetUsernamesFromIds(enigmaEfs.GetSharedUsersId(enigmaEfs.currentUser.Id, path + obj.GetEncryptedFileName()));
 
-                            if (userInfo.Locked == 1)
-                            {
-                                throw new Exception(string.Format("You can't share you file with {0} because this account is locked.", sharedUser));
-                            }
+        //        var form = new ShareFormViewModel(sharedUsers, usersDb.GetAllUsernames(), usersDb, enigmaEfs);
 
-                            if (userInfo.Revoked == 0 && !userCertificateExpired)
-                            {
-                                enigmaEfs.Share(path + "\\" + obj.GetEncryptedFileName(), new UserInformation(userInfo));
-                            }
-                            else
-                            {
-                                throw new Exception(string.Format("You can't share your file with {0} because this user's certificate isn't valid anymore.", sharedUser));
-                            }
 
-                            SetCurrentItems(path);
-                        }
-                        else
-                        {
-                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        navigator.ShowMessage("Error", ex.Message);
-                    }
-                };
+        //        form.AddCommand =>
+        //        {
+        //            try
+        //            {
+        //                if (File.Exists(path + "\\" + obj.GetEncryptedFileName()))
+        //                {
+        //                    var userInfo = usersDb.GetUser(path);
 
-                navigator.OpenFlyoutPanel(form);
-            }
-            catch (Exception ex)
-            {
-                navigator.ShowMessage("Error", ex.Message);
-            }
-        }*/
+        //                    if (userInfo.Locked == 1)
+        //                    {
+        //                        throw new Exception(string.Format("You can't share you file with {0} because this account is locked.", sharedUser));
+        //                    }
+
+        //                    if (userInfo.Revoked == 0 && !userCertificateExpired)
+        //                    {
+        //                        enigmaEfs.Share(path + "\\" + obj.GetEncryptedFileName(), new UserInformation(userInfo));
+        //                    }
+        //                    else
+        //                    {
+        //                        throw new Exception(string.Format("You can't share your file with {0} because this user's certificate isn't valid anymore.", sharedUser));
+        //                    }
+
+        //                    SetCurrentItems(path);
+        //                }
+        //                else
+        //                {
+        //                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                navigator.ShowMessage("Error", ex.Message);
+        //            }
+        //        };
+
+        //        navigator.OpenFlyoutPanel(form);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        navigator.ShowMessage("Error", ex.Message);
+        //    }
+        //}
 
         /*public ICommand UnshareItemCommand => new RelayCommand<FileSystemItem>(HandleUnshareItem);
 

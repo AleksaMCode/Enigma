@@ -168,7 +168,7 @@ namespace Enigma.EFS.Attributes
             }
             else
             {
-                return null;
+                throw new Exception("Only file owner can view information about the shared users.");
             }
         }
 

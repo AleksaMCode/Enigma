@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Enigma.AlgorithmLibrary;
@@ -296,7 +297,7 @@ namespace Enigma.CryptedFileParser
         /// <returns>Updated encrypted file.</returns>
         public byte[] Unshare(byte[] encryptedFile, int loggedInUserId, int userId, out int numberOfSharedUsers)
         {
-            UnshareHelper(encryptedFile, loggedInUserId);
+            ParseEncryptedFile(encryptedFile);
 
             // unshare a file with a specific user
             numberOfSharedUsers = ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId, userId);
@@ -312,7 +313,7 @@ namespace Enigma.CryptedFileParser
         /// <returns></returns>
         public byte[] Unshare(byte[] encryptedFile, int loggedInUserId)
         {
-            UnshareHelper(encryptedFile, loggedInUserId);
+            ParseEncryptedFile(encryptedFile);
 
             // unshare a file with a all users
             ((SecurityDescriptor)Headers[1]).UnshareFile(loggedInUserId);
@@ -320,7 +321,7 @@ namespace Enigma.CryptedFileParser
             return Flush();
         }
 
-        private void UnshareHelper(byte[] encryptedFile, int loggedInUserId)
+        public void ParseEncryptedFile(byte[] encryptedFile)
         {
             var offset = 0;
 
@@ -329,6 +330,11 @@ namespace Enigma.CryptedFileParser
 
             ((SecurityDescriptor)Headers[1]).ParseSecurityDescriptor(encryptedFile, ref offset);
             ((Data)Headers[2]).ParseData(encryptedFile, offset, (int)((StandardInformation)Headers[0]).TotalLength);
+        }
+
+        public List<int> GetSharedUsersId(int loggedInUserId)
+        {
+            return ((SecurityDescriptor)Headers[1]).GetSharedUsersId(loggedInUserId);
         }
 
         /// <summary>

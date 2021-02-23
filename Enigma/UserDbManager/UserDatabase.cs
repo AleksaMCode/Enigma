@@ -55,9 +55,21 @@ namespace Enigma.UserDbManager
         /// </summary>
         /// <param name="username">Username of the user whos id is retrieved from database.</param>
         /// <returns>User's Id.</returns>
-        public int getUserId(string username)
+        public int GetUserId(string username)
         {
             return context.Users.Where(u => u.Username == username).SingleOrDefault().Id;
+        }
+
+        public List<string> GetUsernamesFromIds(List<int> usersId)
+        {
+            var users = new List<string>(usersId.Count);
+
+            foreach(var userId in usersId)
+            {
+                users.Add(GetUser(userId).Username);
+            }
+
+            return users;
         }
 
         /// <summary>
