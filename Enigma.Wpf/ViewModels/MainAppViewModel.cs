@@ -153,29 +153,29 @@ namespace Enigma.Wpf.ViewModels
             navigator.GoToPreviousControl();
         }
 
-        /*private void HandlePasswordChange()
+        private void HandlePasswordChange()
         {
-            var form = new ChangePasswordFormViewModel(navigator);
+            //var form = new ChangePasswordFormViewModel(navigator);
 
-            form.OnSubmit += (ChangePaswordFormData data) =>
-            {
-                try
-                {
-                    if (data.OldPassword != data.OldPasswordRepeat)
-                    {
-                        throw new Exception("Password doesn't match.");
-                    }
+            //form.OnSubmit += (ChangePaswordFormData data) =>
+            //{
+            //    try
+            //    {
+            //        if (data.OldPassword != data.OldPasswordRepeat)
+            //        {
+            //            throw new Exception("Passwords don't match.");
+            //        }
 
-                    usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword, data.OldPassword);
-                }
-                catch (Exception ex)
-                {
-                    navigator.ShowMessage("Error", ex.Message);
-                }
-            };
+            //        usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword, data.OldPassword);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        navigator.ShowMessage("Error", ex.Message);
+            //    }
+            //};
 
-            navigator.OpenFlyoutPanel(form);
-        }*/
+            //navigator.OpenFlyoutPanel(form);
+        }
 
         private void HandleAccountDeletion()
         {
