@@ -144,7 +144,11 @@ namespace Enigma.Wpf.ViewModels
                     var userDb = new UserDatabase(userDatabasePath, pepperPath);
                     var user = login2fa.LoginPartOne(username, password, enigmaEfsRoot, userDb);
 
+                    var lastLoginTime = user.LastLogin;
+
                     login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
+
+                    user.LastLogin = lastLoginTime;
 
                     var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
                     byte[] key = null;
