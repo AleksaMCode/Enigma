@@ -12,6 +12,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <converters:StringToPrivateKeyOptionConverter x:Key="StringToPrivateKeyOptionConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid Background="LightGray">
@@ -23,10 +24,6 @@
                     <Grid Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="30" />
-                            <RowDefinition Height="5" />
-                            <RowDefinition Height="30" />
-                            <RowDefinition Height="5" />
                             <RowDefinition Height="30" />
                             <RowDefinition Height="10" />
                             <RowDefinition Height="30" />
@@ -41,47 +38,9 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right">
-                            Username:
-                        </Label>
+                        <Label Grid.Row="1" Grid.Column="1">Certificate:</Label>
                         <TextBox
                             Grid.Row="1"
-                            Grid.Column="2"
-                            Grid.ColumnSpan="3"
-                            Height="28"
-                            MinWidth="400"
-                            MaxWidth="400"
-                            Margin="5,0"
-                            Padding="3,0"
-                            VerticalContentAlignment="Center"
-                            HorizontalAlignment="Left"
-                            Text="{Binding Username, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
-
-                        <Label
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right">
-                            Password:
-                        </Label>
-                        <PasswordBox
-                            x:Name="passwordBox"
-                            Grid.Row="3"
-                            Grid.Column="2"
-                            Grid.ColumnSpan="3"
-                            Height="28"
-                            MinWidth="400"
-                            MaxWidth="400"
-                            Margin="5,0"
-                            Padding="3,0"
-                            VerticalContentAlignment="Center"
-                            HorizontalAlignment="Left" />
-
-                        <Label Grid.Row="5" Grid.Column="1">Certificate:</Label>
-                        <TextBox
-                            Grid.Row="5"
                             Grid.Column="2"
                             Grid.ColumnSpan="2"
                             Height="28"
@@ -94,7 +53,7 @@
                             IsReadOnly="True"
                             Text="{Binding CertificatePath}" />
                         <Button
-                            Grid.Row="5"
+                            Grid.Row="1"
                             Grid.Column="4"
                             Margin="0,0,5,0"
                             Padding="20,0"
@@ -103,7 +62,7 @@
                         </Button>
 
                         <Button
-                            Grid.Row="7"
+                            Grid.Row="3"
                             Grid.Column="2"
                             Grid.ColumnSpan="2"
                             Width="100"
@@ -112,7 +71,6 @@
                             HorizontalAlignment="Center"
                             Background="#ffffff"
                             Command="{Binding LoginCommand}"
-                            CommandParameter="{Binding ElementName=passwordBox}"
                             IsDefault="True">
                             Login
                         </Button>
@@ -167,18 +125,36 @@
                             HorizontalAlignment="Right">
                             Password:
                         </Label>
+                        <TextBox Grid.Row="3"
+                            Grid.ColumnSpan="2"
+                            Grid.Column="2"
+                            Height="28"
+                            Margin="5,0"
+                            Padding="3,0"
+                            MaxWidth="313.6"
+                            VerticalContentAlignment="Center"
+                            Text="{Binding VisiblePasswordText}"
+                            Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <PasswordBox
                             x:Name="signUpPasswordBox"
                             Grid.Row="3"
-                            Grid.ColumnSpan="3"
+                            Grid.ColumnSpan="2"
                             Grid.Column="2"
                             Height="28"
-                            MinWidth="400"
-                            MaxWidth="400"
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
-                            HorizontalAlignment="Left" />
+                            MaxWidth="313.6"
+                            Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"/>
+                        <CheckBox
+                            Command="{Binding ShowPassCheckboxCommand}"
+                            CommandParameter="{Binding ElementName=signUpPasswordBox}"
+                            Grid.Row="3" 
+                            VerticalAlignment="Center"
+                            Grid.Column="4"
+                            IsChecked="{Binding IsPasswordVisible}">
+                            show
+                        </CheckBox>
 
                         <Label Grid.Row="5" Grid.Column="1">Certificate:</Label>
                         <TextBox
@@ -186,13 +162,11 @@
                             Grid.Column="2"
                             Grid.ColumnSpan="2"
                             Height="28"
-                            MinWidth="310"
-                            MaxWidth="310"
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
-                            HorizontalAlignment="left"
                             IsReadOnly="True"
+                            MaxWidth="313.6"
                             Text="{Binding CertificatePath, NotifyOnValidationError=True, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                         <Button
                             Grid.Row="5"
@@ -223,21 +197,27 @@
                             <RadioButton Grid.Row="0" IsChecked="{Binding PrivateKeySignupOption, Converter={StaticResource StringToPrivateKeyOptionConverter}, ConverterParameter=File}">Generate file</RadioButton>
                             <RadioButton Grid.Row="2" IsChecked="{Binding PrivateKeySignupOption, Converter={StaticResource StringToPrivateKeyOptionConverter}, ConverterParameter=USB}">Create USB key</RadioButton>
                         </Grid>
-
-                        <Button
-                            Grid.Row="9"
+                        <Grid Grid.Row="9" Grid.ColumnSpan="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="5"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button
                             Grid.Column="1"
-                            Grid.ColumnSpan="2"
-                            Width="100"
-                            Height="28"
-                            Margin="5,0"
-                            HorizontalAlignment="Center"
                             Background="#ffffff"
                             Command="{Binding SignUpCommand}"
                             CommandParameter="{Binding ElementName=signUpPasswordBox}"
                             IsDefault="True">
-                            Sign Up
-                        </Button>
+                                Sign Up
+                            </Button>
+                            <Button Grid.Column="3" Command="{Binding GeneratePasswordCommand}" CommandParameter="{Binding ElementName=signUpPasswordBox}">Generate password</Button>
+                            <Button Grid.Column="5" Command="{Binding GeneratePassphraseCommand}" CommandParameter="{Binding ElementName=signUpPasswordBox}">Generate passphrase</Button>
+                        </Grid>
                     </Grid>
                 </TabItem>
             </TabControl>

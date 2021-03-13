@@ -34,5 +34,10 @@
     <DataTemplate DataType="{x:Type formViewModels:TextFileFormViewModel}">
         <forms:TextFileFormView />
     </DataTemplate>
-
+    <DataTemplate DataType="{x:Type formViewModels:YesNoDialogFormViewModel}">
+        <forms:YesNoDialogFormView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type formViewModels:UserAndPassFormViewModel}">
+        <forms:UserAndPassFormView />
+    </DataTemplate>
 </ResourceDictionary>

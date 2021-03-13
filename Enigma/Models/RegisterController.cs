@@ -60,14 +60,14 @@ namespace Enigma.Models
         /// <param name="username">Users account username.</param>
         /// <param name="password">Users password.</param>
         /// <param name="certificateFilePath">Path on FS to users certificate.</param>
-        public void Register(ref string username, string password, string certificateFilePath)
+        public void Register(ref string username, string password, string certificateFilePath, bool skipPasswordStrengthCheck = false)
         {
             if (username.Length > 25)
             {
                 throw new Exception("Usernames can't have more than 25 characters.");
             }
 
-            if (password.Contains(username))
+            if (skipPasswordStrengthCheck && password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
             }
@@ -75,7 +75,7 @@ namespace Enigma.Models
             // Probability of repetition of this do-while loop is low.
             do
             {
-                // Add a random 4-digit number to user's username.
+                // Add a random 4-digit number to users username.
                 var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
                 csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?            
                 var suffix = "#" + csprng.Next(1_000, 9_999).ToString();
@@ -93,13 +93,13 @@ namespace Enigma.Models
             } while (true);
 
             // Check if a password used some of the most common passwords discovered in various data breaches.
-            if (PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
+            if (skipPasswordStrengthCheck && PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
 
             // Check password strength.
-            if (!PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
+            if (skipPasswordStrengthCheck && !PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
             {
                 throw new Exception(string.Format("Password is too weak. It's deemed {0}. Please try again.", passwordStrength));
             }
@@ -246,7 +246,7 @@ namespace Enigma.Models
         /// Generates a random password with a high entropy.
         /// </summary>
         /// <returns>Random ASCII password.</returns>
-        public string GenerateRandomPassword()
+        public static string GenerateRandomPassword()
         {
             var passArray = new char[30];
             string password;
@@ -278,7 +278,7 @@ namespace Enigma.Models
         /// Generates random passphrase delimiter whose length varies between 3 and 5 characters.
         /// </summary>
         /// <returns>Random delimiter.</returns>
-        private string GeneratePassphraseDelimiter()
+        private static string GeneratePassphraseDelimiter()
         {
             var csprng = new SecureRandom(new DigestRandomGenerator(new Sha256Digest()));
             csprng.SetSeed(DateTime.Now.Ticks); // TODO: is this a good seed value?
@@ -299,7 +299,7 @@ namespace Enigma.Models
         /// Generates a random passphrase that contains between 6 and 10 words using a <em>Diceware</em> method (<see href="https://www.eff.org/dice">EFF Dice-Generated Passphrases</see>).
         /// </summary>
         /// <returns>Random ASCII password createad using a <em>Diceware</em> method.</returns>
-        public string GeneratePassphrase(string dicewareWordsPath)
+        public static string GeneratePassphrase(string dicewareWordsPath)
         {
             var diceRollResult = 0;
             string passphrase;

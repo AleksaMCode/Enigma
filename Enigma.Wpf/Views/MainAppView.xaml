@@ -118,15 +118,15 @@
                         <Grid.ContextMenu>
                             <ContextMenu>
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.ItemDefaultCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).ItemDefaultCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Open" />
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.UpdateItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).UpdateItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Update" />
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.ExportItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).ExportItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Export">
                                     <MenuItem.Icon>
@@ -134,7 +134,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.ShareItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).ShareItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Share">
                                     <MenuItem.Icon>
@@ -142,7 +142,7 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem
-                                    Command="{Binding PlacementTarget.(Grid.Tag).(viewModels:MainAppViewModel.DeleteItemCommand), RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                    Command="{Binding PlacementTarget.(Grid.Tag).DeleteItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
                                     Header="Delete">
                                     <MenuItem.Icon>
@@ -151,6 +151,9 @@
                                 </MenuItem>
                             </ContextMenu>
                         </Grid.ContextMenu>
+                        <Grid.ToolTip>
+                            <ToolTip Content="{Binding Name}"></ToolTip>
+                        </Grid.ToolTip>
                         <Grid.InputBindings>
                             <MouseBinding
                                 Command="{Binding Path=DataContext.ItemDefaultCommand, RelativeSource={RelativeSource AncestorType=ListBox, Mode=FindAncestor}}"

@@ -115,10 +115,14 @@ namespace Enigma.Wpf.ViewModels.Windows
             modalControl.IsOpen = true;
         }
 
-        public void CloseFlyoutPanel()
+        public async void CloseFlyoutPanel()
         {
             modalControl.IsOpen = false;
-            modalControl.ContentControl = null;
+            await Task.Run(async () =>
+            {
+                await Task.Delay(200);
+                Application.Current.Dispatcher.Invoke(() => modalControl.ContentControl = null);
+            });
         }
 
         public void ShowMessage(string title, string message)

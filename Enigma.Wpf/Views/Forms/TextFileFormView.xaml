@@ -12,11 +12,13 @@
     <UserControl.Resources>
         <converters:BoolToGridLengthConverter x:Key="BTGLConverter" />
     </UserControl.Resources>
-    <Grid Margin="5">
+    <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="5"/>
             <RowDefinition
                 Height="*"
-                MinHeight="400"
+                MinHeight="200"
                 MaxHeight="600" />
             <RowDefinition Height="{Binding IsNew, Converter={StaticResource BTGLConverter}, ConverterParameter=10}" />
             <RowDefinition Height="{Binding IsNew, Converter={StaticResource BTGLConverter}, ConverterParameter=30}" />
@@ -30,15 +32,26 @@
             <ColumnDefinition Width="150" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        <Grid  Grid.ColumnSpan="5" Height="30" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"></ColumnDefinition>
+                <ColumnDefinition Width="5"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label>File name:</Label>
+            <TextBox Grid.Column="2" Height="30" VerticalContentAlignment="Center" Text="{Binding FileName}"></TextBox>
+        </Grid>
+        
         <TextBox
             Grid.ColumnSpan="5"
+            Grid.Row="2"
             MaxHeight="600"
             AcceptsReturn="True"
             Text="{Binding Text}"
             TextWrapping="Wrap"
             VerticalScrollBarVisibility="Visible" />
 
-        <Grid Grid.Row="2" Grid.ColumnSpan="5">
+        <Grid Grid.Row="4" Grid.ColumnSpan="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
 
@@ -138,13 +151,13 @@
             </ComboBox>
         </Grid>
         <Button
-            Grid.Row="4"
+            Grid.Row="6"
             Grid.Column="1"
             Command="{Binding SaveCommand}">
             Save
         </Button>
         <Button
-            Grid.Row="4"
+            Grid.Row="6"
             Grid.Column="3"
             Command="{Binding CancelCommand}">
             Cancel

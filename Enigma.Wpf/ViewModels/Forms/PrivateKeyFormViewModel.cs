@@ -58,14 +58,14 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         private void HandleSubmit(PasswordBox obj)
         {
-            if (showPrivateKey)
+            /*if (showPrivateKey)
             {
                 if (string.IsNullOrWhiteSpace(PrivateKeyPathText) || !File.Exists(PrivateKeyPathText))
                 {
                     navigator.ShowMessage("Validaton Error", "Invalid private key path.");
                     return;
                 }
-            }
+            }*/
 
             var data = new PrivateKeyFormData
             {

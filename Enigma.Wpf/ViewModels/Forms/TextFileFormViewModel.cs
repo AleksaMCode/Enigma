@@ -13,6 +13,7 @@ namespace Enigma.Wpf.ViewModels.Forms
         private string hashValue;
         private string modeValue;
         private string text;
+        private string fileName;
         private readonly INavigator navigator;
         private readonly bool isEdit;
 
@@ -29,6 +30,12 @@ namespace Enigma.Wpf.ViewModels.Forms
         {
             get => text;
             set => Set(() => Text, ref text, value);
+        }
+
+        public string FileName
+        {
+            get => fileName;
+            set => Set(() => FileName, ref fileName, value);
         }
 
         public bool IsNew => !isEdit;
@@ -55,16 +62,21 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         private void HandleSave()
         {
+            if(string.IsNullOrWhiteSpace(fileName))
+            {
+                navigator.ShowMessage("Error", "File name is required.");
+            }
+
             var data = new TxtFormData
             {
                 AlgorithmIdentifier = AlgorithmValue + "-" + ModeValue,
                 HashIdentifier = HashValue,
-                Text = text
+                Text = text,
+                FileName = fileName
             };
 
             navigator.CloseFlyoutPanel();
             OnSubmit?.Invoke(data);
-
         }
 
         public ICommand CancelCommand => new RelayCommand(HandleCancel);

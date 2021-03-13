@@ -253,14 +253,9 @@ namespace Enigma.Wpf.ViewModels
                     var path = GetDirPath();
                     if (Directory.Exists(path))
                     {
-                        // problem with Simple String form
-                        var nameForm = new SimpleStringFormViewModel(navigator, "File name:");
 
-                        nameForm.OnSubmit += name =>
-                        {
-                            var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, name, data.AlgorithmIdentifier, data.HashIdentifier);
-                            SetCurrentItems(path);
-                        };
+                        var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
+                        SetCurrentItems(path);
                     }
                     else
                     {
@@ -312,48 +307,31 @@ namespace Enigma.Wpf.ViewModels
         {
             // display warning message "You are about to perform action that will result in a permanent change to Enigma EFS. Are you sure that you want to proceed?"
             // Yes | No
-            try
+            var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change to Enigma EFS. Are you sure that you want to proceed?");
+
+            dialog.OnSubmit += confirmed =>
             {
-                var path = GetDirPath();
-
-                if (!Directory.Exists(path))
+                if (!confirmed)
                 {
-                    throw new Exception(string.Format("Directory {0} is missing.", path));
+                    return;
                 }
 
-                if (obj.Type != FileSystemItemType.File)
+                try
                 {
-                    if (obj.Type == FileSystemItemType.Folder)
+                    var path = GetDirPath();
+
+                    if (!Directory.Exists(path))
                     {
-                        if (File.Exists(path + "\\" + obj.Name))
-                        {
-                            enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
-                            SetCurrentItems(path);
-                        }
-                        else
-                        {
-                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
-                        }
+                        throw new Exception(string.Format("Directory {0} is missing.", path));
                     }
-                    else
+
+                    if (obj.Type != FileSystemItemType.File)
                     {
-                        throw new Exception("You cannot delete Shared folder.");
-                    }
-                }
-                else
-                {
-                    if (obj.IsAccessGranted())
-                    {
-                        // check if user is a file owner
-                        if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
+                        if (obj.Type == FileSystemItemType.Folder)
                         {
-                            throw new Exception("You can't delete this file. Only a file owner can delete this file.");
-                        }
-                        else
-                        {
-                            if (File.Exists(path + "\\" + obj.GetEncryptedFileName()))
+                            if (File.Exists(path + "\\" + obj.Name))
                             {
-                                enigmaEfs.DeleteFile(path + "\\" + obj.GetEncryptedFileName());
+                                enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
                                 SetCurrentItems(path);
                             }
                             else
@@ -361,17 +339,47 @@ namespace Enigma.Wpf.ViewModels
                                 throw new Exception(string.Format("File {0} is missing.", obj.Name));
                             }
                         }
+                        else
+                        {
+                            throw new Exception("You cannot delete Shared folder.");
+                        }
                     }
                     else
                     {
-                        throw new Exception("You cannot delete this file because you don't have access to this file.");
+                        if (obj.IsAccessGranted())
+                        {
+                            // check if user is a file owner
+                            if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
+                            {
+                                throw new Exception("You can't delete this file. Only a file owner can delete this file.");
+                            }
+                            else
+                            {
+                                if (File.Exists(path + "\\" + obj.GetEncryptedFileName()))
+                                {
+                                    enigmaEfs.DeleteFile(path + "\\" + obj.GetEncryptedFileName());
+                                    SetCurrentItems(path);
+                                }
+                                else
+                                {
+                                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("You cannot delete this file because you don't have access to this file.");
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                navigator.ShowMessage("Error", ex.Message);
-            }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+            };
+
+            navigator.OpenFlyoutPanel(dialog);
+            
         }
 
         public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);

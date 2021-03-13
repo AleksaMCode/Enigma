@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -66,6 +67,10 @@ namespace Enigma.Wpf.ViewModels
         /// </summary>
         private readonly string crlListPath;
 
+        private bool skipPasswordStrengthCheck = false;
+        private bool isPasswordVisible;
+        private string visiblePasswordText;
+
         public InitialFormViewModel(INavigator mainWindowViewModel)
         {
             navigator = mainWindowViewModel;
@@ -82,11 +87,53 @@ namespace Enigma.Wpf.ViewModels
             crlListPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[6].Split('\t')[1];
         }
 
-        public ICommand LoginCommand => new RelayCommand<PasswordBox>(HandleLogin);
+        public ICommand LoginCommand => new RelayCommand(HandleLogin);
 
         public ICommand SignUpCommand => new RelayCommand<PasswordBox>(HandleRegister);
 
         public ICommand ChooseCertificateCommand => new RelayCommand<PasswordBox>(HandleChooseCertificate);
+
+        public ICommand GeneratePasswordCommand => new RelayCommand<PasswordBox>(HandleGeneratePassword);
+
+        private void HandleGeneratePassword(PasswordBox obj)
+        {
+            var password = RegisterController.GenerateRandomPassword();
+            var dialog = new YesNoDialogFormViewModel(navigator, $"Generated password is: \n\n{password}\n\nDo you accept?");
+
+            dialog.OnSubmit += confirmed =>
+            {
+                if (!confirmed)
+                {
+                    return;
+                }
+
+                obj.Password = password;
+            };
+
+            navigator.OpenFlyoutPanel(dialog);
+        }
+
+        public ICommand GeneratePassphraseCommand => new RelayCommand<PasswordBox>(HandleGeneratePassphrase);
+
+        private void HandleGeneratePassphrase(PasswordBox obj)
+        {
+            var passphrase = RegisterController.GeneratePassphrase(dicewareWordsPath);
+            var dialog = new YesNoDialogFormViewModel(navigator, $"Generated passphrase is: \n\n{passphrase}\n\nDo you accept?");
+
+            dialog.OnSubmit += confirmed =>
+            {
+                if (!confirmed)
+                {
+                    return;
+                }
+
+                obj.Password = passphrase;
+                skipPasswordStrengthCheck = true;
+                HandleRegister(obj);
+            };
+
+            navigator.OpenFlyoutPanel(dialog);
+        }
 
         private void HandleChooseCertificate(PasswordBox obj)
         {
@@ -126,115 +173,184 @@ namespace Enigma.Wpf.ViewModels
             set => Set(() => PrivateKeySignupOption, ref privateKeySignupOption, value);
         }
 
-        private async void HandleLogin(PasswordBox passBox)
+        public bool IsPasswordVisible
+        {
+            get => isPasswordVisible;
+            set => Set(() => IsPasswordVisible, ref isPasswordVisible, value);
+        }
+
+        public string VisiblePasswordText
+        {
+            get => visiblePasswordText;
+            set => Set(() => VisiblePasswordText, ref visiblePasswordText, value);
+        }
+
+        public ICommand ShowPassCheckboxCommand => new RelayCommand<PasswordBox>(HandleCheckboxCommand);
+
+        private void HandleCheckboxCommand(PasswordBox obj)
+        {
+            if (IsPasswordVisible)
+            {
+                VisiblePasswordText = obj.Password;
+            }
+            else
+            {
+                obj.Password = VisiblePasswordText;
+                VisiblePasswordText = "";
+            }
+        }
+
+        private async void HandleLogin()
         {
             try
             {
-                if (IsValid())
+                // rucno provjeriti sertifikat
+                var userDb = new UserDatabase(userDatabasePath, pepperPath);
+                User user = null;
+                LoginController login2fa = null;
+
+                //// for testing
+                //var password = "myRandomPass253";
+                //username = "marko#2393";
+                //certificatePath = @"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\certs\c2.cer";
+                ////============
+                navigator.ShowProgressBox("Checking certificate ...");
+                var certCheck = false;
+
+                await Task.Run(() => certCheck = userDb.IsCertificateUsed(CertificatePath));
+
+                if (certCheck)
                 {
-                    var password = passBox.Password;
+                    navigator.HideProgressBox();
+                    var dialog = new UserAndPassFormViewModel(navigator);
 
-                    if (password == "")
+                    dialog.OnSubmit += data =>
                     {
-                        throw new Exception("Password is a required field.");
-                    }
+                        login2fa = new LoginController(pepperPath);
+                        var password = data.Password;
 
-                    var login2fa = new LoginController(pepperPath);
-
-                    var userDb = new UserDatabase(userDatabasePath, pepperPath);
-                    var user = login2fa.LoginPartOne(username, password, enigmaEfsRoot, userDb);
-
-                    var lastLoginTime = user.LastLogin;
-
-                    login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
-
-                    user.LastLogin = lastLoginTime;
-
-                    var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
-                    byte[] key = null;
-
-                    if (user.UsbKey == 1)
-                    {
-                        navigator.ShowProgressBox("Waiting for USB...");
-                        var driveDet = new DriveDetection();
-                        key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
-
-                        if (key == null)
+                        if (string.IsNullOrEmpty(password))
                         {
-                            throw new Exception("Error occured while reading user's encrypted RSA key.");
-                        }
-
-                        navigator.HideProgressBox();
-                    }
-
-                    keyForm.OnSubmit += data =>
-                    {
-                        if (user.UsbKey == 1)
-                        {
-                            UserInformation userInfo;
-                            try
-                            {
-                                userInfo = new UserInformation(user)
-                                {
-                                    PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
-                                };
-
-                                // Compare private RSA key with saved public RSA key.
-                                if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
-                                {
-                                    throw new Exception("Wrong key used.");
-                                }
-
-                                navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
-                            }
-                            catch (Exception ex)
-                            {
-                                passBox.Clear();
-                                navigator.ShowMessage("Error", ex.Message);
-                            }
+                            navigator.ShowMessage("Error", "Password is a required field.");
                         }
                         else
                         {
-                            UserInformation userInfo;
                             try
                             {
-                                userInfo = new UserInformation(user)
-                                {
-                                    PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
-                                };
-
-                                // Compare private RSA key with saved public RSA key.
-                                if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
-                                {
-                                    throw new Exception("Wrong key used.");
-                                }
-
-                                navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                                navigator.ShowProgressBox("Logging in ...");
+                                user = login2fa.LoginPartOne(username = data.Username, password, enigmaEfsRoot, userDb);
+                                var lastLoginTime = user.LastLogin;
+                                login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
+                                user.LastLogin = lastLoginTime;
+                                KeyHandle(user, login2fa, userDb);
+                                navigator.HideProgressBox();
+                                Username = CertificatePath = "";
                             }
                             catch (Exception ex)
                             {
-                                passBox.Clear();
                                 navigator.ShowMessage("Error", ex.Message);
                             }
                         }
                     };
 
-                    passBox.Clear();
-                    Username = CertificatePath = "";
-
-                    navigator.OpenFlyoutPanel(keyForm);
+                    navigator.OpenFlyoutPanel(dialog);
                 }
                 else
                 {
-                    passBox.Clear();
-                    navigator.ShowMessage("Error", ValidationErrors.First().ErrorMessage);
+                    navigator.HideProgressBox();
+                    throw new Exception("Certificate isn't valid.");
                 }
             }
             catch (Exception ex)
             {
-                passBox.Clear();
+                //passBox.Clear();
                 navigator.ShowMessage("Error", ex.Message);
             }
+        }
+
+        private async void KeyHandle(User user, LoginController login2fa, UserDatabase userDb)
+        {
+            var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
+            byte[] key = null;
+
+            if (user.UsbKey == 1)
+            {
+                navigator.ShowProgressBox("Waiting for USB...");
+                var driveDet = new DriveDetection();
+                key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
+
+                if (key == null)
+                {
+                    throw new Exception("Error occured while reading user's encrypted RSA key.");
+                }
+
+                navigator.HideProgressBox();
+            }
+
+            keyForm.OnSubmit += data =>
+            {
+                navigator.ShowProgressBox("Verifying key...");
+                Task.Run(() =>
+                {
+                    if (user.UsbKey == 1)
+                    {
+                        UserInformation userInfo;
+                        try
+                        {
+                            userInfo = new UserInformation(user)
+                            {
+                                PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
+                            };
+
+                            // Compare private RSA key with saved public RSA key.
+                            if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
+                            {
+                                throw new Exception("Wrong key used.");
+                            }
+
+                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                        }
+                        catch (Exception ex)
+                        {
+                            //passBox.Clear();
+                            navigator.ShowMessage("Error", ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        UserInformation userInfo;
+
+                        // for testing
+                        data.PrivateKeyPath = @"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\private_encrypted\priv_2.bin";
+                        data.KeyPassword = "rainfallonwednesday";
+                        // =========
+
+                        try
+                        {
+                            userInfo = new UserInformation(user)
+                            {
+                                PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
+                            };
+
+                            // Compare private RSA key with saved public RSA key.
+                            if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
+                            {
+                                throw new Exception("Wrong key used.");
+                            }
+
+                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                            navigator.HideProgressBox();
+                        }
+                        catch (Exception ex)
+                        {
+                            //passBox.Clear();
+                            navigator.ShowMessage("Error", ex.Message);
+                        }
+                    }
+                });
+            };
+
+            navigator.OpenFlyoutPanel(keyForm);
         }
 
         private async void HandleRegister(PasswordBox passBox)
@@ -245,7 +361,7 @@ namespace Enigma.Wpf.ViewModels
                 {
                     try
                     {
-                        var password = passBox.Password;
+                        var password = IsPasswordVisible ? VisiblePasswordText : passBox.Password;
                         var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath, caTrustListPath, crlListPath);
 
                         var fullUsername = username;
@@ -320,6 +436,7 @@ namespace Enigma.Wpf.ViewModels
                 else
                 {
                     passBox.Clear();
+                    skipPasswordStrengthCheck = false;
                     navigator.ShowMessage("Error", ValidationErrors.First().ErrorMessage);
                 }
             }

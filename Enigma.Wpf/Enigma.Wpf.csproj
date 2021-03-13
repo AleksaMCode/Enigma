@@ -40,6 +40,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>enigmaEfsLogo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.5.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.5\lib\net48\CommonServiceLocator.dll</HintPath>
@@ -120,6 +123,7 @@
     <Compile Include="Enums\PrivateKeyOption.cs" />
     <Compile Include="Forms\Data\ChangePaswordFormData.cs" />
     <Compile Include="Forms\Data\ImportFormData.cs" />
+    <Compile Include="Forms\Data\LoginFormData.cs" />
     <Compile Include="Forms\Data\PrivateKeyFormData.cs" />
     <Compile Include="Forms\Data\TxtFormData.cs" />
     <Compile Include="Forms\Data\UnshareFormData.cs" />
@@ -131,6 +135,8 @@
     <Compile Include="ViewModels\Forms\ShareFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\SimpleStringFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\TextFileFormViewModel.cs" />
+    <Compile Include="ViewModels\Forms\UserAndPassFormViewModel.cs" />
+    <Compile Include="ViewModels\Forms\YesNoDialogFormViewModel.cs" />
     <Compile Include="ViewModels\InitialFormViewModel.cs" />
     <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
@@ -149,6 +155,12 @@
     </Compile>
     <Compile Include="Views\Forms\TextFileFormView.xaml.cs">
       <DependentUpon>TextFileFormView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Forms\UserAndPassFormView.xaml.cs">
+      <DependentUpon>UserAndPassFormView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Forms\YesNoDialogFormView.xaml.cs">
+      <DependentUpon>YesNoDialogFormView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\InitialForm.xaml.cs">
       <DependentUpon>InitialForm.xaml</DependentUpon>
@@ -177,6 +189,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Forms\TextFileFormView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Forms\UserAndPassFormView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Forms\YesNoDialogFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -247,6 +267,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\SharedFolderIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="enigmaEfsLogo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
