@@ -39,16 +39,16 @@ namespace Enigma.CryptedFileParser
             // tokens [ file_name, file_extension ]
             var tokens = fileName.Split('.');
 
-            if (ExtensionCheck(tokens[1]))
-            {
-                FileContent = fileContent;
-                FileName = tokens[0];
-                FileExtension = tokens[1];
-            }
-            else
-            {
-                throw new Exception(string.Format("File type '{0}' is not supported", tokens[1]));
-            }
+            //if (ExtensionCheck(tokens[1]))
+            //{
+            FileContent = fileContent;
+            FileName = tokens[0];
+            FileExtension = tokens[1];
+            //}
+            //else
+            //{
+            //    throw new Exception(string.Format("File type '{0}' is not supported", tokens[1]));
+            //}
         }
 
         /// <summary>
