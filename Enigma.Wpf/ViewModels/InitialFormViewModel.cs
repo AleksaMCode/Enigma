@@ -204,7 +204,6 @@ namespace Enigma.Wpf.ViewModels
         {
             try
             {
-                // rucno provjeriti sertifikat
                 var userDb = new UserDatabase(userDatabasePath, pepperPath);
                 User user = null;
                 LoginController login2fa = null;
@@ -224,7 +223,7 @@ namespace Enigma.Wpf.ViewModels
                     navigator.HideProgressBox();
                     var dialog = new UserAndPassFormViewModel(navigator);
 
-                    dialog.OnSubmit += data =>
+                    dialog.OnSubmit += async data =>
                     {
                         login2fa = new LoginController(pepperPath);
                         var password = data.Password;
@@ -238,15 +237,32 @@ namespace Enigma.Wpf.ViewModels
                             try
                             {
                                 navigator.ShowProgressBox("Logging in ...");
-                                user = login2fa.LoginPartOne(username = data.Username, password, enigmaEfsRoot, userDb);
-                                var lastLoginTime = user.LastLogin;
-                                login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
-                                user.LastLogin = lastLoginTime;
-                                navigator.HideProgressBox();
-                                //Username = CertificatePath = "";
-                                var userInfo = new UserInformation(user);
+                                var userCheck = false;
 
-                                navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+                                await Task.Run(() =>
+                                {
+                                    try
+                                    {
+                                        user = login2fa.LoginPartOne(username = data.Username, password, enigmaEfsRoot, userDb);
+                                        var lastLoginTime = user.LastLogin;
+                                        login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
+                                        user.LastLogin = lastLoginTime;
+                                        navigator.HideProgressBox();
+                                        //Username = CertificatePath = "";
+                                        userCheck = true;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        CertificatePath = "";
+                                        navigator.ShowMessage("Error", ex.Message);
+                                    }
+                                });
+
+                                // If login was successful go to main window.
+                                if (userCheck)
+                                {
+                                    navigator.GoToControl(new MainAppViewModel(navigator, new UserInformation(user), userDb, enigmaEfsRoot));
+                                }
                             }
                             catch (Exception ex)
                             {
