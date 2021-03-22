@@ -414,14 +414,14 @@ namespace Enigma.Wpf.ViewModels
                     {
                         if (obj.Type == FileSystemItemType.Folder)
                         {
-                            if (File.Exists(path + "\\" + obj.Name))
+                            if (Directory.Exists(path + "\\" + obj.Name))
                             {
                                 enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
                                 SetCurrentItems(path);
                             }
                             else
                             {
-                                throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                                throw new Exception($"Folder {obj.Name} is missing.");
                             }
                         }
                         else
@@ -433,7 +433,7 @@ namespace Enigma.Wpf.ViewModels
                     {
                         if (obj.IsAccessGranted())
                         {
-                            // check if user is a file owner
+                            // Check if user is a file owner.
                             if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
                             {
                                 throw new Exception("You can't delete this file. Only a file owner can delete this file.");
