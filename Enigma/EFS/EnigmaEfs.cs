@@ -514,7 +514,13 @@ namespace Enigma.EFS
             var filesToDelete = Directory.GetFiles(Path.GetTempPath(), "Enigma-*");
             foreach (var fileName in filesToDelete)
             {
-                File.Delete(fileName);
+                try
+                {
+                    File.Delete(fileName);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
     }
