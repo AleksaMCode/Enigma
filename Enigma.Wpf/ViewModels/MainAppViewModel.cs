@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.EFS;
+using Enigma.EFS.MFA;
 using Enigma.Models;
 using Enigma.UserDbManager;
 using Enigma.Wpf.Enums;
@@ -26,6 +29,7 @@ namespace Enigma.Wpf.ViewModels
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
         private readonly bool userCertificateExpired;
+        private bool isKeyImportet = false;
 
         /// <summary>
         /// Root directory of Enigma EFS that contains Shared and users directories.
@@ -111,6 +115,8 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
+        public ICommand RefreshCommand => new RelayCommand(HandleRefreshButton);
+
         private void HandleRefreshButton()
         {
             SetCurrentItems(GetDirPath());
@@ -137,6 +143,85 @@ namespace Enigma.Wpf.ViewModels
             {
                 CurrentItems.Add(new FileSystemItem(efsObject, false));
             }
+        }
+
+        public ICommand ImportKeyCommand => new RelayCommand(HandleImportKey);
+
+        private async void HandleImportKey()
+        {
+            var keyForm = new PrivateKeyFormViewModel(navigator, !enigmaEfs.currentUser.UsbKey);
+            byte[] key = null;
+
+            if (enigmaEfs.currentUser.UsbKey)
+            {
+                navigator.ShowProgressBox("Waiting for USB...");
+                var driveDet = new DriveDetection();
+                key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
+
+                if (key == null)
+                {
+                    throw new Exception("Error occured while reading user's encrypted RSA key.");
+                }
+
+                navigator.HideProgressBox();
+            }
+
+            keyForm.OnSubmit += data =>
+            {
+                navigator.ShowProgressBox("Verifying key...");
+
+                Task.Run(() =>
+                {
+                    if (enigmaEfs.currentUser.UsbKey)
+                    {
+                        try
+                        {
+                            var privateKey = LoginController.GetPrivateKey(key, data.KeyPassword);
+
+                            // Compare private RSA key with saved public RSA key.
+                            if (!RsaAlgorithm.CompareKeys(enigmaEfs.currentUser.PublicKey, privateKey))
+                            {
+                                throw new Exception("Wrong key used.");
+                            }
+
+                            // Set user's private key.
+                            enigmaEfs.currentUser.PrivateKey = privateKey;
+                            // Update key icon to green!
+                            isKeyImportet = true;
+                            navigator.HideProgressBox();
+                        }
+                        catch (Exception ex)
+                        {
+                            navigator.ShowMessage("Error", ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var privateKey = LoginController.GetPrivateKey(key, data.KeyPassword);
+
+                            // Compare private RSA key with saved public RSA key.
+                            if (!RsaAlgorithm.CompareKeys(enigmaEfs.currentUser.PublicKey, privateKey))
+                            {
+                                throw new Exception("Wrong key used.");
+                            }
+
+                            // Set user's private key.
+                            enigmaEfs.currentUser.PrivateKey = privateKey;
+                            // Update key icon to green!
+                            isKeyImportet = true;
+                            navigator.HideProgressBox();
+                        }
+                        catch (Exception ex)
+                        {
+                            navigator.ShowMessage("Error", ex.Message);
+                        }
+                    }
+                });
+            };
+
+            navigator.OpenFlyoutPanel(keyForm);
         }
 
         private void ExitEnigma()
@@ -379,7 +464,7 @@ namespace Enigma.Wpf.ViewModels
             };
 
             navigator.OpenFlyoutPanel(dialog);
-            
+
         }
 
         public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);

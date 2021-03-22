@@ -158,7 +158,7 @@ namespace Enigma.Models
             return RsaAlgorithm.ExportParametersFromPemKey(Encoding.ASCII.GetString(keyRaw), true);
         }
 
-        public RSAParameters GetPrivateKey(byte[] encryptedPrivateKey, string password)
+        public static RSAParameters GetPrivateKey(byte[] encryptedPrivateKey, string password)
         {
             var keyRaw = DecryptTheUserKey(encryptedPrivateKey, password);
 
@@ -172,7 +172,7 @@ namespace Enigma.Models
         /// <param name="salt">Salt used to create  entered password hash.</param>
         /// <param name="passwordDigest">Passwords hash.</param>
         /// <returns>true if passwords match, otherwise false.</returns>
-        private bool CheckKeyPassword(byte[] password, byte[] salt, byte[] passwordDigest)
+        private static bool CheckKeyPassword(byte[] password, byte[] salt, byte[] passwordDigest)
         {
             var currentPasswordDigest = SHA256.Create().ComputeHash(password.Concat(salt).ToArray());
 
@@ -185,7 +185,7 @@ namespace Enigma.Models
         /// <param name="keyRawEncrypted">User RSA key haystack.</param>
         /// <param name="password">Users private RSA key password.</param>
         /// <returns>Users RSA private key in raw form.</returns>
-        private byte[] DecryptTheUserKey(byte[] keyRawEncrypted, string password)
+        private static byte[] DecryptTheUserKey(byte[] keyRawEncrypted, string password)
         {
             var passwordBytes = Encoding.ASCII.GetBytes(password);
             var startLocation = BitConverter.ToInt32(keyRawEncrypted, 0);

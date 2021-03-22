@@ -289,90 +289,90 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
-        private async void KeyHandle(User user, LoginController login2fa, UserDatabase userDb)
-        {
-            var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
-            byte[] key = null;
+        //private async void KeyHandle(User user, LoginController login2fa, UserDatabase userDb)
+        //{
+        //    var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
+        //    byte[] key = null;
 
-            if (user.UsbKey == 1)
-            {
-                navigator.ShowProgressBox("Waiting for USB...");
-                var driveDet = new DriveDetection();
-                key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
+        //    if (user.UsbKey == 1)
+        //    {
+        //        navigator.ShowProgressBox("Waiting for USB...");
+        //        var driveDet = new DriveDetection();
+        //        key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
 
-                if (key == null)
-                {
-                    throw new Exception("Error occured while reading user's encrypted RSA key.");
-                }
+        //        if (key == null)
+        //        {
+        //            throw new Exception("Error occured while reading user's encrypted RSA key.");
+        //        }
 
-                navigator.HideProgressBox();
-            }
+        //        navigator.HideProgressBox();
+        //    }
 
-            keyForm.OnSubmit += data =>
-            {
-                navigator.ShowProgressBox("Verifying key...");
-                Task.Run(() =>
-                {
-                    if (user.UsbKey == 1)
-                    {
-                        UserInformation userInfo;
-                        try
-                        {
-                            userInfo = new UserInformation(user)
-                            {
-                                PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
-                            };
+        //    keyForm.OnSubmit += data =>
+        //    {
+        //        navigator.ShowProgressBox("Verifying key...");
+        //        Task.Run(() =>
+        //        {
+        //            if (user.UsbKey == 1)
+        //            {
+        //                UserInformation userInfo;
+        //                try
+        //                {
+        //                    userInfo = new UserInformation(user)
+        //                    {
+        //                        PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
+        //                    };
 
-                            // Compare private RSA key with saved public RSA key.
-                            if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
-                            {
-                                throw new Exception("Wrong key used.");
-                            }
+        //                    // Compare private RSA key with saved public RSA key.
+        //                    if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
+        //                    {
+        //                        throw new Exception("Wrong key used.");
+        //                    }
 
-                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
-                        }
-                        catch (Exception ex)
-                        {
-                            //passBox.Clear();
-                            navigator.ShowMessage("Error", ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        UserInformation userInfo;
+        //                    navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    //passBox.Clear();
+        //                    navigator.ShowMessage("Error", ex.Message);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                UserInformation userInfo;
 
-                        // for testing
-                        data.PrivateKeyPath = @"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\private_encrypted\priv_2.bin";
-                        data.KeyPassword = "rainfallonwednesday";
-                        // =========
+        //                // for testing
+        //                data.PrivateKeyPath = @"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\private_encrypted\priv_2.bin";
+        //                data.KeyPassword = "rainfallonwednesday";
+        //                // =========
 
-                        try
-                        {
-                            userInfo = new UserInformation(user)
-                            {
-                                PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
-                            };
+        //                try
+        //                {
+        //                    userInfo = new UserInformation(user)
+        //                    {
+        //                        PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
+        //                    };
 
-                            // Compare private RSA key with saved public RSA key.
-                            if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
-                            {
-                                throw new Exception("Wrong key used.");
-                            }
+        //                    // Compare private RSA key with saved public RSA key.
+        //                    if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
+        //                    {
+        //                        throw new Exception("Wrong key used.");
+        //                    }
 
-                            navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
-                            navigator.HideProgressBox();
-                        }
-                        catch (Exception ex)
-                        {
-                            //passBox.Clear();
-                            navigator.ShowMessage("Error", ex.Message);
-                        }
-                    }
-                });
-            };
+        //                    navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
+        //                    navigator.HideProgressBox();
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    //passBox.Clear();
+        //                    navigator.ShowMessage("Error", ex.Message);
+        //                }
+        //            }
+        //        });
+        //    };
 
-            navigator.OpenFlyoutPanel(keyForm);
-        }
+        //    navigator.OpenFlyoutPanel(keyForm);
+        //}
 
         private async void HandleRegister(PasswordBox passBox)
         {
