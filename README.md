@@ -331,7 +331,7 @@ As an additional security random delimiter with random length, that varies betwe
 ## To-Do List
 - [ ] Implement encryption of large files.
   - [ ] Remove 2 GB file size restriction.
-  - [ ] Remove file type limitations.
+  - [x] Remove file type limitations.
 - [ ] ~~Implement SHA-3 hashing (-224,-256,-384 and -512).~~
 - [ ] Implement [trusted timestamping](https://en.wikipedia.org/wiki/Trusted_timestamping) and TSA.
 - [ ] Implement re-login process after 5 minutes of inactivity.
