@@ -414,8 +414,24 @@ namespace Enigma.Wpf.ViewModels
                         {
                             if (Directory.Exists(path + "\\" + obj.Name))
                             {
-                                enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
-                                SetCurrentItems(path);
+                                if (path.StartsWith(enigmaEfs.sharedDir))
+                                {
+                                    if (Directory.GetDirectories(path + "\\" + obj.Name).Length == 0 &&
+                                    Directory.GetFiles(path + "\\" + obj.Name).Length == 0)
+                                    {
+                                        enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
+                                        SetCurrentItems(path);
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("You cannot delete non-empty folders from Shared folder.");
+                                    }
+                                }
+                                else
+                                {
+                                    enigmaEfs.DeleteDirectory(path + "\\" + obj.Name);
+                                    SetCurrentItems(path);
+                                }
                             }
                             else
                             {
