@@ -242,12 +242,15 @@ namespace Enigma.Wpf.ViewModels
                                 var lastLoginTime = user.LastLogin;
                                 login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
                                 user.LastLogin = lastLoginTime;
-                                KeyHandle(user, login2fa, userDb);
                                 navigator.HideProgressBox();
-                                Username = CertificatePath = "";
+                                //Username = CertificatePath = "";
+                                var userInfo = new UserInformation(user);
+
+                                navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
                             }
                             catch (Exception ex)
                             {
+                                CertificatePath = "";
                                 navigator.ShowMessage("Error", ex.Message);
                             }
                         }
@@ -258,12 +261,14 @@ namespace Enigma.Wpf.ViewModels
                 else
                 {
                     navigator.HideProgressBox();
+                    CertificatePath = "";
                     throw new Exception("Certificate isn't valid.");
                 }
             }
             catch (Exception ex)
             {
                 //passBox.Clear();
+                CertificatePath = "";
                 navigator.ShowMessage("Error", ex.Message);
             }
         }
