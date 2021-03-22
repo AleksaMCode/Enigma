@@ -313,7 +313,7 @@ namespace Enigma.Wpf.ViewModels
                     }
                     else
                     {
-                        throw new Exception(string.Format("Directory {0} is missing.", data.InputFilePath));
+                        throw new Exception($"Directory {data.InputFilePath} is missing.");
                     }
                 }
                 catch (Exception ex)
@@ -374,7 +374,7 @@ namespace Enigma.Wpf.ViewModels
                     }
                     else
                     {
-                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                        throw new Exception($"Directory {path} is missing.");
                     }
                 }
                 catch (Exception ex)
@@ -390,8 +390,6 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleDeleteItem(FileSystemItem obj)
         {
-            // display warning message "You are about to perform action that will result in a permanent change to Enigma EFS. Are you sure that you want to proceed?"
-            // Yes | No
             var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change to Enigma EFS. Are you sure that you want to proceed?");
 
             dialog.OnSubmit += confirmed =>
@@ -407,7 +405,7 @@ namespace Enigma.Wpf.ViewModels
 
                     if (!Directory.Exists(path))
                     {
-                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                        throw new Exception($"Directory {path} is missing.");
                     }
 
                     if (obj.Type != FileSystemItemType.File)
