@@ -134,7 +134,7 @@ namespace Enigma.Wpf.ViewModels
             // Shared folder is always visible except when "visiting" Shared folder.
             if (!addressBarText.StartsWith("\\Shared"))
             {
-                shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
+                shared = new FileSystemItem(new EfsDirectory(enigmaEfs.SharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
                 CurrentItems.Add(shared);
             }
 
@@ -274,9 +274,9 @@ namespace Enigma.Wpf.ViewModels
             }
 
             // Delete user's share files.
-            if (Directory.Exists(enigmaEfs.sharedDir))
+            if (Directory.Exists(enigmaEfs.SharedDir))
             {
-                enigmaEfs.DeleteUsersShareFiles(enigmaEfs.sharedDir);
+                enigmaEfs.DeleteUsersShareFiles(enigmaEfs.SharedDir);
             }
 
             // Remove user from user database.
@@ -414,7 +414,7 @@ namespace Enigma.Wpf.ViewModels
                         {
                             if (Directory.Exists(path + "\\" + obj.Name))
                             {
-                                if (path.StartsWith(enigmaEfs.sharedDir))
+                                if (path.StartsWith(enigmaEfs.SharedDir))
                                 {
                                     if (Directory.GetDirectories(path + "\\" + obj.Name).Length == 0 &&
                                     Directory.GetFiles(path + "\\" + obj.Name).Length == 0)

@@ -18,7 +18,8 @@ namespace Enigma.EFS
     {
         private readonly string mountLocation;
         private readonly string rootDir;
-        public readonly string sharedDir;
+
+        public readonly string SharedDir;
 
         /// <summary>
         /// Information about the currently logged-in user.
@@ -40,7 +41,7 @@ namespace Enigma.EFS
         {
             mountLocation = rootDir.Substring(0, 2);
             this.rootDir = rootDir;
-            sharedDir = rootDir + "\\Shared";
+            SharedDir = rootDir + "\\Shared";
 
             currentUser = user;
 
@@ -53,9 +54,9 @@ namespace Enigma.EFS
                     Directory.CreateDirectory(rootDir);
                 }
                 // create a new shared directory if one isn't already created
-                if (!Directory.Exists(sharedDir))
+                if (!Directory.Exists(SharedDir))
                 {
-                    Directory.CreateDirectory(sharedDir);
+                    Directory.CreateDirectory(SharedDir);
                 }
 
                 if (!Directory.Exists(rootDir + "\\" + user.Username))
@@ -306,10 +307,10 @@ namespace Enigma.EFS
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
-                CreateFile(updatedEncryptedFileRaw, sharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
+                CreateFile(updatedEncryptedFileRaw, SharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
 
                 // When first sharing a file from user folder to shared folder.
-                if (pathOnEfs.Split('\\')[1] != sharedDir)
+                if (pathOnEfs.Split('\\')[1] != SharedDir)
                 {
                     DeleteFile(pathOnEfs);
                 }
@@ -335,7 +336,7 @@ namespace Enigma.EFS
                 // File is moved from shared folder to user's folder.
                 if (numberOfSharedUsers != 1)
                 {
-                    CreateFile(updatedEncryptedFileRaw, sharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
+                    CreateFile(updatedEncryptedFileRaw, SharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
                     DeleteFile(pathOnEfs);
                 }
                 // If no other user other than file owner can access a file, it's moved from shared folder to file owners folder.
