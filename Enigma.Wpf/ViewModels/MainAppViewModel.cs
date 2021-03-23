@@ -218,7 +218,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void ExitEnigma()
         {
-            enigmaEfs.RemoveTempFiles();
+            EnigmaEfs.RemoveTempFiles();
         }
 
         public ICommand LogOutCommand => new RelayCommand(HandleLogOut);
@@ -226,7 +226,7 @@ namespace Enigma.Wpf.ViewModels
         private void HandleLogOut()
         {
             // Remove all temporary files created by the user.
-            enigmaEfs.RemoveTempFiles();
+            EnigmaEfs.RemoveTempFiles();
             navigator.GoToPreviousControl();
         }
 
