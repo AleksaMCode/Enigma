@@ -2,11 +2,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Enigma.AlgorithmLibrary.Algorithms;
 using Enigma.EFS.MFA;
 using Enigma.Models;
 using Enigma.UserDbManager;
@@ -75,7 +75,7 @@ namespace Enigma.Wpf.ViewModels
         {
             navigator = mainWindowViewModel;
 
-            // parse config file
+            // Parse config file.
             var configInfo = File.ReadAllLines(rootFilesPath + "EnigmaEFS.config");
 
             enigmaEfsRoot = configInfo[0].Split('\t')[1];
@@ -261,7 +261,7 @@ namespace Enigma.Wpf.ViewModels
                                 // If login was successful go to main window.
                                 if (userCheck)
                                 {
-                                    navigator.GoToControl(new MainAppViewModel(navigator, new UserInformation(user), userDb, enigmaEfsRoot));
+                                    navigator.GoToControl(new MainAppViewModel(navigator, new UserInformation(user), userDb, enigmaEfsRoot, Encoding.ASCII.GetBytes(password)));
                                 }
                             }
                             catch (Exception ex)

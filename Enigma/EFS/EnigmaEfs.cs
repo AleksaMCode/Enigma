@@ -16,16 +16,24 @@ namespace Enigma.EFS
     /// </summary>
     public class EnigmaEfs
     {
+        /// <summary>
+        /// Mount directory for Enigma EFS.
+        /// </summary>
         private readonly string mountLocation;
-        private readonly string rootDir;
+
+        /// <summary>
+        /// Root directory of Enigma EFS that contains Shared and user's directories.
+        /// </summary>
+        public readonly string RootDir;
 
         public readonly string SharedDir;
+
+        public readonly string UserDir;
 
         /// <summary>
         /// Information about the currently logged-in user.
         /// </summary>
         public readonly UserInformation currentUser;
-
 
         /// <summary>
         /// Information on whether the user has a private RSA USB key. 
@@ -37,13 +45,15 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="user">Information about the currently logged in user from the database.</param>
         /// <param name="rootDir">Path to Enigma's Efs root directory.</param>
-        public EnigmaEfs(UserInformation user, string rootDir)
+        /// <param name="passwordRaw">Raw password in bytes.</param>
+        public EnigmaEfs(UserInformation user, string rootDir, byte[] passwordRaw)
         {
             mountLocation = rootDir.Substring(0, 2);
-            this.rootDir = rootDir;
+            RootDir = rootDir;
             SharedDir = rootDir + "\\Shared";
 
             currentUser = user;
+            UserDir = GetUserDirName(passwordRaw);
 
             // EFS "mount"
             if (Directory.Exists(mountLocation))
@@ -59,15 +69,37 @@ namespace Enigma.EFS
                     Directory.CreateDirectory(SharedDir);
                 }
 
-                if (!Directory.Exists(rootDir + "\\" + user.Username))
+                if (!Directory.Exists(rootDir + "\\" + UserDir))
                 {
-                    Directory.CreateDirectory(rootDir + "\\" + user.Username);
+                    Directory.CreateDirectory(rootDir + "\\" + UserDir);
                 }
             }
             else
             {
                 throw new Exception("Mount location for Enigma Encrypted File System is missing.");
             }
+        }
+
+        /// <summary>
+        /// Encrypt user's root directory name.
+        /// </summary>
+        /// <param name="passwordRaw">Raw password in bytes.</param>
+        /// <returns>Encrypted username.</returns>
+        private string GetUserDirName(byte[] passwordRaw)
+        {
+            var hash = SHA512.Create().ComputeHash(passwordRaw);
+            var key = new byte[32];
+            var iv = new byte[16];
+
+            Buffer.BlockCopy(hash, 0, key, 0, 32);
+            Buffer.BlockCopy(hash, 32, iv, 0, 16);
+
+            var usernameRaw = Encoding.ASCII.GetBytes(currentUser.Username);
+
+            var encryptedName = Convert.ToBase64String(new AesAlgorithm(key, iv, "OFB").Encrypt(usernameRaw));
+            encryptedName = encryptedName.Replace('/', '$');
+
+            return encryptedName;
         }
 
         /// <summary>
@@ -342,7 +374,7 @@ namespace Enigma.EFS
                 // If no other user other than file owner can access a file, it's moved from shared folder to file owners folder.
                 else
                 {
-                    CreateFile(updatedEncryptedFileRaw, rootDir + "\\" + currentUser.Username + "\\" + encryptedFile.GetEncryptedFileFullName());
+                    CreateFile(updatedEncryptedFileRaw, RootDir + "\\" + UserDir + "\\" + encryptedFile.GetEncryptedFileFullName());
                     DeleteFile(pathOnEfs);
                 }
             }
@@ -363,7 +395,7 @@ namespace Enigma.EFS
 
             if (CanItBeStored(updatedEncryptedFileRaw.Length))
             {
-                CreateFile(updatedEncryptedFileRaw, rootDir + "\\" + currentUser.Username + "\\" + encryptedFile.GetEncryptedFileFullName());
+                CreateFile(updatedEncryptedFileRaw, RootDir + "\\" + UserDir + "\\" + encryptedFile.GetEncryptedFileFullName());
                 DeleteFile(pathOnEfs);
             }
             else

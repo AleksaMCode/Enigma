@@ -31,24 +31,16 @@ namespace Enigma.Wpf.ViewModels
         private readonly bool userCertificateExpired;
         private bool isKeyImportet = false;
 
-        /// <summary>
-        /// Root directory of Enigma EFS that contains Shared and users directories.
-        /// </summary>
-        private readonly string rootDir;
-
         private string addressBarText;
         private Stack<string> backDir = new Stack<string>();
         private Stack<string> forwardDir = new Stack<string>();
         // private string previousDir = null;
 
-        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, string rootDir)
+        public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, string rootDir, byte[] password)
         {
             navigator = mainWindow;
             usersDb = db;
-            enigmaEfs = new EnigmaEfs(user, rootDir);
-            //shared = new FileSystemItem(new EfsDirectory(enigmaEfs.sharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey));
-            //CurrentItems.Add(shared);
-            this.rootDir = rootDir;
+            enigmaEfs = new EnigmaEfs(user, rootDir, password);
             userCertificateExpired = Convert.ToDateTime(user.CertificateExpirationDate) < DateTime.Now;
 
             AddressBarText = "\\";
@@ -268,9 +260,9 @@ namespace Enigma.Wpf.ViewModels
             // Yes | No
 
             // Delete user's files.
-            if (Directory.Exists(rootDir + "\\" + enigmaEfs.currentUser.Username))
+            if (Directory.Exists(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir))
             {
-                Directory.Delete(rootDir + "\\" + enigmaEfs.currentUser.Username, true);
+                Directory.Delete(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir, true);
             }
 
             // Delete user's share files.
@@ -816,7 +808,7 @@ namespace Enigma.Wpf.ViewModels
 
         private string GetDirPath()
         {
-            var path = rootDir;
+            var path = enigmaEfs.RootDir;
 
             if (addressBarText.StartsWith("\\Shared"))
             {
@@ -824,11 +816,11 @@ namespace Enigma.Wpf.ViewModels
             }
             else if (addressBarText == "\\")
             {
-                path += "\\" + enigmaEfs.currentUser.Username;
+                path += "\\" + enigmaEfs.UserDir;
             }
             else // if addressBarText is set to subdirectory inside of the user's directory 
             {
-                path += "\\" + enigmaEfs.currentUser.Username + addressBarText;
+                path += "\\" + enigmaEfs.UserDir + addressBarText;
             }
 
             return path;
