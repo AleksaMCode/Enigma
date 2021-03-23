@@ -249,7 +249,7 @@ namespace Enigma.Wpf.ViewModels
             //        // Update user's directory name.
             //        var oldUserDir = enigmaEfs.UserDir;
             //        enigmaEfs.UserDir = enigmaEfs.GetUserDirName(Encoding.ASCII.GetBytes(data.NewPassword));
-            //        Directory.Move(oldUserDir, enigmaEfs.UserDir);
+            //        Directory.Move(enigmaEfs.RootDir + "\\" + oldUserDir, enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir);
             //    }
             //    catch (Exception ex)
             //    {
