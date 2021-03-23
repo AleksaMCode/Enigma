@@ -130,10 +130,14 @@ namespace Enigma.Wpf.ViewModels
                 CurrentItems.Add(shared);
             }
 
-            var userDir = new EfsDirectory(path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
-            foreach (var efsObject in userDir.objects)
+            // If user's private key isn't loaded, user files are hidden.
+            if (enigmaEfs.currentUser.PrivateKey.Exponent != null)
             {
-                CurrentItems.Add(new FileSystemItem(efsObject, false));
+                var userDir = new EfsDirectory(path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
+                foreach (var efsObject in userDir.objects)
+                {
+                    CurrentItems.Add(new FileSystemItem(efsObject, false));
+                }
             }
         }
 
@@ -818,6 +822,16 @@ namespace Enigma.Wpf.ViewModels
         {
             var path = enigmaEfs.RootDir;
 
+            // If user directory gets deleted.
+            if (!Directory.Exists($@"{path}\{enigmaEfs.UserDir}"))
+            {
+                navigator.ShowMessage("Error", "Your root directory is missing. New one was created.");
+                forwardDir.Clear();
+                backDir.Clear();
+
+                return path + "\\" + enigmaEfs.UserDir;
+            }
+
             if (addressBarText.StartsWith("\\Shared"))
             {
                 path += addressBarText;
@@ -830,6 +844,7 @@ namespace Enigma.Wpf.ViewModels
             {
                 path += "\\" + enigmaEfs.UserDir + addressBarText;
             }
+
 
             return path;
         }
