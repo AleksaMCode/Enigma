@@ -829,7 +829,9 @@ namespace Enigma.Wpf.ViewModels
                 forwardDir.Clear();
                 backDir.Clear();
 
-                return path + "\\" + enigmaEfs.UserDir;
+                Directory.CreateDirectory(path += "\\" + enigmaEfs.UserDir);
+
+                return path;
             }
 
             if (addressBarText.StartsWith("\\Shared"))
