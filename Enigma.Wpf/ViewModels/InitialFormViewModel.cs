@@ -208,11 +208,6 @@ namespace Enigma.Wpf.ViewModels
                 User user = null;
                 LoginController login2fa = null;
 
-                //// for testing
-                //var password = "myRandomPass253";
-                //username = "marko#2393";
-                //certificatePath = @"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\certs\c2.cer";
-                ////============
                 navigator.ShowProgressBox("Checking certificate ...");
                 var certCheck = false;
 
@@ -248,7 +243,6 @@ namespace Enigma.Wpf.ViewModels
                                         login2fa.LoginPartTwo(user, File.ReadAllBytes(certificatePath), userDb, crlListPath, caTrustListPath);
                                         user.LastLogin = lastLoginTime;
                                         navigator.HideProgressBox();
-                                        //Username = CertificatePath = "";
                                         userCheck = true;
                                     }
                                     catch (Exception ex)
@@ -283,96 +277,10 @@ namespace Enigma.Wpf.ViewModels
             }
             catch (Exception ex)
             {
-                //passBox.Clear();
                 CertificatePath = "";
                 navigator.ShowMessage("Error", ex.Message);
             }
         }
-
-        //private async void KeyHandle(User user, LoginController login2fa, UserDatabase userDb)
-        //{
-        //    var keyForm = new PrivateKeyFormViewModel(navigator, user.UsbKey == 0);
-        //    byte[] key = null;
-
-        //    if (user.UsbKey == 1)
-        //    {
-        //        navigator.ShowProgressBox("Waiting for USB...");
-        //        var driveDet = new DriveDetection();
-        //        key = await driveDet.ReadDataFromDriveAsync(20, "key.bin");
-
-        //        if (key == null)
-        //        {
-        //            throw new Exception("Error occured while reading user's encrypted RSA key.");
-        //        }
-
-        //        navigator.HideProgressBox();
-        //    }
-
-        //    keyForm.OnSubmit += data =>
-        //    {
-        //        navigator.ShowProgressBox("Verifying key...");
-        //        Task.Run(() =>
-        //        {
-        //            if (user.UsbKey == 1)
-        //            {
-        //                UserInformation userInfo;
-        //                try
-        //                {
-        //                    userInfo = new UserInformation(user)
-        //                    {
-        //                        PrivateKey = login2fa.GetPrivateKey(key, data.KeyPassword)
-        //                    };
-
-        //                    // Compare private RSA key with saved public RSA key.
-        //                    if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
-        //                    {
-        //                        throw new Exception("Wrong key used.");
-        //                    }
-
-        //                    navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    //passBox.Clear();
-        //                    navigator.ShowMessage("Error", ex.Message);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                UserInformation userInfo;
-
-        //                // for testing
-        //                data.PrivateKeyPath = @"C:\Users\Aleksa\source\repos\Enigma\OPENSSL\private_encrypted\priv_2.bin";
-        //                data.KeyPassword = "rainfallonwednesday";
-        //                // =========
-
-        //                try
-        //                {
-        //                    userInfo = new UserInformation(user)
-        //                    {
-        //                        PrivateKey = login2fa.GetPrivateKey(data.PrivateKeyPath, data.KeyPassword)
-        //                    };
-
-        //                    // Compare private RSA key with saved public RSA key.
-        //                    if (!RsaAlgorithm.CompareKeys(userInfo.PublicKey, userInfo.PrivateKey))
-        //                    {
-        //                        throw new Exception("Wrong key used.");
-        //                    }
-
-        //                    navigator.GoToControl(new MainAppViewModel(navigator, userInfo, userDb, enigmaEfsRoot));
-        //                    navigator.HideProgressBox();
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    //passBox.Clear();
-        //                    navigator.ShowMessage("Error", ex.Message);
-        //                }
-        //            }
-        //        });
-        //    };
-
-        //    navigator.OpenFlyoutPanel(keyForm);
-        //}
 
         private async void HandleRegister(PasswordBox passBox)
         {
@@ -386,68 +294,93 @@ namespace Enigma.Wpf.ViewModels
                         var register = new RegisterController(new UserDatabase(userDatabasePath, pepperPath), commonPasswordsPath, caTrustListPath, crlListPath);
 
                         var fullUsername = username;
-                        register.Register(ref fullUsername, password, CertificatePath);
+                        var successfulReg = false;
 
-                        if (PrivateKeySignupOption == PrivateKeyOption.USB)
+                        navigator.ShowProgressBox("Checking user info ...");
+                        await Task.Run(() =>
                         {
-                            navigator.ShowProgressBox("Waiting for USB...");
-                            var driveDet = new DriveDetection();
-
-                            if (await driveDet.ReadDataFromDriveAsync(20, "priv.key") == null)
+                            try
                             {
-                                throw new Exception("Error occured while reading user's RSA key.");
+                                register.Register(ref fullUsername, password, CertificatePath);
+                                successfulReg = true;
                             }
+                            catch (Exception ex)
+                            {
+                                navigator.HideProgressBox();
+                                navigator.ShowMessage("Error", ex.Message);
+                            }
+                        });
 
+                        if (successfulReg)
+                        {
                             navigator.HideProgressBox();
 
-                            var keyPassForm = new PrivateKeyFormViewModel(navigator);
-                            keyPassForm.OnSubmit += data =>
+                            if (PrivateKeySignupOption == PrivateKeyOption.USB)
                             {
-                                try
+                                navigator.ShowProgressBox("Waiting for USB ...");
+                                var driveDet = new DriveDetection();
+
+                                if (await driveDet.ReadDataFromDriveAsync(20, "priv.key") == null)
                                 {
-                                    register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                    throw new Exception("Error occured while reading user's RSA key.");
+                                }
 
-                                    // User's key is only made if the registering process (Db update) is successful.
-                                    register.EncryptUserKey(driveDet.currentFullPath, data.KeyPassword, true);
+                                navigator.HideProgressBox();
 
-                                    navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+                                var keyPassForm = new PrivateKeyFormViewModel(navigator);
+                                keyPassForm.OnSubmit += async data =>
+                                {
+                                    navigator.ShowProgressBox("Encrypting user's key ...");
+
+                                    await Task.Run(() =>
+                                    {
+                                        try
+                                        {
+                                            register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+
+                                            // User's key is only made if the registering process (Db update) is successful.
+                                            register.EncryptUserKey(driveDet.currentFullPath, data.KeyPassword, true);
+                                            navigator.HideProgressBox();
+                                            navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            navigator.HideProgressBox();
+                                            navigator.ShowMessage("Error", ex.Message);
+                                        }
+                                    });
 
                                     passBox.Clear();
                                     Username = CertificatePath = "";
-                                }
-                                catch (Exception ex)
-                                {
-                                    passBox.Clear();
-                                    navigator.ShowMessage("Error", ex.Message);
-                                }
-
-                            };
-                            navigator.OpenFlyoutPanel(keyPassForm);
-                        }
-                        else
-                        {
-                            var keyPassForm = new PrivateKeyFormViewModel(navigator, true);
-                            keyPassForm.OnSubmit += data =>
+                                };
+                                navigator.OpenFlyoutPanel(keyPassForm);
+                            }
+                            else
                             {
-                                try
+                                var keyPassForm = new PrivateKeyFormViewModel(navigator, true);
+                                keyPassForm.OnSubmit += data =>
                                 {
-                                    register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
+                                    try
+                                    {
+                                        register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
-                                    // User's key is only made if the registering process (Db update) is successful.
-                                    register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
+                                        // User's key is only made if the registering process (Db update) is successful.
+                                        register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
 
-                                    navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+                                        navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
 
-                                    passBox.Clear();
-                                    Username = CertificatePath = "";
-                                }
-                                catch (Exception ex)
-                                {
-                                    passBox.Clear();
-                                    navigator.ShowMessage("Error", ex.Message);
-                                }
-                            };
-                            navigator.OpenFlyoutPanel(keyPassForm);
+                                        passBox.Clear();
+                                        Username = CertificatePath = "";
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        passBox.Clear();
+                                        navigator.ShowMessage("Error", ex.Message);
+                                    }
+                                };
+                                navigator.OpenFlyoutPanel(keyPassForm);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -455,7 +388,6 @@ namespace Enigma.Wpf.ViewModels
                         passBox.Clear();
                         navigator.ShowMessage("Error", ex.Message);
                     }
-                    //navigator.GoToControl(new MainAppViewModel(navigator)); <- remove this!?
                 }
                 else
                 {
