@@ -67,7 +67,7 @@ namespace Enigma.Models
                 throw new Exception("Usernames can't have more than 25 characters.");
             }
 
-            if (skipPasswordStrengthCheck && password.Contains(username))
+            if (!skipPasswordStrengthCheck && password.Contains(username))
             {
                 throw new Exception("Password cannot contain your username.");
             }
@@ -93,13 +93,13 @@ namespace Enigma.Models
             } while (true);
 
             // Check if a password used some of the most common passwords discovered in various data breaches.
-            if (skipPasswordStrengthCheck && PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
+            if (!skipPasswordStrengthCheck && PasswordAdvisor.CommonPasswordCheck(password, commonPasswordsPath))
             {
                 throw new Exception("This password is not allowed. Please try again.");
             }
 
             // Check password strength.
-            if (skipPasswordStrengthCheck && !PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
+            if (!skipPasswordStrengthCheck && !PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
             {
                 throw new Exception($"Password is too weak. It's deemed {passwordStrength}. Please try again.");
             }

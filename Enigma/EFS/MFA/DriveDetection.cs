@@ -12,7 +12,13 @@ namespace Enigma.EFS.MFA
     public class DriveDetection
     {
         private readonly HashSet<char> drives = null;
+
         public char nextDriveLetter { get; set; } = '0';
+
+        /// <summary>
+        /// Path includes full path to the file including the file name.
+        /// </summary>
+        public string currentFullPath;
 
         public DriveDetection()
         {
@@ -68,14 +74,12 @@ namespace Enigma.EFS.MFA
             drives.Add(nextDriveLetter);
 
             // read a file to memory
-            var path = nextDriveLetter + ":\\" + keyName;
+            currentFullPath = nextDriveLetter + ":\\" + keyName;
 
             if (Directory.GetFiles(nextDriveLetter + ":").Length == 1)
             {
-                path += ":\\" + "key.bin";
-
-                var data = File.Exists(path)
-                    ? File.ReadAllBytes(path)
+                var data = File.Exists(currentFullPath)
+                    ? File.ReadAllBytes(currentFullPath)
                     : throw new Exception("Usb key has been compromised or wrong usb has been inserted.");
 
                 SetNextDriveLetter();

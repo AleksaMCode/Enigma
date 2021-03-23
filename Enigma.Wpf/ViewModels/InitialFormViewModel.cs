@@ -395,7 +395,7 @@ namespace Enigma.Wpf.ViewModels
 
                             if (await driveDet.ReadDataFromDriveAsync(20, "priv.key") == null)
                             {
-                                throw new Exception("Error occured while reading user's encrypted RSA key.");
+                                throw new Exception("Error occured while reading user's RSA key.");
                             }
 
                             navigator.HideProgressBox();
@@ -408,9 +408,12 @@ namespace Enigma.Wpf.ViewModels
                                     register.UpdateDatabase(ref fullUsername, password, CertificatePath, PrivateKeySignupOption == PrivateKeyOption.USB);
 
                                     // User's key is only made if the registering process (Db update) is successful.
-                                    register.EncryptUserKey(driveDet.nextDriveLetter + ":\\priv.key", data.KeyPassword, true);
+                                    register.EncryptUserKey(driveDet.currentFullPath, data.KeyPassword, true);
 
                                     navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+
+                                    passBox.Clear();
+                                    Username = CertificatePath = "";
                                 }
                                 catch (Exception ex)
                                 {
@@ -434,6 +437,9 @@ namespace Enigma.Wpf.ViewModels
                                     register.EncryptUserKey(data.PrivateKeyPath, data.KeyPassword, false);
 
                                     navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
+
+                                    passBox.Clear();
+                                    Username = CertificatePath = "";
                                 }
                                 catch (Exception ex)
                                 {
@@ -443,9 +449,6 @@ namespace Enigma.Wpf.ViewModels
                             };
                             navigator.OpenFlyoutPanel(keyPassForm);
                         }
-
-                        passBox.Clear();
-                        Username = CertificatePath = "";
                     }
                     catch (Exception ex)
                     {

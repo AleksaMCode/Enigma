@@ -153,7 +153,7 @@ namespace Enigma.UserDbManager
                     var msg = ex.InnerException.InnerException.Message;
                     if (msg.Contains("PublicKey"))
                     {
-                        throw new Exception("Certificate  isn't unique. Please try registering again with a different certificate.");
+                        throw new Exception("Certificate isn't unique. Please try registering again with a different certificate.");
                     }
                     else if (msg.Contains("PassHash") || msg.Contains("Salt"))
                     {
