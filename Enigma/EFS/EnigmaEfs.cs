@@ -85,7 +85,7 @@ namespace Enigma.EFS
         /// </summary>
         /// <param name="passwordRaw">Raw password in bytes.</param>
         /// <returns>Encrypted username.</returns>
-        private string GetUserDirName(byte[] passwordRaw)
+        public string GetUserDirName(byte[] passwordRaw)
         {
             var hash = SHA512.Create().ComputeHash(passwordRaw);
             var key = new byte[32];

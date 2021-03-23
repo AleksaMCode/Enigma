@@ -243,7 +243,13 @@ namespace Enigma.Wpf.ViewModels
             //            throw new Exception("Passwords don't match.");
             //        }
 
+            //        // Change user's password.
             //        usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword, data.OldPassword);
+
+            //        // Update user's directory name.
+            //        var oldUserDir = enigmaEfs.UserDir;
+            //        enigmaEfs.UserDir = enigmaEfs.GetUserDirName(Encoding.ASCII.GetBytes(data.NewPassword));
+            //        Directory.Move(oldUserDir, enigmaEfs.UserDir);
             //    }
             //    catch (Exception ex)
             //    {
