@@ -34,7 +34,6 @@ namespace Enigma.Wpf.ViewModels
         private string addressBarText;
         private Stack<string> backDir = new Stack<string>();
         private Stack<string> forwardDir = new Stack<string>();
-        // private string previousDir = null;
 
         public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, string rootDir, byte[] password)
         {
@@ -65,7 +64,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleBackButton()
         {
-            // if current dir isn't root
+            // If current dir isn't root.
             if (addressBarText != "\\") // or previousDir.Count != 0
             {
                 var tempDir = backDir.Pop();
@@ -80,6 +79,7 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleForwardButton()
         {
+            // If forward action is possible.
             if (forwardDir.Count != 0)
             {
                 backDir.Push(addressBarText);
@@ -256,28 +256,32 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleAccountDeletion()
         {
-            // display warning message "You are about to perform action that will result in a permanent change. Are you sure that you want to delete your account?"
-            // Yes | No
+            var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change. Are you sure that you want to delete your account?");
 
-            // Delete user's files.
-            if (Directory.Exists(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir))
+            dialog.OnSubmit += confirmed =>
             {
-                Directory.Delete(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir, true);
-            }
+                // Delete user's files.
+                if (Directory.Exists(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir))
+                {
+                    Directory.Delete(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir, true);
+                }
 
-            // Delete user's share files.
-            if (Directory.Exists(enigmaEfs.SharedDir))
-            {
-                enigmaEfs.DeleteUsersShareFiles(enigmaEfs.SharedDir);
-            }
+                // Delete user's share files.
+                if (Directory.Exists(enigmaEfs.SharedDir))
+                {
+                    enigmaEfs.DeleteUsersShareFiles(enigmaEfs.SharedDir);
+                }
 
-            // Remove user from user database.
-            usersDb.RemoveUser(enigmaEfs.currentUser.UserInfo);
+                // Remove user from user database.
+                usersDb.RemoveUser(enigmaEfs.currentUser.UserInfo);
 
-            //SetCurrentItems(enigmaEfs.currentUser.Username);
+                //SetCurrentItems(enigmaEfs.currentUser.Username);
 
-            // Logout from Enigma EFS.
-            HandleLogOut();
+                // Logout from Enigma EFS.
+                HandleLogOut();
+            };
+
+            navigator.OpenFlyoutPanel(dialog);
         }
 
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);
@@ -336,7 +340,7 @@ namespace Enigma.Wpf.ViewModels
                     }
                     else
                     {
-                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                        throw new Exception($"Directory {path} is missing.");
                     }
                 }
                 catch (Exception ex)
@@ -442,7 +446,7 @@ namespace Enigma.Wpf.ViewModels
                             // Check if user is a file owner.
                             if (enigmaEfs.currentUser.Id != obj.GetFileOwnerId())
                             {
-                                throw new Exception("You can't delete this file. Only a file owner can delete this file.");
+                                throw new Exception($"You can't delete {obj.Name}. Only a file owner can delete this file.");
                             }
                             else
                             {
@@ -453,7 +457,7 @@ namespace Enigma.Wpf.ViewModels
                                 }
                                 else
                                 {
-                                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                                    throw new Exception($"File {obj.Name} is missing.");
                                 }
                             }
                         }
@@ -470,7 +474,6 @@ namespace Enigma.Wpf.ViewModels
             };
 
             navigator.OpenFlyoutPanel(dialog);
-
         }
 
         public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
@@ -493,12 +496,12 @@ namespace Enigma.Wpf.ViewModels
 
                 if (!Directory.Exists(path))
                 {
-                    throw new Exception(string.Format("Directory {0} is missing.", path));
+                    throw new Exception($"Directory {path} is missing.");
                 }
 
                 if (!File.Exists(path + "\\" + obj.GetEncryptedFileName()))
                 {
-                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                    throw new Exception($"File {obj.Name} is missing.");
                 }
 
                 var sharedUsers = usersDb.GetUsernamesFromIds(enigmaEfs.GetSharedUsersId(enigmaEfs.currentUser.Id, path + "\\" + obj.GetEncryptedFileName()));
@@ -556,7 +559,7 @@ namespace Enigma.Wpf.ViewModels
                         }
                         else
                         {
-                            throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                            throw new Exception($"File {obj.Name} is missing.");
                         }
                     }
                     catch (Exception ex)
@@ -589,7 +592,7 @@ namespace Enigma.Wpf.ViewModels
                 }
                 if (!File.Exists(GetDirPath() + "\\" + obj.GetEncryptedFileName()))
                 {
-                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                    throw new Exception($"File {obj.Name} is missing.");
                 }
 
                 string exportPath = null;
@@ -615,14 +618,14 @@ namespace Enigma.Wpf.ViewModels
 
                     if (!Directory.Exists(path))
                     {
-                        throw new Exception(string.Format("Directory {0} is missing.", exportPath));
+                        throw new Exception($"Directory {exportPath} is missing.");
                     }
 
                     path += "\\" + obj.GetEncryptedFileName();
 
                     if (!File.Exists(path))
                     {
-                        throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                        throw new Exception($"File {obj.Name} is missing.");
                     }
 
                     enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
@@ -650,7 +653,7 @@ namespace Enigma.Wpf.ViewModels
                 welcomeMessage += "\nYour certificate has expired. You can still use Enigma EFS, but you can't import or edit any files.";
             }
 
-            navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username), "Your last login time was: " + enigmaEfs.currentUser.LastLogin + welcomeMessage);
+            navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username.Substring(0, enigmaEfs.currentUser.Username.Length - 5)), $"Your last login time was: {enigmaEfs.currentUser.LastLogin}" + welcomeMessage);
         }
 
         private void HandleReadFile(FileSystemItem obj)
@@ -674,7 +677,7 @@ namespace Enigma.Wpf.ViewModels
                 }
                 else
                 {
-                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                    throw new Exception($"File {obj.Name} is missing.");
                 }
             }
             catch (Exception ex)
@@ -699,7 +702,7 @@ namespace Enigma.Wpf.ViewModels
                 }
                 if (!File.Exists(GetDirPath() + "\\" + obj.GetEncryptedFileName()))
                 {
-                    throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                    throw new Exception($"File {obj.Name} is missing.");
                 }
 
                 if (obj.Name.EndsWith(".txt"))
@@ -708,16 +711,15 @@ namespace Enigma.Wpf.ViewModels
 
                     if (!Directory.Exists(path))
                     {
-                        throw new Exception(string.Format("Directory {0} is missing.", path));
+                        throw new Exception($"Directory {path} is missing.");
                     }
 
                     path += "\\" + obj.GetEncryptedFileName();
 
                     if (!File.Exists(path))
                     {
-                        throw new Exception(string.Format("File {0} is missing.", obj.Name));
+                        throw new Exception($"File {obj.Name} is missing.");
                     }
-
 
                     var decryptedFile = enigmaEfs.DownloadInMemory(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
 
@@ -735,7 +737,7 @@ namespace Enigma.Wpf.ViewModels
                             }
                             else
                             {
-                                throw new Exception(string.Format("Directory {0} is missing.", path));
+                                throw new Exception($"Directory {path} is missing.");
                             }
                         }
                         catch (Exception ex)
@@ -776,7 +778,7 @@ namespace Enigma.Wpf.ViewModels
                         }
                         else
                         {
-                            throw new Exception(string.Format("Directory {0} is missing.", path));
+                            throw new Exception($"Directory {path} is missing.");
                         }
                     }
                     catch (Exception ex)

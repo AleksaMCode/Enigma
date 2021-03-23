@@ -49,7 +49,7 @@ namespace Enigma.Models
 
             if (user.Locked == 1)
             {
-                throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
+                throw new Exception($"{username} account has been locked. Please contact your admin for further instructions.");
             }
 
             // if user has entered correct password
@@ -76,10 +76,10 @@ namespace Enigma.Models
                     }
 
                     usersDb.LockUser(user);
-                    throw new Exception(string.Format("{0} account has been locked. Please contact your admin for further instructions.", username));
+                    throw new Exception($"{username} account has been locked. Please contact your admin for further instructions.");
                 }
 
-                throw new Exception(string.Format("Invalid username or password. {0} attempt(s) left", 3 - user.LoginAttempt));
+                throw new Exception($"Invalid username or password. {3 - user.LoginAttempt} attempt(s) left");
             }
         }
 

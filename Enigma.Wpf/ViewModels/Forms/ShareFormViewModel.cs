@@ -54,7 +54,7 @@ namespace Enigma.Wpf.ViewModels.Forms
 
             if (userInfo.Locked == 1)
             {
-                throw new Exception(string.Format("You can't share you file with {0} because this account is locked.", SelectedNotSharedUser));
+                throw new Exception($"You can't share you file with {SelectedNotSharedUser} because this account is locked.");
             }
 
             if (userInfo.Revoked != 0 || Convert.ToDateTime(userInfo.CertificateExpirationDate) > DateTime.Now)
@@ -63,7 +63,7 @@ namespace Enigma.Wpf.ViewModels.Forms
             }
             else
             {
-                throw new Exception(string.Format("You can't share your file with {0} because this user's certificate isn't valid anymore.", userInfo.Username));
+                throw new Exception($"You can't share your file with {userInfo.Username} because this user's certificate isn't valid anymore.");
             }
 
             //put SelectedNotSharedUser in selected

@@ -317,11 +317,11 @@ namespace Enigma.EFS
         {
             if (Convert.ToDateTime(user != null ? user.CertificateExpirationDate : currentUser.CertificateExpirationDate) < DateTime.Now)
             {
-                throw new Exception(string.Format("Certificate has expired. {0}", msg));
+                throw new Exception($"Certificate has expired. {msg}");
             }
             else if (user != null ? user.Revoked : currentUser.Revoked)
             {
-                throw new Exception(string.Format("Certificate has been revoked. {0}", msg));
+                throw new Exception($"Certificate has been revoked. {msg}");
             }
         }
 
@@ -332,7 +332,7 @@ namespace Enigma.EFS
         /// <param name="shareUser">User you are sharing a file with.</param>
         public void Share(string pathOnEfs, UserInformation shareUser)
         {
-            CertificateCheck(string.Format("You cannot share files with {0}.", shareUser.Username));
+            CertificateCheck($"You cannot share files with {shareUser.Username}.");
 
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
             var updatedEncryptedFileRaw = encryptedFile.Share(File.ReadAllBytes(pathOnEfs), currentUser.Id, shareUser.Id, currentUser.PrivateKey, shareUser.PublicKey);

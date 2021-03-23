@@ -101,7 +101,7 @@ namespace Enigma.Models
             // Check password strength.
             if (skipPasswordStrengthCheck && !PasswordAdvisor.IsPasswordStrong(password, out var passwordStrength, false))
             {
-                throw new Exception(string.Format("Password is too weak. It's deemed {0}. Please try again.", passwordStrength));
+                throw new Exception($"Password is too weak. It's deemed {passwordStrength}. Please try again.");
             }
 
             var cert = new X509Certificate2(certificateFilePath);

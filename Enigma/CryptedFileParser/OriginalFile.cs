@@ -47,7 +47,7 @@ namespace Enigma.CryptedFileParser
             //}
             //else
             //{
-            //    throw new Exception(string.Format("File type '{0}' is not supported", tokens[1]));
+            //throw new Exception($"File type '{tokens[1]}' is not supported");
             //}
         }
 
