@@ -304,11 +304,12 @@ namespace Enigma.Wpf.ViewModels
                         {
                             try
                             {
-                                register.Register(ref fullUsername, password, CertificatePath);
+                                register.Register(ref fullUsername, password, CertificatePath, skipPasswordStrengthCheck);
                                 successfulReg = true;
                             }
                             catch (Exception ex)
                             {
+                                skipPasswordStrengthCheck = false;
                                 navigator.HideProgressBox();
                                 navigator.ShowMessage("Error", ex.Message);
                             }
@@ -345,7 +346,6 @@ namespace Enigma.Wpf.ViewModels
                                             register.EncryptUserKey(driveDet.currentFullPath, data.KeyPassword, true);
                                             navigator.HideProgressBox();
                                             navigator.ShowMessage("Successful registration", string.Format(successfulMsg, fullUsername));
-
                                         }
                                         catch (Exception ex)
                                         {
