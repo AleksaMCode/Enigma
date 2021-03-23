@@ -345,9 +345,12 @@ As an additional security random delimiter with random length, that varies betwe
 <ul>
     <li><p align="justify">Dirk Strauss - <i>Cryptography in .NET</i></p></li>
     <li><p align="justify">Michael Welschenbach - <i>Cryptography in C and C++</i></p></li>
+    <li><p align="justify">Dirk Strauss - <i>Application Security in .NET Succinctly</i></p></li>
     <li><p align="justify">William Stallings - <i>Cryptography and Network Security: Principles and Practice</i></p></li>
-    <li><p align="justify">John F. Dooley - <i>History of Cryptography and Cryptanalysis: Codes, Ciphers, and Their Algorithms</i></p></li>
-    <li><p align="justify">Bruce Schneier, Niels Ferguson, Tadayoshi Kohno - <i>Cryptography Engineering: Design Principles and Practical Applications</i></p></li>
+    <li><p align="justify"><a href="https://link.springer.com/book/10.1007/978-3-319-90443-6">John F. Dooley - <i>History of Cryptography and Cryptanalysis: Codes, Ciphers, and Their Algorithms</i></a></p></li>
+    <li><p align="justify"><a href="https://link.springer.com/book/10.1007/978-1-4842-4375-6">Stephen Haunts - <i> Applied Cryptography in .NET and Azure Key Vault: A Practical Guide to Encryption in .NET and .NET Core</i></a></p></li>
+    <li><p align="justify"><a href="https://www.amazon.com/Cryptography-Engineering-Principles-Practical-Applications/dp/0470474246">Bruce Schneier, Niels Ferguson, Tadayoshi Kohno - <i>Cryptography Engineering: Design Principles and Practical Applications</i></a></p></li>
+    <li><p align="justify"><a href="https://www.amazon.com/Secure-Programming-Cookbook-Cryptography-Authentication/dp/0596003943">John Viega, Matt Messier - <i>Secure Programming Cookbook for C and C++: Recipes for Cryptography, Authentication, Input Validation & More</i></a></p></li>
 </ul>
 
 ### Links
