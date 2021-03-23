@@ -110,7 +110,7 @@ namespace Enigma.Wpf.ViewModels
                     return;
                 }
 
-                obj.Password = password;
+                VisiblePasswordText = obj.Password = password;
             };
 
             navigator.OpenFlyoutPanel(dialog);
@@ -130,7 +130,7 @@ namespace Enigma.Wpf.ViewModels
                     return;
                 }
 
-                obj.Password = passphrase;
+                VisiblePasswordText = obj.Password = passphrase;
                 skipPasswordStrengthCheck = true;
                 HandleRegister(obj);
             };
