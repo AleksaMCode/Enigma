@@ -542,7 +542,7 @@ namespace Enigma.EFS
         /// <summary>
         /// Removes all temporary files created while reading encrypted files. This method is called when application is closed or when user logs out.
         /// </summary>
-        public void RemoveTempFiles()
+        public static void RemoveTempFiles()
         {
             var filesToDelete = Directory.GetFiles(Path.GetTempPath(), "Enigma-*");
             foreach (var fileName in filesToDelete)

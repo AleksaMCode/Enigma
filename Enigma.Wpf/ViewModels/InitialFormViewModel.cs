@@ -85,6 +85,9 @@ namespace Enigma.Wpf.ViewModels
             dicewareWordsPath = rootFilesPath + configInfo[4].Split('\t')[1];
             caTrustListPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[5].Split('\t')[1];
             crlListPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\" + configInfo[6].Split('\t')[1];
+
+            // Remove any leftover temp files.
+            EFS.EnigmaEfs.RemoveTempFiles();
         }
 
         public ICommand LoginCommand => new RelayCommand(HandleLogin);
