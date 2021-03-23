@@ -88,6 +88,7 @@
 </p>
 
 > **_NOTE:_**
+> 
 > No two users can have the same certificate.
 
 ### Login
