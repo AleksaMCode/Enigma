@@ -65,11 +65,11 @@ namespace Enigma.Wpf.ViewModels
         private void HandleBackButton()
         {
             // If current dir isn't root.
-            if (addressBarText != "\\") // or previousDir.Count != 0
+            if (AddressBarText != "\\") // or previousDir.Count != 0
             {
                 var tempDir = backDir.Pop();
-                forwardDir.Push(addressBarText);
-                addressBarText = tempDir;
+                forwardDir.Push(AddressBarText);
+                AddressBarText = tempDir;
 
                 SetCurrentItems(GetDirPath());
             }
@@ -82,8 +82,8 @@ namespace Enigma.Wpf.ViewModels
             // If forward action is possible.
             if (forwardDir.Count != 0)
             {
-                backDir.Push(addressBarText);
-                addressBarText = forwardDir.Pop();
+                backDir.Push(AddressBarText);
+                AddressBarText = forwardDir.Pop();
 
                 SetCurrentItems(GetDirPath());
             }
@@ -93,11 +93,11 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleUpButton()
         {
-            if (addressBarText != "\\")
+            if (AddressBarText != "\\")
             {
                 var tempDir = backDir.Pop();
                 forwardDir.Clear();
-                addressBarText = tempDir;
+                AddressBarText = tempDir;
 
                 SetCurrentItems(GetDirPath());
             }
@@ -124,7 +124,7 @@ namespace Enigma.Wpf.ViewModels
             CurrentItems.Clear();
 
             // Shared folder is always visible except when "visiting" Shared folder.
-            if (!addressBarText.StartsWith("\\Shared"))
+            if (!AddressBarText.StartsWith("\\Shared"))
             {
                 shared = new FileSystemItem(new EfsDirectory(enigmaEfs.SharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
                 CurrentItems.Add(shared);
@@ -807,8 +807,8 @@ namespace Enigma.Wpf.ViewModels
         {
             if (obj.Type is FileSystemItemType.Folder or FileSystemItemType.SharedFolder)
             {
-                backDir.Push(addressBarText);
-                addressBarText += addressBarText == "\\" ? obj.Name : "\\" + obj.Name;
+                backDir.Push(AddressBarText);
+                AddressBarText += AddressBarText == "\\" ? obj.Name : "\\" + obj.Name;
 
                 SetCurrentItems(GetDirPath());
             }
@@ -834,17 +834,17 @@ namespace Enigma.Wpf.ViewModels
                 return path;
             }
 
-            if (addressBarText.StartsWith("\\Shared"))
+            if (AddressBarText.StartsWith("\\Shared"))
             {
-                path += addressBarText;
+                path += AddressBarText;
             }
-            else if (addressBarText == "\\")
+            else if (AddressBarText == "\\")
             {
                 path += "\\" + enigmaEfs.UserDir;
             }
             else // if addressBarText is set to subdirectory inside of the user's directory 
             {
-                path += "\\" + enigmaEfs.UserDir + addressBarText;
+                path += "\\" + enigmaEfs.UserDir + AddressBarText;
             }
 
 
