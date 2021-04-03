@@ -36,7 +36,11 @@
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
@@ -58,16 +62,27 @@
                     Height="15"
                     Kind="ArrowUpSolid" />
             </Button>
+            <Button Grid.Column="6" Command="{Binding RefreshCommand}">
+                <iconPacks:PackIconFontAwesome
+                    Width="15"
+                    Height="15"
+                    Kind="RedoSolid" />
+            </Button>
 
             <TextBox
-                Grid.Column="6"
+                Grid.Column="8"
                 Padding="3,0"
                 VerticalContentAlignment="Center"
                 FontSize="13"
                 Text="{Binding AddressBarText}" />
-
+            <Button Grid.Column="10" Command="{Binding ImportKeyCommand}">
+                <iconPacks:PackIconFontAwesome
+                    Width="15"
+                    Height="15"
+                    Kind="KeySolid" />
+            </Button>
             <Button
-                Grid.Column="8"
+                Grid.Column="12"
                 Padding="10,0"
                 Command="{Binding LogOutCommand}">
                 Log Out
