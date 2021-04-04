@@ -15,6 +15,7 @@
       - [Login attempt limit](#login-attempt-limit)
       - [Nuclear switch](#nuclear-switch)
     - [Add file](#add-file)
+    - [Add folder](#add-folder)
     - [Create and add new <code>.txt</code> file](#create-and-add-new-txt-file)
     - [Remove file](#remove-file)
     - [File sharing](#file-sharing)
@@ -107,6 +108,9 @@
 ### Add file
 <p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
 
+### Add folder
+<p align="justify">User can add a new folder to EFS by entering folder's name. Folder is added at the current path.</p>
+
 ### Create and add new <code>.txt</code> file
 <p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using a build-in application text editor.</p>
 
@@ -138,6 +142,8 @@
  <li>The Windows directory.</li>
 </ol>
 <p align="justify">After writing a new temp file named "Enigma-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.extension (e.q. Enigma-382c74c3-721d-4f34-80e5-57657b6cbc27.pdf for a <code>.pdf</code> file), file is then opened using a default application on the system for the chosen file type.</p>
+
+<p align="center"><img src="./resources/file-open.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 > **_NOTE:_**
 > 
