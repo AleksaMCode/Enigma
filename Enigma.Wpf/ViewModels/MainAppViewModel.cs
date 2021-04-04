@@ -151,6 +151,12 @@ namespace Enigma.Wpf.ViewModels
 
         private async void HandleImportKey()
         {
+            if (IsKeyImported)
+            {
+                navigator.ShowMessage("Error", "Your key is already imported.");
+                return;
+            }
+
             var keyForm = new PrivateKeyFormViewModel(navigator, !enigmaEfs.currentUser.UsbKey);
             byte[] key = null;
 
@@ -201,7 +207,7 @@ namespace Enigma.Wpf.ViewModels
                     {
                         try
                         {
-                            var privateKey = LoginController.GetPrivateKey(key, data.KeyPassword);
+                            var privateKey = LoginController.GetPrivateKey(File.ReadAllBytes(data.PrivateKeyPath), data.KeyPassword);
 
                             // Compare private RSA key with saved public RSA key.
                             if (!RsaAlgorithm.CompareKeys(enigmaEfs.currentUser.PublicKey, privateKey))
