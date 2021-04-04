@@ -14,7 +14,7 @@ namespace Enigma.Wpf.Converters
                 throw new ArgumentException("Value must be a bool");
             }
 
-            return boolValue ? Colors.SeaGreen : Colors.Red;
+            return new SolidColorBrush(boolValue ? Colors.SeaGreen : Colors.Red);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo language)
