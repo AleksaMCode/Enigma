@@ -309,100 +309,120 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);
 
+        private bool UserPrivateKeyCheck()
+        {
+            if (!IsKeyImported)
+            {
+                navigator.ShowMessage("Error", "Please import you private RSA key first.");
+                return false;
+            }
+
+            return true;
+        }
+
         private void HandleImportFile()
         {
-            var form = new ImportFormViewModel(navigator);
-
-            form.OnSubmit += data =>
+            if (UserPrivateKeyCheck())
             {
-                try
+                var form = new ImportFormViewModel(navigator);
+
+                form.OnSubmit += data =>
                 {
-                    var path = GetDirPath();
-                    if (Directory.Exists(Path.GetDirectoryName(data.InputFilePath)))
+                    try
                     {
-                        if (File.Exists(data.InputFilePath))
+                        var path = GetDirPath();
+                        if (Directory.Exists(Path.GetDirectoryName(data.InputFilePath)))
                         {
-                            var encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
-                            SetCurrentItems(path);
+                            if (File.Exists(data.InputFilePath))
+                            {
+                                var encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
+                                SetCurrentItems(path);
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("File {0} is missing.", data.InputFilePath.Substring(0, data.InputFilePath.LastIndexOf("\\"))));
+                            }
                         }
                         else
                         {
-                            throw new Exception(string.Format("File {0} is missing.", data.InputFilePath.Substring(0, data.InputFilePath.LastIndexOf("\\"))));
+                            throw new Exception($"Directory {data.InputFilePath} is missing.");
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        throw new Exception($"Directory {data.InputFilePath} is missing.");
+                        navigator.ShowMessage("Error", ex.Message);
                     }
-                }
-                catch (Exception ex)
-                {
-                    navigator.ShowMessage("Error", ex.Message);
-                }
-            };
+                };
 
-            navigator.OpenFlyoutPanel(form);
+                navigator.OpenFlyoutPanel(form);
+            }
         }
 
         public ICommand CreateTextFileCommand => new RelayCommand(HandleCreateTextFile);
 
         private void HandleCreateTextFile()
         {
-            var form = new TextFileFormViewModel(navigator);
-
-            form.OnSubmit += (TxtFormData data) =>
+            if (UserPrivateKeyCheck())
             {
-                try
-                {
-                    var path = GetDirPath();
-                    if (Directory.Exists(path))
-                    {
+                var form = new TextFileFormViewModel(navigator);
 
-                        var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
-                        SetCurrentItems(path);
-                    }
-                    else
-                    {
-                        throw new Exception($"Directory {path} is missing.");
-                    }
-                }
-                catch (Exception ex)
+                form.OnSubmit += (TxtFormData data) =>
                 {
-                    navigator.ShowMessage("Error", ex.Message);
-                }
-            };
+                    try
+                    {
+                        var path = GetDirPath();
+                        if (Directory.Exists(path))
+                        {
 
-            navigator.OpenFlyoutPanel(form);
+                            var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
+                            SetCurrentItems(path);
+                        }
+                        else
+                        {
+                            throw new Exception($"Directory {path} is missing.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        navigator.ShowMessage("Error", ex.Message);
+                    }
+                };
+
+                navigator.OpenFlyoutPanel(form);
+            }
         }
 
         public ICommand CreateFolderCommand => new RelayCommand(HandleCreateFolder);
 
         private void HandleCreateFolder()
         {
-            var form = new SimpleStringFormViewModel(navigator, "Folder name:");
-
-            form.OnSubmit += (string dirName) =>
+            if (UserPrivateKeyCheck())
             {
-                try
-                {
-                    var path = GetDirPath();
-                    if (Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path + "\\" + dirName);
-                        SetCurrentItems(path);
-                    }
-                    else
-                    {
-                        throw new Exception($"Directory {path} is missing.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    navigator.ShowMessage("Error", ex.Message);
-                }
-            };
+                var form = new SimpleStringFormViewModel(navigator, "Folder name:");
 
-            navigator.OpenFlyoutPanel(form);
+                form.OnSubmit += (string dirName) =>
+                {
+                    try
+                    {
+                        var path = GetDirPath();
+                        if (Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path + "\\" + dirName);
+                            SetCurrentItems(path);
+                        }
+                        else
+                        {
+                            throw new Exception($"Directory {path} is missing.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        navigator.ShowMessage("Error", ex.Message);
+                    }
+                };
+
+                navigator.OpenFlyoutPanel(form);
+            }
         }
 
         public ICommand DeleteItemCommand => new RelayCommand<FileSystemItem>(HandleDeleteItem);
