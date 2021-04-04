@@ -21,6 +21,7 @@
 
     <UserControl.Resources>
         <converters:FileTypeToIconConverter x:Key="TypeToImageConverter" />
+        <converters:BoolToKeyColorConverter x:Key="boolToKeyColorConverter" />
     </UserControl.Resources>
     <Grid x:Name="ParentGrid" Margin="5">
         <Grid.RowDefinitions>
@@ -79,6 +80,7 @@
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
+                    Foreground="{Binding IsKeyImported, Converter={StaticResource boolToKeyColorConverter}}"
                     Kind="KeySolid" />
             </Button>
             <Button
@@ -167,7 +169,7 @@
                             </ContextMenu>
                         </Grid.ContextMenu>
                         <Grid.ToolTip>
-                            <ToolTip Content="{Binding Name}"></ToolTip>
+                            <ToolTip Content="{Binding Name}" />
                         </Grid.ToolTip>
                         <Grid.InputBindings>
                             <MouseBinding

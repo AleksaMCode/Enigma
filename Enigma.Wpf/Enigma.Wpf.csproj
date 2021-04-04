@@ -115,6 +115,7 @@
       <DependentUpon>ModalPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToGridLengthConverter.cs" />
+    <Compile Include="Converters\BoolToKeyColorConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\FileTypeToIconConverter.cs" />

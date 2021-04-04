@@ -29,11 +29,11 @@ namespace Enigma.Wpf.ViewModels
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
         private readonly bool userCertificateExpired;
-        private bool isKeyImportet = false;
+        private bool isKeyImported = false;
 
         private string addressBarText;
-        private Stack<string> backDir = new Stack<string>();
-        private Stack<string> forwardDir = new Stack<string>();
+        private readonly Stack<string> backDir = new Stack<string>();
+        private readonly Stack<string> forwardDir = new Stack<string>();
 
         public MainAppViewModel(INavigator mainWindow, UserInformation user, UserDatabase db, string rootDir, byte[] password)
         {
@@ -56,6 +56,12 @@ namespace Enigma.Wpf.ViewModels
         {
             get => currentItems;
             set => Set(() => CurrentItems, ref currentItems, value);
+        }
+
+        public bool IsKeyImported
+        {
+            get => isKeyImported;
+            set => Set(() => IsKeyImported, ref isKeyImported, value);
         }
 
         public ICommand ItemDefaultCommand => new RelayCommand<FileSystemItem>(HandleDefaultAction);
@@ -183,7 +189,7 @@ namespace Enigma.Wpf.ViewModels
                             // Set user's private key.
                             enigmaEfs.currentUser.PrivateKey = privateKey;
                             // Update key icon to green!
-                            isKeyImportet = true;
+                            IsKeyImported = true;
                             navigator.HideProgressBox();
                         }
                         catch (Exception ex)
@@ -206,7 +212,7 @@ namespace Enigma.Wpf.ViewModels
                             // Set user's private key.
                             enigmaEfs.currentUser.PrivateKey = privateKey;
                             // Update key icon to green!
-                            isKeyImportet = true;
+                            IsKeyImported = true;
                             navigator.HideProgressBox();
                         }
                         catch (Exception ex)
@@ -842,7 +848,7 @@ namespace Enigma.Wpf.ViewModels
             {
                 path += "\\" + enigmaEfs.UserDir;
             }
-            else // if addressBarText is set to subdirectory inside of the user's directory 
+            else // if addressBarText is set to subdirectory inside of the user's directory
             {
                 path += "\\" + enigmaEfs.UserDir + AddressBarText;
             }
