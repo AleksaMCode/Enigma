@@ -534,7 +534,11 @@ namespace Enigma.Wpf.ViewModels
                     throw new Exception("You can't share files with others because your certificate isn't valid anymore.");
                 }
 
-                var form = new ShareFormViewModel(sharedUsers, usersDb.GetAllUsernames(), usersDb, enigmaEfs, path + "\\" + obj.GetEncryptedFileName());
+                // Get all user's username from db and remove file owner username.
+                var userList = usersDb.GetAllUsernames();
+                userList.Remove(enigmaEfs.currentUser.Username);
+
+                var form = new ShareFormViewModel(sharedUsers, userList, usersDb, enigmaEfs, path + "\\" + obj.GetEncryptedFileName());
 
                 navigator.OpenFlyoutPanel(form);
             }
