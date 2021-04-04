@@ -168,7 +168,8 @@ namespace Enigma.Wpf.ViewModels
 
                 if (key == null)
                 {
-                    throw new Exception("Error occured while reading user's encrypted RSA key.");
+                    navigator.ShowMessage("Error", "Error occured while reading user's encrypted RSA key.");
+                    return;
                 }
 
                 navigator.HideProgressBox();
