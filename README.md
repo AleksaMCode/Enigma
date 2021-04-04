@@ -94,17 +94,21 @@
 ### Login
 <p align="justify">To access <b>Enigmas EFS</b> user needs to login first. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user only needs to provide his certificate (something only the user has). If the entered certificate exists in the Enigma's database, user will be prompted to provide his <i>Username</i> and <i>Password</i> (something only user knows). If the entered password matches the hash value stored for the current user in the database, user's certificate will be subjected to different tests. If the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. At the end, if the login attempt is successful user is granted access to EFS.</p>
 
+<p align="center"><img src="./resources/sign_in.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
+
 #### Login attempt limit
 <p align="justify">Every user has a total of three opportunities to enter his password. After three failed attempts, a "nuclear switch" is turned on and users data is deleted. The emphasis is placed on security of data above anything else. User is prepared to lose his data forever if that means that the attacker won't get his hands on files.</p>
+
+<p align="center"><img src="./resources/failed-login.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 #### Nuclear switch
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, user's account is locked preventing him to login to Enigmas EFS. Only an admin can unlock a user account. Unlocking process is followed with a mandatory user password change.</p>
 
 ### Add file
-<p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported.</p>
+<p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
 
 ### Create and add new <code>.txt</code> file
-<p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using build-in application text editor.</p>
+<p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using a build-in application text editor.</p>
 
 ### Remove file
 <p align="justify">Users can simply delete their files without any restrictions.</p>
