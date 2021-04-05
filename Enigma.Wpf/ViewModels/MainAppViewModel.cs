@@ -409,8 +409,16 @@ namespace Enigma.Wpf.ViewModels
                         var path = GetDirPath();
                         if (Directory.Exists(path))
                         {
-                            Directory.CreateDirectory(path + "\\" + dirName);
-                            SetCurrentItems(path);
+                            var newpath = path + "\\" + dirName;
+                            if (Directory.Exists(newpath))
+                            {
+                                throw new Exception($"Folder '{dirName}' already exists.");
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(newpath);
+                                SetCurrentItems(path);
+                            }
                         }
                         else
                         {
