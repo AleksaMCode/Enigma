@@ -19,11 +19,12 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         public event Action<TxtFormData> OnSubmit;
 
-        public TextFileFormViewModel(INavigator navigator, bool isEdit = false, string text = "")
+        public TextFileFormViewModel(INavigator navigator, bool isEdit = false, string text = "", string fileName = "")
         {
             this.navigator = navigator;
             this.isEdit = isEdit;
             Text = text;
+            FileName = fileName;
         }
 
         public string Text
@@ -62,7 +63,7 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         private void HandleSave()
         {
-            if(string.IsNullOrWhiteSpace(fileName))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 navigator.ShowMessage("Error", "File name is required.");
             }

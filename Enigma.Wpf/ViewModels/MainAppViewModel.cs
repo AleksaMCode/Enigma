@@ -770,7 +770,7 @@ namespace Enigma.Wpf.ViewModels
 
                     var decryptedFile = enigmaEfs.DownloadInMemory(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
 
-                    var form = new TextFileFormViewModel(navigator, true, Encoding.ASCII.GetString(decryptedFile.FileContent));
+                    var form = new TextFileFormViewModel(navigator, true, Encoding.ASCII.GetString(decryptedFile.FileContent), obj.Name.Substring(0,obj.Name.LastIndexOf(".")));
 
                     form.OnSubmit += textData =>
                     {
