@@ -659,16 +659,18 @@ namespace Enigma.Wpf.ViewModels
                 }
 
                 string exportPath = null;
-                using var fileChooseDialog = new OpenFileDialog
+                using var fileChooseDialog = new SaveFileDialog
                 {
                     ValidateNames = true,
-                    CheckFileExists = true,
-                    CheckPathExists = true
+                    CheckPathExists = true,
+                    FileName = obj.Name,
+                    DefaultExt = Path.GetExtension(obj.Name),
+                    AddExtension = true
                 };
 
                 if (fileChooseDialog.ShowDialog() == DialogResult.OK)
                 {
-                    exportPath = fileChooseDialog.FileName;
+                    exportPath = fileChooseDialog.FileName + "." + fileChooseDialog.DefaultExt;
                 }
                 else
                 {
@@ -692,6 +694,7 @@ namespace Enigma.Wpf.ViewModels
                     }
 
                     enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
+                    navigator.ShowMessage("Notification", $"File '{Path.GetFileName(exportPath)}' has been successfully exported");
                 }
                 catch (Exception ex)
                 {

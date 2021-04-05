@@ -211,7 +211,7 @@ namespace Enigma.EFS
             if (CanItBeStored(originalFile.FileContent.Length, pathOnFs.Substring(0, 2)))
             {
                 // write a new unencrypted file
-                CreateFile(originalFile.FileContent, pathOnFs + "\\" + originalFile.GetOriginalFileFullName());
+                CreateFile(originalFile.FileContent, pathOnFs/* + "\\" + originalFile.GetOriginalFileFullName()*/);
 
                 // override existing encrypted file
                 CreateFile(encryptedFile.Flush(), pathOnEfs);
