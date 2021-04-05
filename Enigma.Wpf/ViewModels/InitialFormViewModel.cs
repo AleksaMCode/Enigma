@@ -229,6 +229,7 @@ namespace Enigma.Wpf.ViewModels
                         if (string.IsNullOrEmpty(password))
                         {
                             navigator.ShowMessage("Error", "Password is a required field.");
+                            CertificatePath = "";
                         }
                         else
                         {
