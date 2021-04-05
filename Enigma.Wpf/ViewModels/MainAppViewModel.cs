@@ -406,6 +406,12 @@ namespace Enigma.Wpf.ViewModels
                 {
                     try
                     {
+                        // Check if folder's name is permitted.
+                        if(string.IsNullOrEmpty(dirName) || dirName.IndexOfAny(Path.GetInvalidPathChars()) > 0)
+                        {
+                            throw new Exception($"Folder '{dirName}' isn't permitted.");
+                        }
+
                         var path = GetDirPath();
                         if (Directory.Exists(path))
                         {
