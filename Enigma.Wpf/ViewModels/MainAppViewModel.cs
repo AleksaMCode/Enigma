@@ -407,7 +407,7 @@ namespace Enigma.Wpf.ViewModels
                     try
                     {
                         // Check if folder's name is permitted.
-                        if(string.IsNullOrEmpty(dirName) || dirName.IndexOfAny(Path.GetInvalidPathChars()) > 0)
+                        if (string.IsNullOrEmpty(dirName) || dirName.IndexOfAny(Path.GetInvalidPathChars()) > 0)
                         {
                             throw new Exception($"Folder '{dirName}' isn't permitted.");
                         }
@@ -641,7 +641,7 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand ExportItemCommand => new RelayCommand<FileSystemItem>(HandleExportItem);
 
-        private void HandleExportItem(FileSystemItem obj)
+        private async void HandleExportItem(FileSystemItem obj)
         {
             try
             {
@@ -670,7 +670,7 @@ namespace Enigma.Wpf.ViewModels
 
                 if (fileChooseDialog.ShowDialog() == DialogResult.OK)
                 {
-                    exportPath = fileChooseDialog.FileName + "." + fileChooseDialog.DefaultExt;
+                    exportPath = fileChooseDialog.FileName;
                 }
                 else
                 {
@@ -693,7 +693,11 @@ namespace Enigma.Wpf.ViewModels
                         throw new Exception($"File {obj.Name} is missing.");
                     }
 
-                    enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
+                    navigator.ShowProgressBox($"Exporting a file ...");
+
+                    await Task.Run(() => enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey));
+
+                    navigator.HideProgressBox();
                     navigator.ShowMessage("Notification", $"File '{Path.GetFileName(exportPath)}' has been successfully exported");
                 }
                 catch (Exception ex)
