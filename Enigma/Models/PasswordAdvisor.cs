@@ -95,7 +95,7 @@ namespace Enigma.Models
             // Memorized secrets SHALL be at least 8 characters in length not including spaces.
             if (string.Concat(password.Where(c => !char.IsWhiteSpace(c))).Length < minimumLength)
             {
-                throw new Exception("Password must be at least 8 characters long not including the spaces.");
+                throw new Exception($"Password must be at least {minimumLength} characters long not including the spaces.");
             }
             else if (password.Length > maximumLength)
             {
