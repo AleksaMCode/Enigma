@@ -558,7 +558,7 @@ namespace Enigma.Wpf.ViewModels
                 var userList = usersDb.GetAllUsernames();
                 userList.Remove(enigmaEfs.currentUser.Username);
 
-                var form = new ShareFormViewModel(sharedUsers, userList, usersDb, enigmaEfs, path + "\\" + obj.GetEncryptedFileName());
+                var form = new ShareFormViewModel(sharedUsers, userList, usersDb, enigmaEfs, path + "\\" + obj.GetEncryptedFileName(), navigator);
 
                 navigator.OpenFlyoutPanel(form);
             }

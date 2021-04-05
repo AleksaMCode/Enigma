@@ -9,6 +9,7 @@ using Enigma.EFS;
 using System;
 using Enigma.Models;
 using System.IO;
+using Enigma.Wpf.Interfaces;
 
 namespace Enigma.Wpf.ViewModels.Forms
 {
@@ -19,6 +20,7 @@ namespace Enigma.Wpf.ViewModels.Forms
         private readonly UserDatabase usersDb;
         private readonly EnigmaEfs enigmaEfs;
         private readonly string filePath;
+        private readonly INavigator navigator;
 
         public ObservableCollection<string> SharedUsers { get; set; }
 
@@ -36,7 +38,7 @@ namespace Enigma.Wpf.ViewModels.Forms
             set => Set(() => SelectedNotSharedUser, ref selectedNotSharedUser, value);
         }
 
-        public ShareFormViewModel(IEnumerable<string> shared, IEnumerable<string> all, UserDatabase db, EnigmaEfs efs, string filePath)
+        public ShareFormViewModel(IEnumerable<string> shared, IEnumerable<string> all, UserDatabase db, EnigmaEfs efs, string filePath, INavigator navigator)
         {
             SharedUsers = new ObservableCollection<string>(shared);
             NotSharedUsers = new ObservableCollection<string>(all.Where(x => !shared.Contains(x)));
@@ -44,6 +46,7 @@ namespace Enigma.Wpf.ViewModels.Forms
             usersDb = db;
             enigmaEfs = efs;
             this.filePath = filePath;
+            this.navigator = navigator;
         }
 
         public ICommand AddCommand => new RelayCommand(HandleAddCommand);
@@ -54,7 +57,8 @@ namespace Enigma.Wpf.ViewModels.Forms
 
             if (userInfo.Locked == 1)
             {
-                throw new Exception($"You can't share you file with {SelectedNotSharedUser} because this account is locked.");
+                navigator.ShowMessage("Error", $"You can't share you file with {SelectedNotSharedUser} because this account is locked.");
+                return;
             }
 
             if (userInfo.Revoked != 0 || Convert.ToDateTime(userInfo.CertificateExpirationDate) > DateTime.Now)
@@ -63,7 +67,8 @@ namespace Enigma.Wpf.ViewModels.Forms
             }
             else
             {
-                throw new Exception($"You can't share your file with {userInfo.Username} because this user's certificate isn't valid anymore.");
+                navigator.ShowMessage("Error", $"You can't share your file with {userInfo.Username} because this user's certificate isn't valid anymore.");
+                return;
             }
 
             //put SelectedNotSharedUser in selected

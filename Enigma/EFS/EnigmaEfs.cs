@@ -342,7 +342,7 @@ namespace Enigma.EFS
                 CreateFile(updatedEncryptedFileRaw, SharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
 
                 // When first sharing a file from user folder to shared folder.
-                if (pathOnEfs.Split('\\')[1] != SharedDir)
+                if (pathOnEfs.Substring(0,pathOnEfs.LastIndexOf('\\')) != SharedDir)
                 {
                     DeleteFile(pathOnEfs);
                 }
@@ -369,9 +369,8 @@ namespace Enigma.EFS
                 if (numberOfSharedUsers != 1)
                 {
                     CreateFile(updatedEncryptedFileRaw, SharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
-                    DeleteFile(pathOnEfs);
                 }
-                // If no other user other than file owner can access a file, it's moved from shared folder to file owners folder.
+                // If no other user other than file owner can access a file, it's moved from shared folder to file owner's folder.
                 else
                 {
                     CreateFile(updatedEncryptedFileRaw, RootDir + "\\" + UserDir + "\\" + encryptedFile.GetEncryptedFileFullName());
