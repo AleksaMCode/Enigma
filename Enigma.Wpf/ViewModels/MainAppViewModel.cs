@@ -328,7 +328,7 @@ namespace Enigma.Wpf.ViewModels
             {
                 var form = new ImportFormViewModel(navigator);
 
-                form.OnSubmit += data =>
+                form.OnSubmit += async data =>
                 {
                     try
                     {
@@ -337,8 +337,14 @@ namespace Enigma.Wpf.ViewModels
                         {
                             if (File.Exists(data.InputFilePath))
                             {
-                                var encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal);
+                                navigator.ShowProgressBox($"Importing a file ...");
+                                string encrypedName;
+
+                                await Task.Run(() => encrypedName = enigmaEfs.Upload(data.InputFilePath, path, data.AlgorithmIdentifier, data.HashIdentifier, data.DeleteOriginal));
                                 SetCurrentItems(path);
+
+                                navigator.HideProgressBox();
+                                navigator.ShowMessage("Notification", $"File '{Path.GetFileName(data.InputFilePath)}' has been successfully imported.");
                             }
                             else
                             {
@@ -698,7 +704,7 @@ namespace Enigma.Wpf.ViewModels
                     await Task.Run(() => enigmaEfs.Download(path, exportPath, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey));
 
                     navigator.HideProgressBox();
-                    navigator.ShowMessage("Notification", $"File '{Path.GetFileName(exportPath)}' has been successfully exported");
+                    navigator.ShowMessage("Notification", $"File '{Path.GetFileName(exportPath)}' has been successfully exported.");
                 }
                 catch (Exception ex)
                 {
