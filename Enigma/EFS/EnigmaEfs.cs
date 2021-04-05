@@ -291,7 +291,7 @@ namespace Enigma.EFS
             var encryptedFile = new EncryptedFile(pathOnEfs.Substring(pathOnEfs.LastIndexOf('\\') + 1).Split('.')[0]);
             var updatedEncryptedFileRaw = encryptedFile.Update(updateFile, File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.PrivateKey);
 
-            // name update is always necessary because files IV has been changed
+            // Name update is always necessary because file's IV has been changed and possibly a new file has a different name.
             encryptedFile.NameEncryption(updateFile.GetOriginalFileFullName(),
                 new AesAlgorithm(((SecurityDescriptor)encryptedFile.Headers[1]).GetKey((int)currentUser.Id, currentUser.PrivateKey),
                 ((SecurityDescriptor)encryptedFile.Headers[1]).IV, "OFB"));

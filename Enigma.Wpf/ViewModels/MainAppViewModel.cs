@@ -820,7 +820,7 @@ namespace Enigma.Wpf.ViewModels
                         var path = GetDirPath();
                         if (Directory.Exists(path))
                         {
-                            enigmaEfs.Update(path, filePath + "\\" + obj.GetEncryptedFileName(), obj.Name.Split('.')[1]);
+                            enigmaEfs.Update(path + "\\" + obj.GetEncryptedFileName(), filePath, obj.Name.Split('.')[1]);
                             SetCurrentItems(path);
                         }
                         else
