@@ -214,7 +214,18 @@ namespace Enigma.Wpf.ViewModels
                 navigator.ShowProgressBox("Checking certificate ...");
                 var certCheck = false;
 
-                await Task.Run(() => certCheck = userDb.IsCertificateUsed(CertificatePath));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        certCheck = userDb.IsCertificateUsed(CertificatePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        certCheck = false;
+                    }
+                });
+
 
                 if (certCheck)
                 {
