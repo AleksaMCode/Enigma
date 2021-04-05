@@ -250,6 +250,8 @@ namespace Enigma.Wpf.ViewModels
             navigator.GoToPreviousControl();
         }
 
+        public ICommand PasswordChangeCommand => new RelayCommand(HandlePasswordChange);
+
         private void HandlePasswordChange()
         {
             //var form = new ChangePasswordFormViewModel(navigator);
@@ -279,6 +281,7 @@ namespace Enigma.Wpf.ViewModels
 
             //navigator.OpenFlyoutPanel(form);
         }
+        public ICommand AccountDeletionCommand => new RelayCommand(HandleAccountDeletion);
 
         private void HandleAccountDeletion()
         {

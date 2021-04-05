@@ -43,7 +43,7 @@
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Command="{Binding BackCommand}">
                 <iconPacks:PackIconFontAwesome
@@ -86,9 +86,34 @@
             </Button>
             <Button
                 Grid.Column="12"
-                Padding="10,0"
-                Command="{Binding LogOutCommand}">
-                Log Out
+                Click="Button_Click"
+               >
+                <iconPacks:PackIconFontAwesome
+                    Width="15"
+                    Height="15"
+                    Kind="BarsSolid" />
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding AccountDeletionCommand}"
+                     Header="Delete account">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconFontAwesome Kind="UserMinusSolid" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding PasswordChangeCommand}"
+                     Header="Change password">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconFontAwesome Kind="UserShieldSolid" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding LogOutCommand}"
+                     Header="Logout">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconFontAwesome Kind="UserLockSolid" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
             </Button>
         </Grid>
         <ListBox Grid.Row="2" ItemsSource="{Binding CurrentItems, Mode=TwoWay, IsAsync=True}">

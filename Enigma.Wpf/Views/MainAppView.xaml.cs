@@ -1,3 +1,5 @@
+using System.Windows;
+
 namespace Enigma.Wpf.Views
 {
     /// <summary>
@@ -8,6 +10,14 @@ namespace Enigma.Wpf.Views
         public MainAppView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement button)
+            {
+                button.ContextMenu.IsOpen = true;
+            }
         }
     }
 }
