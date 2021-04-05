@@ -199,6 +199,7 @@ namespace Enigma.Wpf.ViewModels
                             IsKeyImported = true;
                             navigator.HideProgressBox();
                             navigator.ShowMessage("Key import status", "Key has been successfully imported.");
+                            System.Windows.Application.Current.Dispatcher.Invoke(() => HandleRefreshButton());
                         }
                         catch (Exception ex)
                         {

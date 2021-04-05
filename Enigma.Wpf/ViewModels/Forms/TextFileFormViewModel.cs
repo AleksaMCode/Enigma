@@ -41,6 +41,8 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         public bool IsNew => !isEdit;
 
+        public bool IsEdit => isEdit;
+
         public string AlgorithmValue
         {
             get => algorithmValue;

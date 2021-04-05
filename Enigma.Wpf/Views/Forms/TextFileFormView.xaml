@@ -39,7 +39,7 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Label>File name:</Label>
-            <TextBox Grid.Column="2" Height="30" VerticalContentAlignment="Center" Text="{Binding FileName}"></TextBox>
+            <TextBox Grid.Column="2" Height="30" VerticalContentAlignment="Center" IsReadOnly="{Binding IsEdit}" Text="{Binding FileName}"></TextBox>
         </Grid>
         
         <TextBox

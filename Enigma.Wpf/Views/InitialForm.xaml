@@ -131,6 +131,7 @@
                             Height="28"
                             Margin="5,0"
                             Padding="3,0"
+                            MinWidth="313.6"
                             MaxWidth="313.6"
                             VerticalContentAlignment="Center"
                             Text="{Binding VisiblePasswordText}"
@@ -144,6 +145,7 @@
                             Margin="5,0"
                             Padding="3,0"
                             VerticalContentAlignment="Center"
+                            MinWidth="313.6"
                             MaxWidth="313.6"
                             Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"/>
                         <CheckBox
