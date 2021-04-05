@@ -129,8 +129,8 @@ namespace Enigma.Wpf.ViewModels
 
             CurrentItems.Clear();
 
-            // Shared folder is always visible except when "visiting" Shared folder.
-            if (!AddressBarText.StartsWith("\\Shared"))
+            // Shared folder is only visible from root folder.
+            if (AddressBarText == "\\")
             {
                 shared = new FileSystemItem(new EfsDirectory(enigmaEfs.SharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
                 CurrentItems.Add(shared);
