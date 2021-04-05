@@ -248,6 +248,7 @@ namespace Enigma.Wpf.ViewModels
                                         user.LastLogin = lastLoginTime;
                                         navigator.HideProgressBox();
                                         userCheck = true;
+                                        CertificatePath = "";
                                     }
                                     catch (Exception ex)
                                     {
