@@ -61,7 +61,6 @@ namespace Enigma.Wpf.ViewModels
         /// </summary>
         private readonly string caTrustListPath;
 
-
         /// <summary>
         /// CRL list directory path on FS.
         /// </summary>
@@ -220,12 +219,11 @@ namespace Enigma.Wpf.ViewModels
                     {
                         certCheck = userDb.IsCertificateUsed(CertificatePath);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         certCheck = false;
                     }
                 });
-
 
                 if (certCheck)
                 {
