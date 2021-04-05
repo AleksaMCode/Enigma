@@ -348,7 +348,7 @@ namespace Enigma.Wpf.ViewModels
                             }
                             else
                             {
-                                throw new Exception(string.Format("File {0} is missing.", data.InputFilePath.Substring(0, data.InputFilePath.LastIndexOf("\\"))));
+                                throw new Exception($"File {data.InputFilePath.Substring(0, data.InputFilePath.LastIndexOf("\\"))} is missing.");
                             }
                         }
                         else
