@@ -198,6 +198,7 @@ namespace Enigma.Wpf.ViewModels
                             // Update key icon to green!
                             IsKeyImported = true;
                             navigator.HideProgressBox();
+                            navigator.ShowMessage("Key import status", "Key has been successfully imported.");
                         }
                         catch (Exception ex)
                         {
@@ -221,6 +222,7 @@ namespace Enigma.Wpf.ViewModels
                             // Update key icon to green!
                             IsKeyImported = true;
                             navigator.HideProgressBox();
+                            navigator.ShowMessage("Key import status", "Key has been successfully imported.");
                         }
                         catch (Exception ex)
                         {
@@ -770,7 +772,7 @@ namespace Enigma.Wpf.ViewModels
 
                     var decryptedFile = enigmaEfs.DownloadInMemory(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
 
-                    var form = new TextFileFormViewModel(navigator, true, Encoding.ASCII.GetString(decryptedFile.FileContent), obj.Name.Substring(0,obj.Name.LastIndexOf(".")));
+                    var form = new TextFileFormViewModel(navigator, true, Encoding.ASCII.GetString(decryptedFile.FileContent), obj.Name.Substring(0, obj.Name.LastIndexOf(".")));
 
                     form.OnSubmit += textData =>
                     {
