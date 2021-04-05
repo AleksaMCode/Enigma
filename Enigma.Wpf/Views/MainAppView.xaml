@@ -137,11 +137,19 @@
                                 <MenuItem
                                     Command="{Binding PlacementTarget.(Grid.Tag).ItemDefaultCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
-                                    Header="Open" />
+                                    Header="Open">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconFontAwesome Kind="EnvelopeOpenTextSolid" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem
                                     Command="{Binding PlacementTarget.(Grid.Tag).UpdateItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
-                                    Header="Update" />
+                                    Header="Update">
+                                    <MenuItem.Icon>
+                                        <iconPacks:PackIconFontAwesome Kind="SyncSolid" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem
                                     Command="{Binding PlacementTarget.(Grid.Tag).ExportItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                     CommandParameter="{Binding}"
