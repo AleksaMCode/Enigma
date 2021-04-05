@@ -75,6 +75,7 @@
                 Padding="3,0"
                 VerticalContentAlignment="Center"
                 FontSize="13"
+                IsReadOnly="True"
                 Text="{Binding AddressBarText}" />
             <Button Grid.Column="10" Command="{Binding ImportKeyCommand}">
                 <iconPacks:PackIconFontAwesome
