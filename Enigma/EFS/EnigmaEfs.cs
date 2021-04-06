@@ -261,7 +261,7 @@ namespace Enigma.EFS
             //    .Decrypt(File.ReadAllBytes(pathOnEfs), currentUser.Id, currentUser.PrivateKey, ownerPublicKey).GetOriginalFileFullName().Split('.')[1];
 
             // update method restriction
-            if (originalFileExt != fullFileName.Split('.')[1])
+            if ("." + originalFileExt != Path.GetExtension(fullFileName))
             {
                 throw new Exception("File type must remain the same when updating an existing encrypted file.");
             }
@@ -342,7 +342,7 @@ namespace Enigma.EFS
                 CreateFile(updatedEncryptedFileRaw, SharedDir + "\\" + encryptedFile.GetEncryptedFileFullName());
 
                 // When first sharing a file from user folder to shared folder.
-                if (pathOnEfs.Substring(0,pathOnEfs.LastIndexOf('\\')) != SharedDir)
+                if (pathOnEfs.Substring(0, pathOnEfs.LastIndexOf('\\')) != SharedDir)
                 {
                     DeleteFile(pathOnEfs);
                 }

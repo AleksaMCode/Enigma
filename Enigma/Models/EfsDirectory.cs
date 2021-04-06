@@ -39,29 +39,36 @@ namespace Enigma.Models
         /// <param name="userPrivateKey">Users private RSA key.</param>
         private void DirectorySearch(string path, int userId, RSAParameters userPrivateKey)
         {
-            foreach (var file in Directory.GetFiles(path))
+            if (Directory.Exists(path))
             {
-                // only encrypted files can be added to the list
-                if (file.Split('.')[1].Equals("at"))
+                foreach (var file in Directory.GetFiles(path))
                 {
-                    var fileRaw = File.ReadAllBytes(file);
-                    if (fileRaw.Length != 0)
+                    // only encrypted files can be added to the list
+                    if (file.Split('.')[1].Equals("at"))
                     {
-                        try
+                        var fileRaw = File.ReadAllBytes(file);
+                        if (fileRaw.Length != 0)
                         {
-                            var newFile = new EfsFile(Path.GetFileName(file), fileRaw, userId, userPrivateKey);
-                            objects.Add(newFile);
-                        }
-                        catch(Exception)
-                        {
-                        }
+                            try
+                            {
+                                var newFile = new EfsFile(Path.GetFileName(file), fileRaw, userId, userPrivateKey);
+                                objects.Add(newFile);
+                            }
+                            catch (Exception)
+                            {
+                            }
 
+                        }
                     }
                 }
+                foreach (var dir in Directory.GetDirectories(path))
+                {
+                    objects.Add(new EfsDirectory(path + "\\" + Path.GetFileName(dir), userId, userPrivateKey));
+                }
             }
-            foreach (var dir in Directory.GetDirectories(path))
+            else
             {
-                objects.Add(new EfsDirectory(path + "\\" + Path.GetFileName(dir), userId, userPrivateKey));
+                throw new Exception($"Path is '{path}' is missing.");
             }
         }
     }

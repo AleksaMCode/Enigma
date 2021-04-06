@@ -139,17 +139,32 @@ namespace Enigma.Wpf.ViewModels
             // Shared folder is only visible from root folder.
             if (AddressBarText == "\\")
             {
-                shared = new FileSystemItem(new EfsDirectory(enigmaEfs.SharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
-                CurrentItems.Add(shared);
+                try
+                {
+                    shared = new FileSystemItem(new EfsDirectory(enigmaEfs.SharedDir, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey), true);
+                    CurrentItems.Add(shared);
+                }
+                catch (Exception)
+                {
+                    navigator.ShowMessage("Error", "Shared folder is missing.");
+                }
             }
 
             // If user's private key isn't loaded, user files are hidden.
             if (enigmaEfs.currentUser.PrivateKey.Exponent != null)
             {
-                var userDir = new EfsDirectory(path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
-                foreach (var efsObject in userDir.objects)
+                try
                 {
-                    CurrentItems.Add(new FileSystemItem(efsObject, false));
+                    var userDir = new EfsDirectory(path, enigmaEfs.currentUser.Id, enigmaEfs.currentUser.PrivateKey);
+
+                    foreach (var efsObject in userDir.objects)
+                    {
+                        CurrentItems.Add(new FileSystemItem(efsObject, false));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", $"{ex.Message}\nPlease refresh your screen.");
                 }
             }
         }
@@ -231,6 +246,7 @@ namespace Enigma.Wpf.ViewModels
                             IsKeyImported = true;
                             navigator.HideProgressBox();
                             navigator.ShowMessage("Key import status", "Key has been successfully imported.");
+                            System.Windows.Application.Current.Dispatcher.Invoke(() => HandleRefreshButton());
                         }
                         catch (Exception ex)
                         {
@@ -385,16 +401,21 @@ namespace Enigma.Wpf.ViewModels
             {
                 var form = new TextFileFormViewModel(navigator);
 
-                form.OnSubmit += (TxtFormData data) =>
+                form.OnSubmit += async (TxtFormData data) =>
                 {
                     try
                     {
                         var path = GetDirPath();
                         if (Directory.Exists(path))
                         {
+                            navigator.ShowProgressBox($"Creating a text file ...");
+                            var encrypedName = "";
 
-                            var encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier);
+                            await Task.Run(() => encrypedName = enigmaEfs.CreateTxtFile(data.Text, path, data.FileName, data.AlgorithmIdentifier, data.HashIdentifier));
                             SetCurrentItems(path);
+
+                            navigator.HideProgressBox();
+                            navigator.ShowMessage("Notification", $"File '{Path.GetFileName(data.FileName)}' has been successfully imported as '{encrypedName}'.");
                         }
                         else
                         {
@@ -743,7 +764,7 @@ namespace Enigma.Wpf.ViewModels
             navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username.Substring(0, enigmaEfs.currentUser.Username.Length - 5)), $"Your last login time was: {enigmaEfs.currentUser.LastLogin}" + welcomeMessage);
         }
 
-        private void HandleReadFile(FileSystemItem obj)
+        private async void HandleReadFile(FileSystemItem obj)
         {
             try
             {
@@ -760,7 +781,12 @@ namespace Enigma.Wpf.ViewModels
 
                 if (File.Exists(path))
                 {
-                    enigmaEfs.OpenFile(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey);
+                    navigator.ShowProgressBox($"Reading a file ...");
+
+                    await Task.Run(() => enigmaEfs.OpenFile(path, new UserInformation(usersDb.GetUser(enigmaEfs.GetFileOwnerId(path))).PublicKey));
+
+                    HandleRefreshButton();
+                    navigator.HideProgressBox();
                 }
                 else
                 {
@@ -775,7 +801,7 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand UpdateItemCommand => new RelayCommand<FileSystemItem>(HandleUpdateItem);
 
-        private void HandleUpdateItem(FileSystemItem obj)
+        private async void HandleUpdateItem(FileSystemItem obj)
         {
             try
             {
@@ -812,15 +838,20 @@ namespace Enigma.Wpf.ViewModels
 
                     var form = new TextFileFormViewModel(navigator, true, Encoding.ASCII.GetString(decryptedFile.FileContent), obj.Name.Substring(0, obj.Name.LastIndexOf(".")));
 
-                    form.OnSubmit += textData =>
+                    form.OnSubmit += async textData =>
                     {
                         try
                         {
                             var path = GetDirPath();
                             if (Directory.Exists(path))
                             {
-                                enigmaEfs.EditTxtFile(textData.Text, path + "\\" + obj.GetEncryptedFileName(), obj.Name);
+                                navigator.ShowProgressBox($"Updating a file ...");
+
+                                await Task.Run(() => enigmaEfs.EditTxtFile(textData.Text, path + "\\" + obj.GetEncryptedFileName(), obj.Name));
                                 SetCurrentItems(path);
+
+                                navigator.HideProgressBox();
+                                navigator.ShowMessage("Notification", $"File '{obj.Name}' has been successfully updated.");
                             }
                             else
                             {
@@ -860,7 +891,21 @@ namespace Enigma.Wpf.ViewModels
                         var path = GetDirPath();
                         if (Directory.Exists(path))
                         {
-                            enigmaEfs.Update(path + "\\" + obj.GetEncryptedFileName(), filePath, obj.Name.Split('.')[1]);
+                            navigator.ShowProgressBox($"Updating a file ...");
+
+                            await Task.Run(() =>
+                            {
+                                try
+                                {
+                                    enigmaEfs.Update(path + "\\" + obj.GetEncryptedFileName(), filePath, obj.Name.Split('.')[1]);
+                                    navigator.HideProgressBox();
+                                    navigator.ShowMessage("Notification", $"File '{obj.Name}' has been successfully updated.");
+                                }
+                                catch (Exception ex)
+                                {
+                                    navigator.ShowMessage("Error", ex.Message);
+                                }
+                            });
                             SetCurrentItems(path);
                         }
                         else
