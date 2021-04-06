@@ -117,7 +117,14 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleRefreshButton()
         {
-            SetCurrentItems(GetDirPath());
+            if (!IsKeyImported)
+            {
+                navigator.ShowMessage("Error", "Please import you private RSA key first.");
+            }
+            else
+            {
+                SetCurrentItems(GetDirPath());
+            }
         }
 
         private void SetCurrentItems(string path)
