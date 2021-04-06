@@ -292,32 +292,32 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandleAccountDeletion()
         {
-            var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change. Are you sure that you want to delete your account?");
+            //var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change. Are you sure that you want to delete your account?");
 
-            dialog.OnSubmit += confirmed =>
+            //dialog.OnSubmit += confirmed =>
+            //{
+            // Delete user's files.
+            if (Directory.Exists(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir))
             {
-                // Delete user's files.
-                if (Directory.Exists(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir))
-                {
-                    Directory.Delete(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir, true);
-                }
+                Directory.Delete(enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir, true);
+            }
 
-                // Delete user's share files.
-                if (Directory.Exists(enigmaEfs.SharedDir))
-                {
-                    enigmaEfs.DeleteUsersShareFiles(enigmaEfs.SharedDir);
-                }
+            // Delete user's share files.
+            if (Directory.Exists(enigmaEfs.SharedDir))
+            {
+                enigmaEfs.DeleteUsersShareFiles(enigmaEfs.SharedDir);
+            }
 
-                // Remove user from user database.
-                usersDb.RemoveUser(enigmaEfs.currentUser.UserInfo);
+            // Remove user from user database.
+            usersDb.RemoveUser(enigmaEfs.currentUser.UserInfo);
 
-                //SetCurrentItems(enigmaEfs.currentUser.Username);
+            //SetCurrentItems(enigmaEfs.currentUser.Username);
 
-                // Logout from Enigma EFS.
-                HandleLogOut();
-            };
+            // Logout from Enigma EFS.
+            HandleLogOut();
+            //};
 
-            navigator.OpenFlyoutPanel(dialog);
+            //navigator.OpenFlyoutPanel(dialog);
         }
 
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);

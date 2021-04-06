@@ -277,8 +277,14 @@ namespace Enigma.UserDbManager
         /// <param name="user">User whose account is being deleted.</param>
         public void RemoveUser(User user)
         {
-            context.Users.Remove(user);
-            context.SaveChanges();
+            try
+            {
+                context.Users.Remove(user);
+                context.SaveChanges();
+            }
+            catch(Exception)
+            {
+            }
         }
 
         /// <summary>
