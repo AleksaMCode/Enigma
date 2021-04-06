@@ -174,7 +174,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
 
         /// <summary>
         /// Computes the hash value of the specified byte array using the specified hash
-        /// algorithm (MD2, MD4, RIPEMD-128, RIPEMD-160 or RIPEMD-256) and signs the resulting hash value.
+        /// algorithm (MD2, MD4, RIPEMD-128, RIPEMD-160, RIPEMD-256 or SHA224) and signs the resulting hash value.
         /// </summary>
         /// <param name="data">The input data for which to compute the hash.</param>
         /// <param name="hashAlgo">The hash algorithm to use to create the hash value.</param>
@@ -182,7 +182,7 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         public byte[] CreateSignature(byte[] data, ISigner hashAlgo)
         {
             // Convert .NETs RSAParameters to Bouncy Castles RsaKeyParameters
-            var key = new RsaKeyParameters(true, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
+            var key = new RsaKeyParameters(true, new BigInteger(1, Key.Modulus), new BigInteger(1, Key.Exponent));
 
             hashAlgo.Init(true, key);
             hashAlgo.BlockUpdate(data, 0, data.Length);
@@ -218,13 +218,17 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// <returns>true if the signature is valid, otherwise false.</returns>
         public bool VerifySignature(byte[] data, ISigner hashAlgo, byte[] signature)
         {
-            // Convert .NETs RSAParameters to Bouncy Castle's RsaKeyParameters.
-            var key = new RsaKeyParameters(false, new BigInteger(Key.Modulus), new BigInteger(Key.Exponent));
+            //// Convert .NETs RSAParameters to Bouncy Castle's RsaKeyParameters.
+            //var key = new RsaKeyParameters(false, new BigInteger(1, Key.Modulus), new BigInteger(Key.Exponent));
 
-            hashAlgo.Init(false, key);
-            hashAlgo.BlockUpdate(data, 0, data.Length);
+            //hashAlgo.Init(false, key);
+            //hashAlgo.BlockUpdate(data, 0, data.Length);
 
-            return hashAlgo.VerifySignature(signature);
+            //return hashAlgo.VerifySignature(signature);
+
+            // TODO: Is this safe?
+
+            return signature.SequenceEqual(CreateSignature(data, hashAlgo));
         }
 
         /// <summary>
