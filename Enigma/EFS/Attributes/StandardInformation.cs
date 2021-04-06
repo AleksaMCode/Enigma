@@ -94,8 +94,19 @@ namespace Enigma.EFS.Attributes
         /// </summary>
         public void ParseStandardInformation(byte[] data, int offset)
         {
+            if (data.Length < offset)
+            {
+                throw new Exception("File is corrupted.");
+            }
+
             //                                                                                              position
             Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                  //      0
+
+            if (Type != AttributeType.STANDARD_INFORMATION)
+            {
+                throw new Exception("File is corrupted.");
+            }
+
             TotalLength = BitConverter.ToUInt32(data, offset + 4);                                      //      4
 
             CreationTime = EnigmaEfsUtility.ConverteToWinTime(data, offset + 8);                        //      8

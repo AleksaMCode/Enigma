@@ -258,8 +258,18 @@ namespace Enigma.EFS.Attributes
         /// <param name="offset">Offset from the start of the raw data <see cref="byte"/>[].</param>
         public void ParseSecurityDescriptor(byte[] data, ref int offset)
         {
+            if (data.Length < offset)
+            {
+                throw new Exception("File is corrupted.");
+            }
+
             Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                                                  // parse Type
             offset += 4;
+
+            if (Type != AttributeType.SECURITY_DESCRIPTOR)
+            {
+                throw new Exception("File is corrupted.");
+            }
 
             var algorithmNameSignatureLength = data[offset];                                                                            // parse AlgorithmNameSignature length
             offset += 1;
@@ -288,7 +298,7 @@ namespace Enigma.EFS.Attributes
             // security mechanism
             if (numberOfUsers > 4)
             {
-                throw new Exception("File has been subjected to the unauthorized change.");
+                throw new Exception("File has been subjected to an unauthorized change.");
             }
             offset += 4;
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
@@ -43,7 +44,19 @@ namespace Enigma.Models
                 // only encrypted files can be added to the list
                 if (file.Split('.')[1].Equals("at"))
                 {
-                    objects.Add(new EfsFile(Path.GetFileName(file), File.ReadAllBytes(file), userId, userPrivateKey));
+                    var fileRaw = File.ReadAllBytes(file);
+                    if (fileRaw.Length != 0)
+                    {
+                        try
+                        {
+                            var newFile = new EfsFile(Path.GetFileName(file), fileRaw, userId, userPrivateKey);
+                            objects.Add(newFile);
+                        }
+                        catch(Exception)
+                        {
+                        }
+
+                    }
                 }
             }
             foreach (var dir in Directory.GetDirectories(path))

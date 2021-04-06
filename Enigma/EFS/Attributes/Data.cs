@@ -74,8 +74,19 @@ namespace Enigma.EFS.Attributes
         /// This information is stored as <see cref="StandardInformation.TotalLength"/> in the <see cref="StandardInformation"/> header.</param>
         public void ParseData(byte[] data, int offset, int encryptedDataSize)
         {
+            if (data.Length < offset)
+            {
+                throw new Exception("File is corrupted.");
+            }
+
             Type = (AttributeType)BitConverter.ToUInt32(data, offset);                                  // parse Type
             offset += 4;
+
+            if (Type != AttributeType.DATA)
+            {
+                throw new Exception("File is corrupted.");
+            }
+
             EncryptedData = new byte[encryptedDataSize];
             Buffer.BlockCopy(data, offset, EncryptedData, 0, encryptedDataSize);                        // parse EncryptedData
         }
