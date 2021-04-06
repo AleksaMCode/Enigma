@@ -69,6 +69,12 @@ namespace Enigma.AlgorithmLibrary.Algorithms
         /// <param name="mode">Block cipher mode of operation used for the symmetric algorithm.</param>
         public AesAlgorithm(byte[] key, byte[] iv, string mode = "CBC")
         {
+            // Only needed when files are encrypted using 3DES algorithm that has 8 byte IV. TODO: find a better solution for this bug!
+            if (iv.Length != 16)
+            {
+                System.Array.Resize(ref iv, 16);
+            }
+            
             if ((key.Length == 16 || key.Length == 24 || key.Length == 32) && (iv.Length == 16))
             {
                 Key = key;
