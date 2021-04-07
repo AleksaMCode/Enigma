@@ -277,32 +277,32 @@ namespace Enigma.Wpf.ViewModels
 
         private void HandlePasswordChange()
         {
-            //var form = new ChangePasswordFormViewModel(navigator);
+            var form = new ChangePasswordFormViewModel(navigator);
 
-            //form.OnSubmit += (ChangePaswordFormData data) =>
-            //{
-            //    try
-            //    {
-            //        if (data.OldPassword != data.OldPasswordRepeat)
-            //        {
-            //            throw new Exception("Passwords don't match.");
-            //        }
+            form.OnSubmit += (ChangePaswordFormData data) =>
+            {
+                try
+                {
+                    if (data.NewPassword != data.ConfirmedNewPassword)
+                    {
+                        throw new Exception("Passwords don't match.");
+                    }
 
-            //        // Change user's password.
-            //        usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword, data.OldPassword);
+                    // Change user's password.
+                    usersDb.ChangePassword(enigmaEfs.currentUser.UserInfo, data.NewPassword, data.CurrentPassword);
 
-            //        // Update user's directory name.
-            //        var oldUserDir = enigmaEfs.UserDir;
-            //        enigmaEfs.UserDir = enigmaEfs.GetUserDirName(Encoding.ASCII.GetBytes(data.NewPassword));
-            //        Directory.Move(enigmaEfs.RootDir + "\\" + oldUserDir, enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        navigator.ShowMessage("Error", ex.Message);
-            //    }
-            //};
+                    // Update user's directory name.
+                    var oldUserDir = enigmaEfs.UserDir;
+                    enigmaEfs.UserDir = enigmaEfs.GetUserDirName(Encoding.ASCII.GetBytes(data.NewPassword));
+                    Directory.Move(enigmaEfs.RootDir + "\\" + oldUserDir, enigmaEfs.RootDir + "\\" + enigmaEfs.UserDir);
+                }
+                catch (Exception ex)
+                {
+                    navigator.ShowMessage("Error", ex.Message);
+                }
+            };
 
-            //navigator.OpenFlyoutPanel(form);
+            navigator.OpenFlyoutPanel(form);
         }
         public ICommand AccountDeletionCommand => new RelayCommand(HandleAccountDeletion);
 

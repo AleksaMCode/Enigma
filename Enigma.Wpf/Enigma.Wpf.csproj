@@ -108,6 +108,9 @@
     </ApplicationDefinition>
     <Compile Include="AttachedProperties\UI.cs" />
     <Compile Include="Attributes\Validation\FileExists.cs" />
+    <Compile Include="Components\BindablePasswordBox.xaml.cs">
+      <DependentUpon>BindablePasswordBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FlyoutPanel.xaml.cs">
       <DependentUpon>FlyoutPanel.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,7 @@
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="Interfaces\IPanel.cs" />
     <Compile Include="Observables\FileSystemItem.cs" />
+    <Compile Include="ViewModels\Forms\ChangePasswordFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\ImportFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\PrivateKeyFormViewModel.cs" />
     <Compile Include="ViewModels\Forms\ShareFormViewModel.cs" />
@@ -142,6 +146,9 @@
     <Compile Include="ViewModels\MainAppViewModel.cs" />
     <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBaseWithValidation.cs" />
+    <Compile Include="Views\Forms\ChangePasswordFormView.xaml.cs">
+      <DependentUpon>ChangePasswordFormView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Forms\ImportFormView.xaml.cs">
       <DependentUpon>ImportFormView.xaml</DependentUpon>
     </Compile>
@@ -172,11 +179,19 @@
     <Compile Include="Views\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Components\BindablePasswordBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\FlyoutPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ModalPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Forms\ChangePasswordFormView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

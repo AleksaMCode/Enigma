@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -132,6 +134,26 @@ namespace Enigma.Wpf.ViewModels.Windows
             runAnimation = false;
             IsMessageBoxShown = true;
             IsBoxVisible = true;
+        }
+
+        public ICommand CloseCommand => new RelayCommand(RemoveTempFiles);
+
+        /// <summary>
+        /// Removes all temporary files created while reading encrypted files. This method is called when application is closed or when user logs out.
+        /// </summary>
+        public static void RemoveTempFiles()
+        {
+            var filesToDelete = Directory.GetFiles(Path.GetTempPath(), "Enigma-*");
+            foreach (var fileName in filesToDelete)
+            {
+                try
+                {
+                    File.Delete(fileName);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         public void ShowProgressBox(string loadingMessage)

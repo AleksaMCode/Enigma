@@ -28,7 +28,7 @@ namespace Enigma.EFS
 
         public readonly string SharedDir;
 
-        public readonly string UserDir;
+        public string UserDir;
 
         /// <summary>
         /// Information about the currently logged-in user.

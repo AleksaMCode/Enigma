@@ -40,4 +40,7 @@
     <DataTemplate DataType="{x:Type formViewModels:UserAndPassFormViewModel}">
         <forms:UserAndPassFormView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type formViewModels:ChangePasswordFormViewModel}">
+        <forms:ChangePasswordFormView />
+    </DataTemplate>
 </ResourceDictionary>
