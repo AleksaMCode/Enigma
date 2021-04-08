@@ -12,6 +12,8 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -23,7 +25,7 @@
         <StackPanel
             Grid.Row="0"
             Grid.Column="0"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="5"
             MinWidth="250">
             <Label>Shared with:</Label>
             <DataGrid
@@ -49,18 +51,36 @@
         <ComboBox
             Grid.Row="2"
             Grid.Column="0"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="5"
             Height="30"
             VerticalContentAlignment="Center"
             ItemsSource="{Binding NotSharedUsers}"
             SelectedItem="{Binding SelectedNotSharedUser}" />
-        <Button Grid.Row="4" Command="{Binding AddCommand}">Add</Button>
+        <Button
+            Grid.Row="4"
+            MinWidth="80"
+            MaxWidth="80"
+            HorizontalAlignment="Left"
+            Command="{Binding AddCommand}">
+            Add
+        </Button>
         <Button
             Grid.Row="4"
             Grid.Column="2"
+            MinWidth="80"
+            MaxWidth="80"
+            HorizontalAlignment="Center"
             Command="{Binding RemoveCommand}">
             Remove
         </Button>
-
+        <Button
+            Grid.Row="4"
+            Grid.Column="5"
+            MinWidth="80"
+            MaxWidth="80"
+            HorizontalAlignment="Right"
+            Command="{Binding RemoveAllCommand}">
+            Remove All
+        </Button>
     </Grid>
 </UserControl>

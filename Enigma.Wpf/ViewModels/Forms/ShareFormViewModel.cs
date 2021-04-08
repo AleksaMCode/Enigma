@@ -8,7 +8,6 @@ using Enigma.UserDbManager;
 using Enigma.EFS;
 using System;
 using Enigma.Models;
-using System.IO;
 using Enigma.Wpf.Interfaces;
 
 namespace Enigma.Wpf.ViewModels.Forms
@@ -53,37 +52,66 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         private void HandleAddCommand()
         {
-            var userInfo = usersDb.GetUser(SelectedNotSharedUser);
-
-            if (userInfo.Locked == 1)
+            if (string.IsNullOrEmpty(selectedSharedUser))
             {
-                navigator.ShowMessage("Error", $"You can't share you file with {SelectedNotSharedUser} because this account is locked.");
-                return;
-            }
-
-            if (userInfo.Revoked != 0 || Convert.ToDateTime(userInfo.CertificateExpirationDate) > DateTime.Now)
-            {
-                enigmaEfs.Share(filePath, new UserInformation(userInfo));
+                navigator.ShowMessage("Error", "Please select a user first.");
             }
             else
             {
-                navigator.ShowMessage("Error", $"You can't share your file with {userInfo.Username} because this user's certificate isn't valid anymore.");
-                return;
-            }
+                var userInfo = usersDb.GetUser(SelectedNotSharedUser);
 
-            //put SelectedNotSharedUser in selected
-            SharedUsers.Add(SelectedNotSharedUser);
-            NotSharedUsers.Remove(SelectedNotSharedUser);
+                if (userInfo.Locked == 1)
+                {
+                    navigator.ShowMessage("Error", $"You can't share you file with {SelectedNotSharedUser} because this account is locked.");
+                    return;
+                }
+
+                if (userInfo.Revoked != 0 || Convert.ToDateTime(userInfo.CertificateExpirationDate) > DateTime.Now)
+                {
+                    enigmaEfs.Share(filePath, new UserInformation(userInfo));
+                }
+                else
+                {
+                    navigator.ShowMessage("Error", $"You can't share your file with {userInfo.Username} because this user's certificate isn't valid anymore.");
+                    return;
+                }
+
+                //put SelectedNotSharedUser in selected
+                SharedUsers.Add(SelectedNotSharedUser);
+                NotSharedUsers.Remove(SelectedNotSharedUser);
+            }
         }
 
         public ICommand RemoveCommand => new RelayCommand(HandleRemoveCommand);
 
         private void HandleRemoveCommand()
         {
-            enigmaEfs.Unshare(filePath, usersDb.GetUserId(selectedSharedUser));
+            if (string.IsNullOrEmpty(selectedSharedUser))
+            {
+                navigator.ShowMessage("Error", "Please select a user first.");
+            }
+            else
+            {
+                enigmaEfs.Unshare(filePath, usersDb.GetUserId(selectedSharedUser));
 
-            NotSharedUsers.Add(SelectedSharedUser);
-            SharedUsers.Remove(SelectedSharedUser);
+                NotSharedUsers.Add(SelectedSharedUser);
+                SharedUsers.Remove(SelectedSharedUser);
+            }
+        }
+
+        public ICommand RemoveAllCommand => new RelayCommand(HandleRemoveAllCommand);
+
+        private void HandleRemoveAllCommand()
+        {
+            var sharedUsers = new List<string>(SharedUsers);
+
+            foreach (var usr in sharedUsers)
+            {
+                enigmaEfs.Unshare(filePath, usersDb.GetUserId(usr));
+
+                NotSharedUsers.Add(usr);
+                SharedUsers.Remove(usr);
+            }
         }
     }
 }

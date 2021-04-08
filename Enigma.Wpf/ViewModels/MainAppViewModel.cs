@@ -259,11 +259,6 @@ namespace Enigma.Wpf.ViewModels
             navigator.OpenFlyoutPanel(keyForm);
         }
 
-        private void ExitEnigma()
-        {
-            EnigmaEfs.RemoveTempFiles();
-        }
-
         public ICommand LogOutCommand => new RelayCommand(HandleLogOut);
 
         private void HandleLogOut()
