@@ -52,7 +52,7 @@ namespace Enigma.Wpf.ViewModels.Forms
 
         private void HandleAddCommand()
         {
-            if (string.IsNullOrEmpty(selectedSharedUser))
+            if (string.IsNullOrEmpty(SelectedNotSharedUser))
             {
                 navigator.ShowMessage("Error", "Please select a user first.");
             }
