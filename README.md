@@ -49,8 +49,7 @@
         - [Haystack structure](#haystack-structure)
   - [Certificate policies](#certificate-policies)
   - [Limitations and restrictions](#limitations-and-restrictions)
-  - [Potential problems and known security bugs](#potential-problems-and-known-security-bugs)
-  - [Screenshots](#screenshots)
+  - [Potential problems and known security and other bugs](#potential-problems-and-known-security-and-other-bugs)
   - [To-Do List](#to-do-list)
   - [References](#references)
     - [Books](#books)
@@ -110,32 +109,32 @@
 ### File import
 <p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
 
-<p align="center"><img src="./resources/file-import.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-import.gif" width="450" title="file import" align="centar" hspace="5" vspace="5">
 
 ### Add folder
 <p align="justify">User can add a new folder to EFS by entering folder's name. Folder is added at the current path.</p>
 
-<p align="center"><img src="./resources/folder-create.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/folder-create.gif" width="450" title="add folder" align="centar" hspace="5" vspace="5">
 
 ### File export
 <p align="justify">User can export any file from his EFS to a selected location on FS.</p>
 
-<p align="center"><img src="./resources/file-export.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-export.gif" width="450" title="file export" align="centar" hspace="5" vspace="5">
 
 ### Create and import a new <code>.txt</code> file
 <p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using a build-in application text editor.</p>
 
-<p align="center"><img src="./resources/txt-file-create.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/txt-file-create.gif" width="450" title="txt file create and import" align="centar" hspace="5" vspace="5">
 
 ### Remove file
 <p align="justify">Users can simply delete their files without any restrictions.</p>
 
-<p align="center"><img src="./resources/file-delete.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-delete.gif" width="450" title="file delete login" align="centar" hspace="5" vspace="5">
 
 ### File sharing
 <p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
 
-<p align="center"><img src="./resources/file-share.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-share.gif" width="450" title="file sharing" align="centar" hspace="5" vspace="5">
 
 ### File unsharing
 <p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised, file then overwrites the old file.</p>
@@ -150,7 +149,7 @@
 ### <code>.txt</code> file updating
 <p align="justify">User can update <code>.txt</code> files stored on <b>Enigma EFS</b> by using build-in application text editor. This update requires file to be decrypted first before allowing user to change context of the <code>.txt</code> file.</p>
 
-<p align="center"><img src="./resources/txt-file-update.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/txt-file-update.gif" width="450" title="txt file update" align="centar" hspace="5" vspace="5">
 
 ### File reading
 <p align="justify">User can view encrypted files that are stored on <b>Enigma EFS</b>. File is first decrypted and stored on FS in temp directory. Method used for file reading checks for the existence of environment variables in the following order and uses the first path found:</p>
@@ -162,7 +161,7 @@
 </ol>
 <p align="justify">After writing a new temp file named "Enigma-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.extension (e.q. Enigma-382c74c3-721d-4f34-80e5-57657b6cbc27.pdf for a <code>.pdf</code> file), file is then opened using a default application on the system for the chosen file type.</p>
 
-<p align="center"><img src="./resources/file-open.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-open.gif" width="450" title="file open" align="centar" hspace="5" vspace="5">
 
 > **_NOTE:_**
 > 
@@ -181,7 +180,7 @@
 <li>Click <i>Submit</i>.</li>
 </ol>
 
-<p align="center"><img src="./resources/change-passwod.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/change-passwod.gif" width="450" title="change password" align="centar" hspace="5" vspace="5">
 
 
 ## Encrypted file
@@ -357,7 +356,7 @@ As an additional security random delimiter with random length, that varies betwe
 * <p align="justify">Minimum RSA key size permited is 2,048 bits long.</p>
 * <p align="justify">Only a file owner can share/unshare, update or delete a file.</p>
 
-## Potential problems and known security bugs
+## Potential problems and known security and other bugs
 <dl>
 <ul>
     <li><dt>RSA key usage</dt>
@@ -373,8 +372,6 @@ As an additional security random delimiter with random length, that varies betwe
 </ul>
 </dl>
 
-## Screenshots
-
 ## To-Do List
 - [ ] Implement encryption of large files.
   - [ ] Remove 2 GB file size restriction.
@@ -382,8 +379,9 @@ As an additional security random delimiter with random length, that varies betwe
 - [ ] ~~Implement SHA-3 hashing (-224,-256,-384 and -512).~~
 - [ ] Implement [trusted timestamping](https://en.wikipedia.org/wiki/Trusted_timestamping) and TSA.
 - [ ] Implement re-login process after 5 minutes of inactivity.
-- [ ] Implement *forgot password* functionality.
-- [ ] Implement password change.
+- [ ] ~~Implement *forgot password* functionality.~~
+- [x] Implement password change.
+- [ ] Fix RSA USB key loading bug.
 
 ## References
 ### Books
