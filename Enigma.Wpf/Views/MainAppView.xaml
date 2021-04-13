@@ -49,19 +49,22 @@
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="ArrowLeftSolid" />
+                    Kind="ArrowLeftSolid"
+                    ToolTip="Back to" />
             </Button>
             <Button Grid.Column="2" Command="{Binding ForwardCommand}">
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="ArrowRightSolid" />
+                    Kind="ArrowRightSolid"
+                    ToolTip="Forward to" />
             </Button>
             <Button Grid.Column="4" Command="{Binding UpCommand}">
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="ArrowUpSolid" />
+                    Kind="ArrowUpSolid"
+                    ToolTip="Up to" />
             </Button>
             <Button Grid.Column="6" Command="{Binding RefreshCommand}">
                 <iconPacks:PackIconFontAwesome
@@ -82,32 +85,28 @@
                     Width="15"
                     Height="15"
                     Foreground="{Binding IsKeyImported, Converter={StaticResource boolToKeyColorConverter}}"
-                    Kind="KeySolid" />
+                    Kind="KeySolid"
+                    ToolTip="Import key" />
             </Button>
-            <Button
-                Grid.Column="12"
-                Click="Button_Click"
-               >
+            <Button Grid.Column="12" Click="Button_Click">
                 <iconPacks:PackIconFontAwesome
                     Width="15"
                     Height="15"
-                    Kind="BarsSolid" />
+                    Kind="BarsSolid"
+                    ToolTip="Open menu" />
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Command="{Binding AccountDeletionCommand}"
-                     Header="Delete account">
+                        <MenuItem Command="{Binding AccountDeletionCommand}" Header="Delete account">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconFontAwesome Kind="UserMinusSolid" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Command="{Binding PasswordChangeCommand}"
-                     Header="Change password">
+                        <MenuItem Command="{Binding PasswordChangeCommand}" Header="Change password">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconFontAwesome Kind="UserShieldSolid" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Command="{Binding LogOutCommand}"
-                     Header="Logout">
+                        <MenuItem Command="{Binding LogOutCommand}" Header="Logout">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconFontAwesome Kind="UserLockSolid" />
                             </MenuItem.Icon>
