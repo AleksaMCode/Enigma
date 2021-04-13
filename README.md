@@ -14,15 +14,17 @@
     - [Login](#login)
       - [Login attempt limit](#login-attempt-limit)
       - [Nuclear switch](#nuclear-switch)
-    - [Add file](#add-file)
+    - [File import](#file-import)
     - [Add folder](#add-folder)
-    - [Create and add new <code>.txt</code> file](#create-and-add-new-txt-file)
+    - [File export](#file-export)
+    - [Create and import a new <code>.txt</code> file](#create-and-import-a-new-txt-file)
     - [Remove file](#remove-file)
     - [File sharing](#file-sharing)
     - [File unsharing](#file-unsharing)
     - [File updating](#file-updating)
     - [<code>.txt</code> file updating](#txt-file-updating)
     - [File reading](#file-reading)
+    - [Changing the Current Password](#changing-the-current-password)
   - [Encrypted file](#encrypted-file)
     - [File encryption](#file-encryption)
     - [File decryption](#file-decryption)
@@ -95,30 +97,45 @@
 ### Login
 <p align="justify">To access <b>Enigmas EFS</b> user needs to login first. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user only needs to provide his certificate (something only the user has). If the entered certificate exists in the Enigma's database, user will be prompted to provide his <i>Username</i> and <i>Password</i> (something only user knows). If the entered password matches the hash value stored for the current user in the database, user's certificate will be subjected to different tests. If the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. At the end, if the login attempt is successful user is granted access to EFS.</p>
 
-<p align="center"><img src="./resources/sign_in.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/successful-sign_in.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
 #### Login attempt limit
 <p align="justify">Every user has a total of three opportunities to enter his password. After three failed attempts, a "nuclear switch" is turned on and users data is deleted. The emphasis is placed on security of data above anything else. User is prepared to lose his data forever if that means that the attacker won't get his hands on files.</p>
 
-<p align="center"><img src="./resources/failed-login.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/unsuccessful-sign_in.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 #### Nuclear switch
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, user's account is locked preventing him to login to Enigmas EFS. Only an admin can unlock a user account. Unlocking process is followed with a mandatory user password change.</p>
 
-### Add file
+### File import
 <p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
+
+<p align="center"><img src="./resources/file-import.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 ### Add folder
 <p align="justify">User can add a new folder to EFS by entering folder's name. Folder is added at the current path.</p>
 
-### Create and add new <code>.txt</code> file
+<p align="center"><img src="./resources/folder-create.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+
+### File export
+<p align="justify">User can export any file from his EFS to a selected location on FS.</p>
+
+<p align="center"><img src="./resources/file-export.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+
+### Create and import a new <code>.txt</code> file
 <p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using a build-in application text editor.</p>
+
+<p align="center"><img src="./resources/txt-file-create.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 ### Remove file
 <p align="justify">Users can simply delete their files without any restrictions.</p>
 
+<p align="center"><img src="./resources/file-delete.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+
 ### File sharing
 <p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
+
+<p align="center"><img src="./resources/file-share.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 ### File unsharing
 <p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised, file then overwrites the old file.</p>
@@ -132,6 +149,8 @@
 
 ### <code>.txt</code> file updating
 <p align="justify">User can update <code>.txt</code> files stored on <b>Enigma EFS</b> by using build-in application text editor. This update requires file to be decrypted first before allowing user to change context of the <code>.txt</code> file.</p>
+
+<p align="center"><img src="./resources/txt-file-update.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 ### File reading
 <p align="justify">User can view encrypted files that are stored on <b>Enigma EFS</b>. File is first decrypted and stored on FS in temp directory. Method used for file reading checks for the existence of environment variables in the following order and uses the first path found:</p>
@@ -149,6 +168,21 @@
 > 
 > <ul><li>Every temporary file is deleted once the <b>Enigma</b> application is closed or if user logs out.</li>
 > <li>If a temp file is in use when trying to delete it, deletion will fail and temp file will remain on FS. For this reason temp files are also deleted when the application is first started.</li>
+
+### Changing the Current Password
+<p align="justify">User can change his <b>Enigma EFS</b> password at any time. Steps:</p>
+
+<ol>
+<li>Click on the menu button.</li>
+<li>Click <i>Change password</i>.</li>
+<li>Type your current password into the “Current password” box.</li>
+<li>Type a new password into the “New password” box.</li>
+<li>Repeat a new password into the “Confirm password” box.</li>
+<li>Click <i>Submit</i>.</li>
+</ol>
+
+<p align="center"><img src="./resources/change-passwod.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+
 
 ## Encrypted file
 <p align="justify"><b>Enigma EFS</b> views each encrypted file as a set of file attributes. File elements such as its name, its security information, and even its data are file attributes. Each attribute is identified by an attribute type code stored as an <code>enum</code>.</p>
