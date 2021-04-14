@@ -51,7 +51,7 @@
         - [Haystack structure](#haystack-structure)
   - [Certificate policies](#certificate-policies)
   - [Limitations and restrictions](#limitations-and-restrictions)
-    - [Potential problems and known security and other bugs](#potential-problems-and-known-security-and-other-bugs)
+  - [Potential problems and known security and other bugs](#potential-problems-and-known-security-and-other-bugs)
   - [To-Do List](#to-do-list)
   - [References](#references)
     - [Books](#books)
@@ -335,8 +335,6 @@ Algorithm | Variant | Output size<br>(bits)
 > <p align="justify">MD5 and SHA1 <b>MUST NOT</b> be used for cryptographic hash functions. Keep in mind that RIPEMD-128 and RIPEMD-160 aren't considered secure because message digest of (at least) 224 bits must be used. RIPEMD-256 isn't recommended by NIST, so caution is advised when using it. Also, MD2 and MD4 are obsolete.</p>
 
 ## Username
-
----
 <p align="justify">Username is provided by the user when registering. After having a talk with my professor, I've came to conclusion that a better approach to username creation would be to add random numbers to every username. This will make a <a href="https://en.wikipedia.org/wiki/Brute-force_attack">brute force attack</a> on users account more difficult and it will also allow duplicate username usage. Probability of a collision when using the same username is 0.0001. If the collision does happen, user should try to register again with the same username (probability of a two consecutive collisions is 0.00000001).<br><br>I've used a similar approach to creating usernames as <a href="https://en.wikipedia.org/wiki/Discord_(software)#User_profiles">Discord</a>. Each username is assigned a four-digit number, prefixed with '#', which is added to the end of their username. E.q. if you choose a username <i>myname</i>, then your final username will look something like <i>myname#5642</i>.</p>
 
 ## Passwords and keys
@@ -392,14 +390,14 @@ As an additional security random delimiter with random length, that varies betwe
 <p align="justify">Haystack contains, starting from a first bit of data, encrypted RSA key randomly chosen starting location in a haystack stored as an integer, size of the encrypted RSA key stored as an integer, user passwords salt stored in next 16 bytes of data, user password digest stored in next 32 bytes of data and the encrypted RSA key stored at the appropriate location.</p>
 
 ## Certificate policies
-ustify">User certificate has to be issued by a proper root <a href="https://en.wikipedia.org/wiki/Certificate_authority">CA</a>. Path to list of trusted CAs is stored in <i>EnigmaEFS.config</i> file. Since 2015, NIST recommends a minimum of 2,048-bit keys for RSA. Consequently, <b>Enigma EFS</b> accepts only certificate that use, at least, 2,048 bit long RSA key. 2,048-bit keys are sufficient until 2030. This policy is perhaps not warranted, because I doubt any respectable CA will create a certificate with 1,024 bit long key. Also, KeyUsage certificate extension has to have leastwise <i>digitalSignature</i> and <i>keyEncipherment</i> bits set.</p>
+<p align="justify">User certificate has to be issued by a proper root <a href="https://en.wikipedia.org/wiki/Certificate_authority">CA</a>. Path to list of trusted CAs is stored in <i>EnigmaEFS.config</i> file. Since 2015, NIST recommends a minimum of 2,048-bit keys for RSA. Consequently, <b>Enigma EFS</b> accepts only certificate that use, at least, 2,048 bit long RSA key. 2,048-bit keys are sufficient until 2030. This policy is perhaps not warranted, because I doubt any respectable CA will create a certificate with 1,024 bit long key. Also, KeyUsage certificate extension has to have leastwise <i>digitalSignature</i> and <i>keyEncipherment</i> bits set.</p>
 
 ## Limitations and restrictions
 * <p align="justify">User can't store files larger than 2 GB.</p>
 * <p align="justify">Minimum RSA key size permited is 2,048 bits long.</p>
 * <p align="justify">Only a file owner can share/unshare, update or delete a file.</p>
 
-### Potential problems and known security and other bugs
+## Potential problems and known security and other bugs
 <dl>
 <ul>
     <li><dt>RSA key usage</dt>
