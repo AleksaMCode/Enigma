@@ -140,7 +140,7 @@
 <p align="center"><img src="./resources/file-delete.gif?raw=true" width="450" title="file delete login" align="centar" hspace="5" vspace="5">
 
 ### File sharing
-<p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
+<p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with three other users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
 
 <p align="center"><img src="./resources/file-share.gif?raw=true" width="450" title="file sharing" align="centar" hspace="5" vspace="5">
 
