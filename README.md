@@ -237,7 +237,7 @@ public enum AttributeType : uint
 ```
 
 ### File encryption
-<p align="justify">Files are encrypted using one of the available symmetric algorithms. After user pics symmetric algorithm, hash algorithm, key size and a block cipher mode of operation file is than encrypted. First the file headers are generated, after which the original file is signed and encrypted (in that order).</p>
+<p align="justify">Files are encrypted using one of the available symmetric algorithms. After user picks symmetric algorithm, hash algorithm, key size and a block cipher mode of operation file is than encrypted. First the file headers are generated, after which the original file is signed and encrypted (in that order).</p>
 
 > **_NOTE:_**
 > 
