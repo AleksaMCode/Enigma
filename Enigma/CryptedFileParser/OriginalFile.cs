@@ -50,15 +50,15 @@ namespace Enigma.CryptedFileParser
             //}
         }
 
-        /// <summary>
-        /// Checks if the file extension is allowed.
-        /// </summary>
-        /// <param name="fileExtension">Extension of the file.</param>
-        /// <returns>true if file type is permitted, otherwise false.</returns>
-        public bool ExtensionCheck(string fileExtension)
-        {
-            return allowedExtensions.Contains(fileExtension);
-        }
+        ///// <summary>
+        ///// Checks if the file extension is allowed.
+        ///// </summary>
+        ///// <param name="fileExtension">Extension of the file.</param>
+        ///// <returns>true if file type is permitted, otherwise false.</returns>
+        //public bool ExtensionCheck(string fileExtension)
+        //{
+        //    return allowedExtensions.Contains(fileExtension);
+        //}
 
         /// <summary>
         /// Creates original files full name that contains file name and extension separated with '<b>.</b>'.
