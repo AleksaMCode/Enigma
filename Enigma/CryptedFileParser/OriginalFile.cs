@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Enigma.CryptedFileParser
 {
@@ -28,10 +27,10 @@ namespace Enigma.CryptedFileParser
         /// </summary>
         public int FileSize => FileContent.Length;
 
-        /// <summary>
-        /// List of allowed file extensions.
-        /// </summary>
-        private readonly HashSet<string> allowedExtensions = new HashSet<string> { "txt", "docx", "doc", "png", "jpeg", "jpg", "pdf", "xlsx", "xls", "ppt", "pptx" };
+        ///// <summary>
+        ///// List of allowed file extensions.
+        ///// </summary>
+        //private readonly HashSet<string> allowedExtensions = new HashSet<string> { "txt", "docx", "doc", "png", "jpeg", "jpg", "pdf", "xlsx", "xls", "ppt", "pptx" };
 
         public OriginalFile(byte[] fileContent, string fileName)
         {

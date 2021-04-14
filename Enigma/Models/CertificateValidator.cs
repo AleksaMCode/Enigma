@@ -19,7 +19,7 @@ namespace Enigma.Models
         /// <param name="certificateToValidate">Certificate that is checked.</param>
         /// <param name="caTrustListPath">Path on FS to CA trust list.</param>
         /// <param name="error">String describing error.</param>
-        /// <param name="checkRoot">If set to <see cref="true"/> true, <see cref="VerifyCertificate(X509Certificate2, out string, bool)"/>  will check if certificate is issued by a proper root certificate. </param>
+        /// <param name="checkRoot">If set to <see cref="true"/> true, <see cref="VerifyCertificate(X509Certificate2, out string, bool)"/>  will check if certificate is issued by a proper root certificate.</param>
         /// <returns>true if the certificate hasn't expired and if it issued by a proper root certificate, otherwise false.</returns>
         public static bool VerifyCertificate(X509Certificate2 certificateToValidate, string caTrustListPath, out string error, bool checkRoot)
         {
