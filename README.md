@@ -12,9 +12,9 @@
   - [Usage](#usage)
     - [Register](#register)
     - [Login](#login)
-    - [Private key import](#private-key-import)
       - [Login attempt limit](#login-attempt-limit)
       - [Nuclear switch](#nuclear-switch)
+    - [Private key import](#private-key-import)
     - [File import](#file-import)
     - [Add folder](#add-folder)
     - [File export](#file-export)
@@ -100,11 +100,6 @@
 
 <p align="center"><img src="./resources/successful-sign_in.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
-### Private key import
-<p align="justify">If user wants to access his files and use other <b>Enigma EFS</b> options he needs to import his private RSA key first. If the key's password is correct user is granted access to EFS. With successfull key import program's MFA is completed succesfully.</p>
-
-<p align="center"><img src="./resources/successful-key-import.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
-
 #### Login attempt limit
 <p align="justify">Every user has a total of three opportunities to enter his password. After three failed attempts, a "nuclear switch" is turned on and users data is deleted. The emphasis is placed on security of data above anything else. User is prepared to lose his data forever if that means that the attacker won't get his hands on files.</p>
 
@@ -112,6 +107,11 @@
 
 #### Nuclear switch
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, user's account is locked preventing him to login to Enigmas EFS. Only an admin can unlock a user account. Unlocking process is followed with a mandatory user password change.</p>
+
+### Private key import
+<p align="justify">If user wants to access his files and use other <b>Enigma EFS</b> options he needs to import his private RSA key first. If the key's password is correct user is granted access to EFS. With successfull key import program's MFA is completed succesfully.</p>
+
+<p align="center"><img src="./resources/successful-key-import.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
 ### File import
 <p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
