@@ -204,18 +204,18 @@ Id | Username | Password
 Also, here's the property query for my SQLite database:
 ```SQL
 CREATE TABLE "Users" (
-	"Id"	                      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	"Username"	                  CHAR(30) NOT NULL UNIQUE,
-	"Salt"	                      BLOB NOT NULL UNIQUE,
-	"PassHash"	                  BLOB NOT NULL,
-	"PublicKey"	                  BLOB NOT NULL UNIQUE,
-	"LastLogin"	                  CHAR(33) NOT NULL,
-	"LoginAttempt"	              INTEGER NOT NULL,
-	"UsbKey"	                  BOOLEAN NOT NULL,
-	"Locked"	                  BOOLEAN NOT NULL,
-	"CertificateExpirationDate"	  CHAR(38) NOT NULL,
-	"Revoked"	                  BOOLEAN NOT NULL,
-	"ForcePasswordChange"	      BOOLEAN NOT NULL
+	"Id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"Username"	CHAR(30) NOT NULL UNIQUE,
+	"Salt"	BLOB NOT NULL UNIQUE,
+	"PassHash"	BLOB NOT NULL,
+	"PublicKey"	BLOB NOT NULL UNIQUE,
+	"LastLogin"	CHAR(33) NOT NULL,
+	"LoginAttempt"	INTEGER NOT NULL,
+	"UsbKey"	BOOLEAN NOT NULL,
+	"Locked"	BOOLEAN NOT NULL,
+	"CertificateExpirationDate"	CHAR(38) NOT NULL,
+	"Revoked"	BOOLEAN NOT NULL,
+	"ForcePasswordChange"	BOOLEAN NOT NULL
 );
 ```
 
