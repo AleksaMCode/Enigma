@@ -12,6 +12,7 @@
   - [Usage](#usage)
     - [Register](#register)
     - [Login](#login)
+    - [Private key import](#private-key-import)
       - [Login attempt limit](#login-attempt-limit)
       - [Nuclear switch](#nuclear-switch)
     - [File import](#file-import)
@@ -76,6 +77,7 @@
   <tr>    <td>FS</td>    <td>File System</td>  </tr>
   <tr>    <td>EFS</td>    <td>Encrypted FS</td>  </tr>
   <tr>    <td>2FA</td>    <td>Two-factor Authentication</td>  </tr>
+  <tr>    <td>MFA</td>    <td>Multi-factor authentication</td>  </tr>
   <tr>    <td>RSA</td>    <td>Rivest-Shamir-Adleman algorithm</td>  </tr>
   <tr>    <td>AES</td>    <td>Advanced Encryption Standard</td>  </tr>
   <tr>    <td>3DES</td>    <td>Triple Data Encryption Standard</td>  </tr>
@@ -97,6 +99,11 @@
 <p align="justify">To access <b>Enigmas EFS</b> user needs to login first. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user only needs to provide his certificate (something only the user has). If the entered certificate exists in the Enigma's database, user will be prompted to provide his <i>Username</i> and <i>Password</i> (something only user knows). If the entered password matches the hash value stored for the current user in the database, user's certificate will be subjected to different tests. If the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. At the end, if the login attempt is successful user is granted access to EFS.</p>
 
 <p align="center"><img src="./resources/successful-sign_in.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
+
+### Private key import
+<p align="justify">If user wants to access his files and use other <b>Enigma EFS</b> options he needs to import his private RSA key first. If the key's password is correct user is granted access to EFS. With successfull key import program's MFA is completed succesfully.</p>
+
+<p align="center"><img src="./resources/successful-key-import.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
 #### Login attempt limit
 <p align="justify">Every user has a total of three opportunities to enter his password. After three failed attempts, a "nuclear switch" is turned on and users data is deleted. The emphasis is placed on security of data above anything else. User is prepared to lose his data forever if that means that the attacker won't get his hands on files.</p>
