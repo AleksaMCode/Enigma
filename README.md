@@ -99,12 +99,12 @@
 ### Login
 <p align="justify">To access <b>Enigmas EFS</b> user needs to login first. Login process is realizes as <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">2FA</a>. At first, user only needs to provide his certificate (something only the user has). If the entered certificate exists in the Enigma's database, user will be prompted to provide his <i>Username</i> and <i>Password</i> (something only user knows). If the entered password matches the hash value stored for the current user in the database, user's certificate will be subjected to different tests. If the given certificate matches the public key stored in the database, certificate is subjected to furter verifications. At the end, if the login attempt is successful user is granted access to EFS.</p>
 
-<p align="center"><img src="./resources/successful-sign_in.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/successful-sign_in.gif?raw=true" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
 #### Login attempt limit
 <p align="justify">Every user has a total of three opportunities to enter his password. After three failed attempts, a "nuclear switch" is turned on and users data is deleted. The emphasis is placed on security of data above anything else. User is prepared to lose his data forever if that means that the attacker won't get his hands on files.</p>
 
-<p align="center"><img src="./resources/unsuccessful-sign_in.gif" width="450" title="failed login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/unsuccessful-sign_in.gif?raw=true" width="450" title="failed login" align="centar" hspace="5" vspace="5">
 
 #### Nuclear switch
 <p align="justify">This functionality is implemented to add more security to users files. In addition to deleting user files, user's account is locked preventing him to login to Enigmas EFS. Only an admin can unlock a user account. Unlocking process is followed with a mandatory user password change.</p>
@@ -112,37 +112,37 @@
 ### Private key import
 <p align="justify">If user wants to access his files and use other <b>Enigma EFS</b> options he needs to import his private RSA key first. If the key's password is correct user is granted access to EFS. With successfull key import program's MFA is completed succesfully.</p>
 
-<p align="center"><img src="./resources/successful-key-import.gif" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/successful-key-import.gif?raw=true" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
 ### File import
 <p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
 
-<p align="center"><img src="./resources/file-import.gif" width="450" title="file import" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-import.gif?raw=true" width="450" title="file import" align="centar" hspace="5" vspace="5">
 
 ### Add folder
 <p align="justify">User can add a new folder to EFS by entering folder's name. Folder is added at the current path.</p>
 
-<p align="center"><img src="./resources/folder-create.gif" width="450" title="add folder" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/folder-create.gif?raw=true" width="450" title="add folder" align="centar" hspace="5" vspace="5">
 
 ### File export
 <p align="justify">User can export any file from his EFS to a selected location on FS.</p>
 
-<p align="center"><img src="./resources/file-export.gif" width="450" title="file export" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-export.gif?raw=true" width="450" title="file export" align="centar" hspace="5" vspace="5">
 
 ### Create and import a new <code>.txt</code> file
 <p align="justify">User can add simple <code>.txt</code> files to <b>Enigma EFS</b> by using a build-in application text editor.</p>
 
-<p align="center"><img src="./resources/txt-file-create.gif" width="450" title="txt file create and import" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/txt-file-create.gif?raw=true" width="450" title="txt file create and import" align="centar" hspace="5" vspace="5">
 
 ### Remove file
 <p align="justify">Users can simply delete their files without any restrictions.</p>
 
-<p align="center"><img src="./resources/file-delete.gif" width="450" title="file delete login" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-delete.gif?raw=true" width="450" title="file delete login" align="centar" hspace="5" vspace="5">
 
 ### File sharing
 <p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with 3 users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
 
-<p align="center"><img src="./resources/file-share.gif" width="450" title="file sharing" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-share.gif?raw=true" width="450" title="file sharing" align="centar" hspace="5" vspace="5">
 
 ### File unsharing
 <p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised, file then overwrites the old file.</p>
@@ -157,7 +157,7 @@
 ### <code>.txt</code> file updating
 <p align="justify">User can update <code>.txt</code> files stored on <b>Enigma EFS</b> by using build-in application text editor. This update requires file to be decrypted first before allowing user to change context of the <code>.txt</code> file.</p>
 
-<p align="center"><img src="./resources/txt-file-update.gif" width="450" title="txt file update" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/txt-file-update.gif?raw=true" width="450" title="txt file update" align="centar" hspace="5" vspace="5">
 
 ### File reading
 <p align="justify">User can view encrypted files that are stored on <b>Enigma EFS</b>. File is first decrypted and stored on FS in temp directory. Method used for file reading checks for the existence of environment variables in the following order and uses the first path found:</p>
@@ -169,7 +169,7 @@
 </ol>
 <p align="justify">After writing a new temp file named "Enigma-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.extension (e.q. Enigma-382c74c3-721d-4f34-80e5-57657b6cbc27.pdf for a <code>.pdf</code> file), file is then opened using a default application on the system for the chosen file type.</p>
 
-<p align="center"><img src="./resources/file-open.gif" width="450" title="file open" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/file-open.gif?raw=true" width="450" title="file open" align="centar" hspace="5" vspace="5">
 
 > **_NOTE:_**
 > 
@@ -188,7 +188,7 @@
 <li>Click <i>Submit</i>.</li>
 </ol>
 
-<p align="center"><img src="./resources/change-passwod.gif" width="450" title="change password" align="centar" hspace="5" vspace="5">
+<p align="center"><img src="./resources/change-passwod.gif?raw=true" width="450" title="change password" align="centar" hspace="5" vspace="5">
 
 ## Database
 <p align="justify">For testing purposes there is a folder <i>OPENSSL</i> and a database Users.db provided in the repository with certificates and private keys. Unfortunately encrypted private keys are not stored on git due too their large size. There are two users already registered:</p>
@@ -369,7 +369,7 @@ Diceware word list | 7,776 | 12.925 bits<br>per word
 > <p align="justify">NIST recommends dropping the arbitrary password complexity requirements needing mixtures of upper case letters, symbols and numbers. Based on cracking real-world passwords conclude "<i>notion of password entropy...does not provide a valid metric for measuring the security provided by password creation policie</i>". However, I have implemented Shannon's entropy in <b>Enigma EFS</b> despite it not being a good predictor of how quickly attackers can crack passwords.</p>
 
 ### Passphrase
-<p align="justify"><img src="./resources/xkcd_password_strength.png" width="350" title="xkcd illustration" align="left" hspace="5" vspace="5">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma EFS</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domain of <img src="./resources/diceware_domain.png" title="diceware domain" style="vertical-align: -0.505ex" width="100">, that provides anywhere from 78 to 128 bits of entropy.
+<p align="justify"><img src="./resources/xkcd_password_strength.png?raw=true" width="350" title="xkcd illustration" align="left" hspace="5" vspace="5">A passphrase is a sequence of randomly chosen words. It is similar to password in usage, but is generally longer. <b>Enigma EFS</b> offers random generated passphrases based on diceware. While such a collection of words might appear to violate the "not from any dictionary" rule, the security is based entirely on the large number of possible ways to choose from the list of words and not from any secrecy about the words themselves. There are in total 7,776 words in the list (<a href="https://en.wikipedia.org/wiki/Electronic_Frontier_Foundation">EFF</a> wordlist) and anywhere between 6 and 10 words are chosen randomly which gives us a combination domain of <img src="./resources/diceware_domain.png" title="diceware domain" style="vertical-align: -0.505ex" width="100">, that provides anywhere from 78 to 128 bits of entropy.
 Number 7,776 (<img src="./resources/diceware_7776.png" width="65" style="vertical-align: -0.505ex">) was chosen to allow words to be selected by throwing dice five times.  Every dice throw is simulated by CSPRNG.
 As an additional security random delimiter with random length, that varies between 3 and 5 charters (ASCII chars between 0x20 and 0x41), is used.</p>
 
