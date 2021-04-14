@@ -127,6 +127,10 @@ namespace Enigma.Wpf.ViewModels
             }
         }
 
+        /// <summary>
+        /// Sets Enigma EFS file/folder view.
+        /// </summary>
+        /// <param name="path">Current path.</param>
         private void SetCurrentItems(string path)
         {
             if (currentItems == null)
@@ -171,6 +175,9 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand ImportKeyCommand => new RelayCommand(HandleImportKey);
 
+        /// <summary>
+        /// Handles user's private RSA key import.
+        /// </summary>
         private async void HandleImportKey()
         {
             if (IsKeyImported)
@@ -270,6 +277,9 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand PasswordChangeCommand => new RelayCommand(HandlePasswordChange);
 
+        /// <summary>
+        /// Handles user's account password change.
+        /// </summary>
         private void HandlePasswordChange()
         {
             var form = new ChangePasswordFormViewModel(navigator);
@@ -301,6 +311,9 @@ namespace Enigma.Wpf.ViewModels
         }
         public ICommand AccountDeletionCommand => new RelayCommand(HandleAccountDeletion);
 
+        /// <summary>
+        /// Handles user's account deletion.
+        /// </summary>
         private void HandleAccountDeletion()
         {
             //var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change. Are you sure that you want to delete your account?");
@@ -333,6 +346,10 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand ImportFileCommand => new RelayCommand(HandleImportFile);
 
+        /// <summary>
+        /// Checks if user has imported his private RSA key.
+        /// </summary>
+        /// <returns>true if key has been imported, otherwise false.</returns>
         private bool UserPrivateKeyCheck()
         {
             if (!IsKeyImported)
@@ -344,6 +361,9 @@ namespace Enigma.Wpf.ViewModels
             return true;
         }
 
+        /// <summary>
+        /// Handles file import.
+        /// </summary>
         private void HandleImportFile()
         {
             if (UserPrivateKeyCheck())
@@ -409,6 +429,9 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand CreateTextFileCommand => new RelayCommand(HandleCreateTextFile);
 
+        /// <summary>
+        /// Handles txt file creation and import.
+        /// </summary>
         private void HandleCreateTextFile()
         {
             if (UserPrivateKeyCheck())
@@ -467,6 +490,9 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand CreateFolderCommand => new RelayCommand(HandleCreateFolder);
 
+        /// <summary>
+        /// Handles folder creation.
+        /// </summary>
         private void HandleCreateFolder()
         {
             if (UserPrivateKeyCheck())
@@ -514,6 +540,10 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand DeleteItemCommand => new RelayCommand<FileSystemItem>(HandleDeleteItem);
 
+        /// <summary>
+        /// Handles file deletion.
+        /// </summary>
+        /// <param name="obj">Selected file.</param>
         private void HandleDeleteItem(FileSystemItem obj)
         {
             var dialog = new YesNoDialogFormViewModel(navigator, "You are about to perform an action that will result in a permanent change to Enigma EFS. Are you sure that you want to proceed?");
@@ -608,6 +638,10 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand ShareItemCommand => new RelayCommand<FileSystemItem>(HandleShareItem);
 
+        /// <summary>
+        /// Handles file sharing.
+        /// </summary>
+        /// <param name="obj">Selected file.</param>
         private void HandleShareItem(FileSystemItem obj)
         {
             try
@@ -657,6 +691,10 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand ExportItemCommand => new RelayCommand<FileSystemItem>(HandleExportItem);
 
+        /// <summary>
+        /// Handles file export.
+        /// </summary>
+        /// <param name="obj">Selected file.</param>
         private async void HandleExportItem(FileSystemItem obj)
         {
             try
@@ -749,6 +787,9 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand InitCommand => new RelayCommand(HandleInit);
 
+        /// <summary>
+        /// Prints initial welcome message.
+        /// </summary>
         private void HandleInit()
         {
             var welcomeMessage = "\nIf you dont remember using your account then, please change your password.";
@@ -761,6 +802,10 @@ namespace Enigma.Wpf.ViewModels
             navigator.ShowMessage(string.Format("Welcome {0}", enigmaEfs.currentUser.Username.Substring(0, enigmaEfs.currentUser.Username.Length - 5)), $"Your last login time was: {enigmaEfs.currentUser.LastLogin}" + welcomeMessage);
         }
 
+        /// <summary>
+        /// Opens user file.
+        /// </summary>
+        /// <param name="obj">Selected file.</param>
         private async void HandleReadFile(FileSystemItem obj)
         {
             try
@@ -814,6 +859,10 @@ namespace Enigma.Wpf.ViewModels
 
         public ICommand UpdateItemCommand => new RelayCommand<FileSystemItem>(HandleUpdateItem);
 
+        /// <summary>
+        /// Handles file update.
+        /// </summary>
+        /// <param name="obj">Selected file.</param>
         private async void HandleUpdateItem(FileSystemItem obj)
         {
             try
@@ -968,7 +1017,7 @@ namespace Enigma.Wpf.ViewModels
         /// <summary>
         /// Handles Enigma's EFS default action (mouse double click).
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">Selected folder or file.</param>
         private void HandleDefaultAction(FileSystemItem obj)
         {
             if (obj.Type is FileSystemItemType.Folder or FileSystemItemType.SharedFolder)
@@ -987,7 +1036,7 @@ namespace Enigma.Wpf.ViewModels
         /// <summary>
         /// Gets user's current directory path.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>User's current directory path.</returns>
         private string GetDirPath()
         {
             var path = enigmaEfs.RootDir;
