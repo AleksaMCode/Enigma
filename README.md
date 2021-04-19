@@ -115,7 +115,7 @@
 <p align="center"><img src="./resources/successful-key-import.gif?raw=true" width="450" title="successful sign in" align="centar" hspace="5" vspace="5">
 
 ### File import
-<p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can chose to either delete or keept the original file.</p>
+<p align="justify">User can add files from FS to <b>Enigma EFS</b> by selecting a path to the original file, encryption and hashing algorithm. Files need to be added one at the time because batch import isn't supported. When adding a new file, user can choose to either delete or keep the original file.</p>
 
 <p align="center"><img src="./resources/file-import.gif?raw=true" width="450" title="file import" align="centar" hspace="5" vspace="5">
 
@@ -140,12 +140,12 @@
 <p align="center"><img src="./resources/file-delete.gif?raw=true" width="450" title="file delete login" align="centar" hspace="5" vspace="5">
 
 ### File sharing
-<p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can only share his files with three other users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
+<p align="justify">Every user can share their file with other users. For no other reason than simply wanting to put a limit, user can share his files with up to three other users. When sharing a file with an other user, file's Key is encrypted using a shared user's public RSA key after which it's stored inside file's Security Descriptor header.</p>
 
 <p align="center"><img src="./resources/file-share.gif?raw=true" width="450" title="file sharing" align="centar" hspace="5" vspace="5">
 
 ### File unsharing
-<p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised, file then overwrites the old file.</p>
+<p align="justify">Unsharing a file is even simpler than sharing. When unsharing, file is first parsed after which shared user's encrypted Key is simply deleted. New, revised file, then overwrites the old file.</p>
 
 ### File updating
 <p align="justify">User can simply update already existing encrypted file with a new file. User can use a modified version of the old file or an entirely new file. However, file's type must remain the same when updating an encrypted file. Once the data containing the actual file is updated, file's read and altered time as well as the file signature is updated. File update also includes a change of the file's IV while the Key remains the same.</p>
@@ -316,7 +316,7 @@ ALGORITHM<br>NAME | BLOCK CIPHER<br>MODE OF OPERATION | KEY SIZE<br>(bits) | BLO
 > <p align="justify"> I don't recomment ECB mode because it's not <a href="https://en.wikipedia.org/wiki/Semantic_security">semantically secure</a>. The only time it could be safe to use is if its used for encryption of data smaller than 128 bits when using with AES, Camellia or Twofish, or 64 bits when using with 3DES.</p>
 
 ### Asymmetric algorithm
-RSA cryptosystem is the only asymmetric algorithm implemented. It's used for symmetric key encryption and for generating a digital signature of files.
+RSA cryptosystem is the only asymmetric algorithm implemented. It's used to encrypt symmetric keys and it's used for generating a digital signature of files.
 
 ### Hashing algorithms
 Hashing algorithms that are implemented in <b>Enigma EFS</b>.
